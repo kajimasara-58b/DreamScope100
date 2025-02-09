@@ -93,3 +93,6 @@ SNS共有機能により、目標の共有や達成報告を可能に
 
 【画面遷移図】
 https://www.figma.com/design/Wkkb4qyhaJZkvgeSB6Bwxl/Untitled?node-id=0-1&p=f&t=OpwuPFBlcBvGuIDT-0
+
+【ER図】
+https://i.gyazo.com/9ed52a145428561d9306097431e35aad.png
