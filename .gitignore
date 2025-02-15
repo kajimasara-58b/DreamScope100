@@ -43,3 +43,4 @@
 .DS_Store
 /vendor/bundle
 .env
+config/initializers/devise.rb
