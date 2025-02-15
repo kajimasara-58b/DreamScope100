@@ -38,3 +38,7 @@
 !/app/assets/builds/.keep
 
 /node_modules
+
+# railsnew 以降手動で追加
+.DS_Store
+/vendor/bundle
