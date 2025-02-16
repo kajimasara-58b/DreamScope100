@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get "home/index"
   root "home#index"
-  devise_for :users
+  devise_for :users, controllers: { sessions: "users/sessions" }
   get "dashboard", to: "dashboard#index"
   # get "login", to: "sessions#new"
   # /loginにアクセスするとSessionsControllerのnewアクションがよばれる
@@ -17,4 +17,8 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
 end
