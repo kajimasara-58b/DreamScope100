@@ -1,6 +1,7 @@
 <h2 class="text-3xl">ログイン</h2>
 
 <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
   <div class="field">
     <%= f.label :email %><br />
     <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
@@ -19,7 +20,7 @@
   <% end %>
 
   <div class="actions">
-    <%= link_to "ログイン", dashboard_path(resource_name), class: 'underline' %><br />
+    <%= f.submit "ログイン", class: 'underline' %><br />
   </div>
 <% end %>
 
