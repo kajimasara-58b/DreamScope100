@@ -1,4 +1,40 @@
-<h2 class="text-3xl">DreamScore100</h2>
-<h1 class="text-xl">ダッシュボード</h1>
-<h1 class="text-xl">目標一覧</h1>
-<h1 class="text-xl">ユーザー情報</h1>
+<!DOCTYPE html>
+<html>
+<link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet"> <!-- Aldrichフォントをインポート -->
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* 高さを画面いっぱいにする */
+    }
+    footer {
+      margin-top: auto; /* フッターを下に寄せる */
+    }
+    header h2 {
+      font-family: 'Aldrich', sans-serif; /* Aldrichフォントを適用 */
+    }
+  </style>
+<body class="bg-[#FFF5E8]">
+
+  <header class="bg-[#FFC276] text-white p-6 flex justify-between items-center">
+    <h2 class="text-4xl"><%= link_to "DreamScore100", root_path, class: "text-white" %></h2>
+    <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-white" %>
+  </header>
+
+  <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
+    <a href="#" class="text-xl">ダッシュボード</a>
+    <a href="#" class="text-xl">目標一覧</a>
+    <a href="#" class="text-xl">ユーザー情報</a>
+  </main>
+
+  <footer class="bg-[#FFC276] text-white p-4 flex justify-between">
+    <div>
+      <a href="#" class="text-white mr-4">プライバシーポリシー</a>
+      <a href="#" class="text-white mr-4">利用規約</a>
+      <a href="#" class="text-white">お問い合わせ</a>
+    </div>
+    <p>© 2025 DreamScore100. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
