@@ -19,8 +19,7 @@
   <% end %>
 
   <div class="actions">
-    <%= f.submit "Log in" %>
-    <%= link_to "Log in", new_registration_path(resource_name) %><br />
+    <%= link_to "Log in", dashboard_path(resource_name), class: 'underline' %><br />
   </div>
 <% end %>
 
