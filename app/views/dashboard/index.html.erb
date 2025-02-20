@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<p style="color: green"><%= notice %></p>
 <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet"> <!-- Aldrichフォントをインポート -->
   <style>
     body {
@@ -17,7 +18,7 @@
 <body class="bg-[#FFF5E8]">
 
   <header class="bg-[#FFC276] text-white p-6 flex justify-between items-center">
-    <h2 class="text-4xl"><%= link_to "DreamScore100", root_path, class: "text-white" %></h2>
+    <h2 class="text-4xl"><%= link_to "DreamScope100", root_path, class: "text-white" %></h2>
     <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-white" %>
   </header>
 
@@ -33,7 +34,7 @@
       <a href="#" class="text-white mr-4">利用規約</a>
       <a href="#" class="text-white">お問い合わせ</a>
     </div>
-    <p>© 2025 DreamScore100. All rights reserved.</p>
+    <p>© 2025 DreamScope100. All rights reserved.</p>
   </footer>
 
 </body>
