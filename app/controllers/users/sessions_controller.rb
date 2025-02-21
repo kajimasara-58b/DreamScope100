@@ -10,13 +10,19 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   # POST /resource/sign_in
-  # def create
-  #   super
-  # end
+  def create
+    super
+    if @resource.present?
+      flash[:notice] = "ログインしました"
+    else
+      flash.now[:warning] = "ログインできませんでした"
+    end
+  end
 
   # DELETE /resource/sign_out
   def destroy
     super
+    flash[:notice] = "ログアウトしました"
   end
 
   # protected
@@ -29,5 +35,11 @@ class Users::SessionsController < Devise::SessionsController
   def after_sign_in_path_for(resource)
     # リダイレクト先を指定する
     dashboard_path # ここで任意のパスを指定するカ
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:email, :password, :remember_me)
   end
 end
