@@ -1,4 +1,28 @@
-<p style="color: green"><%= notice %></p>
-<h2 class="text-3xl">DreamScope100</h2>
-<h1 class="text-xl">100の夢をかなえよう</h1>
-<h1 class="text-xl"><%= link_to 'ログイン', new_user_session_path, class: 'underline' %></h1>
+<!DOCTYPE html>
+<html>
+<link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet"> <!-- Aldrichフォントをインポート -->
+  <style>
+    .font-aldrich  {
+      font-family: 'Aldrich', sans-serif; /* Aldrichフォントを適用 */
+    }
+  </style>
+
+<header class="bg-[#FFC276] text-white p-6 flex justify-between items-center">
+  <h2 class="text-4xl"><%= link_to "DreamScope100", dashboard_path, class: "text-white" %></h2>
+  <%= link_to 'ログイン', new_user_session_path, class: "text-white" %>
+</header>
+
+<body class="bg-[#FFF5E8] flex flex-col min-h-screen">
+  <div class="flex flex-col items-center justify-center flex-grow text-center">
+    <!-- タイトル -->
+    <h1 class="text-7xl font-bold text-[#FFC276] font-aldrich">DreamScope100</h1>
+    <!-- 横線 -->
+    <div class="border-t border-[#FFC276] w-[600px] mt-2"></div>
+    <!-- サブタイトル -->
+    <h2 class="text-xl text-black mt-4">100の夢をかなえよう</h2>
+  </div>
+
+</body>
+
+<%= render "shared/footer" %>
+</html>
