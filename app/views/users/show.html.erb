@@ -1,19 +1,5 @@
 <!DOCTYPE html>
 <html>
-<link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet"> <!-- Aldrichフォントをインポート -->
-  <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh; /* 高さを画面いっぱいにする */
-    }
-    footer {
-      margin-top: auto; /* フッターを下に寄せる */
-    }
-    header h2 {
-      font-family: 'Aldrich', sans-serif; /* Aldrichフォントを適用 */
-    }
-  </style>
 
 <%= render "shared/header" %>
 <p style="color: green"><%= notice %></p>
@@ -22,7 +8,8 @@
 
   <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
     <h2 class="text-3xl">ユーザー情報</h2>
-    <h2 class="card-title"><%= current_user.email %></h2>
+    <h2 class="card-title">ユーザー名： <%= current_user.name %></h2>
+    <h2 class="card-title">メールアドレス： <%= current_user.email %></h2>
 
     <div>
       <%= link_to "編集", edit_user_registration_path %> 
