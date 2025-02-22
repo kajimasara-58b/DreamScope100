@@ -1,32 +1,58 @@
+<!DOCTYPE html>
+<html>
+
 <% if flash[:alert].present? %>
   <div class="flash alert"><%= flash[:alert] %></div>
 <% end %>
 
-<h2 class="text-3xl">ログイン</h2>
+<link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet"> <!-- Aldrichフォントをインポート -->
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* 高さを画面いっぱいにする */
+    }
+    footer {
+      margin-top: auto; /* フッターを下に寄せる */
+    }
+    header h2 {
+      font-family: 'Aldrich', sans-serif; /* Aldrichフォントを適用 */
+    }
+  </style>
+  
+<header class="bg-[#FFC276] text-white p-6 flex justify-between items-center">
+  <h2 class="text-4xl"><%= link_to "DreamScope100", root_path, class: "text-white" %></h2>
+</header>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <%= render 'devise/shared/error_messages', resource: resource %>
+<body class="bg-[#FFF5E8]">
+  <h2 class="text-3xl">ログイン</h2>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <%= render 'devise/shared/error_messages', resource: resource %>
 
-  <div class="field">
-    <%= f.label :password %><br />
-    <%= f.password_field :password, autocomplete: "current-password" %>
-  </div>
-
-  <% if devise_mapping.rememberable? %>
     <div class="field">
-      <%= f.check_box :remember_me %>
-      <%= f.label :remember_me %>
+      <%= f.label :email %><br />
+      <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+    </div>
+
+    <div class="field">
+      <%= f.label :password %><br />
+      <%= f.password_field :password, autocomplete: "current-password" %>
+    </div>
+
+    <% if devise_mapping.rememberable? %>
+      <div class="field">
+        <%= f.check_box :remember_me %>
+        <%= f.label :remember_me %>
+      </div>
+    <% end %>
+
+    <div class="actions">
+      <%= f.submit "ログイン", class: 'underline' %><br />
     </div>
   <% end %>
-
-  <div class="actions">
-    <%= f.submit "ログイン", class: 'underline' %><br />
-  </div>
-<% end %>
+</body>
 
 <%= render "devise/shared/links" %>
+<%= render "shared/footer" %>
+</html>
