@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html>
-<p style="color: green"><%= notice %></p>
 <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet"> <!-- Aldrichフォントをインポート -->
   <style>
     body {
@@ -15,18 +12,7 @@
       font-family: 'Aldrich', sans-serif; /* Aldrichフォントを適用 */
     }
   </style>
-
-<%= render "shared/header" %>
-
-<body class="bg-[#FFF5E8]">
-
-  <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
-    <a href="#" class="text-xl">ダッシュボード</a>
-    <a href="#" class="text-xl">目標一覧</a>
-    <a href="users/show" class="text-xl">ユーザー情報</a>
-  </main>
-
-</body>
-
-<%= render "shared/footer" %>
-</html>
+  
+<header class="bg-[#FFC276] text-white p-6 flex justify-between items-center">
+  <h2 class="text-4xl"><%= link_to "DreamScope100", root_path, class: "text-white" %></h2>
+</header>

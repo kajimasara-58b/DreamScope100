@@ -17,16 +17,20 @@
   </style>
 
 <%= render "shared/header" %>
+<p style="color: green"><%= notice %></p>
 
 <body class="bg-[#FFF5E8]">
 
   <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
-    <a href="#" class="text-xl">ダッシュボード</a>
-    <a href="#" class="text-xl">目標一覧</a>
-    <a href="users/show" class="text-xl">ユーザー情報</a>
-  </main>
+    <h2 class="text-3xl">ユーザー情報</h2>
+    <h2 class="card-title"><%= current_user.email %></h2>
 
+    <div>
+      <%= link_to "編集", edit_user_registration_path %> 
+    </div>
+  </main>
 </body>
 
 <%= render "shared/footer" %>
+
 </html>
