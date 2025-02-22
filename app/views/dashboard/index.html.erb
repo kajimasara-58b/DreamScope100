@@ -1,27 +1,14 @@
 <!DOCTYPE html>
 <html>
-<p style="color: green"><%= notice %></p>
-<link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet"> <!-- Aldrichフォントをインポート -->
-  <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh; /* 高さを画面いっぱいにする */
-    }
-    footer {
-      margin-top: auto; /* フッターを下に寄せる */
-    }
-    header h2 {
-      font-family: 'Aldrich', sans-serif; /* Aldrichフォントを適用 */
-    }
-  </style>
 
 <%= render "shared/header" %>
+
+<p style="color: green"><%= notice %></p>
 
 <body class="bg-[#FFF5E8]">
 
   <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
-    <a href="#" class="text-xl">ダッシュボード</a>
+    <h2 class="text-3xl">ダッシュボード</h2>
     <a href="#" class="text-xl">目標一覧</a>
     <a href="users/show" class="text-xl">ユーザー情報</a>
   </main>

@@ -2,7 +2,10 @@ Rails.application.routes.draw do
   get "users/show"
   get "home/index"
   root "home#index"
-  devise_for :users, controllers: { sessions: "users/sessions" }
+  devise_for :users, controllers: {
+    sessions: "users/sessions",
+    registrations: "users/registrations"
+  }
   get "dashboard", to: "dashboard#index"
   get "users/show", to: "users#show"
   # get "login", to: "sessions#new"
