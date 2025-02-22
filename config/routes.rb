@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   root "home#index"
   devise_for :users, controllers: { sessions: "users/sessions" }
   get "dashboard", to: "dashboard#index"
-  get 'users/show', to: 'users#show'
+  get "users/show", to: "users#show"
   # get "login", to: "sessions#new"
   # /loginにアクセスするとSessionsControllerのnewアクションがよばれる
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
