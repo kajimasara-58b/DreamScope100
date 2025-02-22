@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   }
   get "dashboard", to: "dashboard#index"
   get "users/show", to: "users#show"
+  resources :goals
   # get "login", to: "sessions#new"
   # /loginにアクセスするとSessionsControllerのnewアクションがよばれる
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

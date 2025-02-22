@@ -1,4 +1,15 @@
-<p style="color: green"><%= notice %></p>
-<h2 class="text-3xl">DreamScope100</h2>
-<h1 class="text-xl">100の夢をかなえよう</h1>
-<h1 class="text-xl"><%= link_to 'ログイン', new_user_session_path, class: 'underline' %></h1>
+<!DOCTYPE html>
+<html>
+
+<%= render "shared/beforelogin_header" %>
+
+<body class="bg-[#FFF5E8]">
+  <p style="color: green"><%= notice %></p>
+  <h2 class="text-3xl">DreamScope100</h2>
+  <h1 class="text-xl">100の夢をかなえよう</h1>
+  <h1 class="text-xl"><%= link_to 'ログイン', new_user_session_path, class: 'underline' %></h1>
+
+</body>
+
+<%= render "shared/footer" %>
+</html>
