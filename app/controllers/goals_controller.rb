@@ -10,9 +10,9 @@ class GoalsController < ApplicationController
   def create
     @goal = Goal.new(goal_params)
     if @goal.save
-      redirect_to goals_path, notice: '目標を作成しました'
+      redirect_to goals_path, notice: "目標を作成しました"
     else
-      flash[:alert] = '目標の作成に失敗しました。入力内容を確認してください。'
+      flash[:alert] = "目標の作成に失敗しました。入力内容を確認してください。"
       redirect_to new_goal_path
     end
   end
