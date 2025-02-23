@@ -17,9 +17,13 @@ class GoalsController < ApplicationController
     end
   end
 
+  def show
+    @goal = Goal.find(params[:id]) 
+  end
+
   private
 
   def goal_params
-    params.require(:goal).permit(:title, :due_date, :status) # 必要な属性を指定すること
+    params.require(:goal).permit(:id, :title, :due_date, :status) # 必要な属性を指定すること
   end
 end
