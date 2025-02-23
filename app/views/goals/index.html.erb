@@ -9,6 +9,16 @@
 
   <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
     <h2 class="text-3xl">目標一覧</h2>
+    <%= link_to '目標作成', new_goal_path %>
+    
+    <div class="grid grid-cols-5 gap-4">
+      <% @goals.each do |goal| %>
+        <div class="flex items-center">
+          <%= check_box_tag "goals[]", goal.id, false, onclick: "location.href='#{goal_path(goal)}'" %>
+          <label for="goals_<%= goal.id %>" class="ml-2 cursor-pointer"><%= goal.title %></label>
+        </div>
+      <% end %>
+    </div>
   </main>
 
 </body>
