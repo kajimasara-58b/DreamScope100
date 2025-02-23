@@ -3,13 +3,37 @@
 
 <%= render "shared/header" %>
 
-<p style="color: green"><%= notice %></p>
+<% if flash[:alert].present? %>
+  <div class="flash alert" style="color: red;"><%= flash[:alert] %></div>
+<% end %>
 
 <body class="bg-[#FFF5E8]">
 
   <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
     <h2 class="text-3xl">目標作成</h2>
-    
+    <%= form_with model: @goal, local: true do |form| %>
+      <div class="mb-4">
+        <%= form.label :title, "目標" %>
+        <%= form.text_area :title, placeholder: "目標を入力してください", required: true, class: "border rounded p-2 w-full" %>
+      </div>
+
+      <div class="mb-4">
+        <%= form.label :due_date, "達成目標日" %>
+        <input type="date" name="goal[due_date]" class="border rounded p-2 w-full">
+      </div>
+
+      <div class="mb-4">
+        <%= form.label :status, "達成状況" %>
+        <%= form.select :status, Goal.statuses.keys.map { |status| [status.humanize, status] }, { prompt: '選択してください' }, { class: "border rounded p-2 w-full" } %>
+      </div>
+
+      <div class="flex justify-between">
+        <%= form_with model: @goal, url: goals_path, local: true do |form| %>
+          <%= form.submit "作成", class: "bg-blue-500 text-white rounded p-2" %>
+        <% end %>
+        <%= link_to "キャンセル", goals_path, class: "bg-gray-300 text-black rounded p-2" %>
+      </div>
+    <% end %>  
   </main>
 
 </body>
