@@ -8,9 +8,11 @@
   </style>
 
 <header class="bg-[#FFC276] text-white p-6 flex justify-between items-center">
-  <h2 class="text-4xl"><%= link_to "DreamScope100", dashboard_path, class: "text-white" %></h2>
+  <h2 class="text-4xl"><%= link_to "DreamScope100", root_path, class: "text-white" %></h2>
   <%= link_to 'ログイン', new_user_session_path, class: "text-white" %>
 </header>
+
+<p style="color: red"><%= notice %></p>
 
 <body class="bg-[#FFF5E8] flex flex-col min-h-screen">
   <div class="flex flex-col items-center justify-center flex-grow text-center">

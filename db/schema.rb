@@ -15,10 +15,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_22_135539) do
   enable_extension "plpgsql"
 
   create_table "goals", force: :cascade do |t|
-    t.string "title"
-    t.integer "status"
+    t.string "title", null: false
+    t.integer "status", null: false
     t.integer "category"
-    t.date "due_date"
+    t.date "due_date", null: false
     t.datetime "reminder_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
