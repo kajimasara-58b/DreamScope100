@@ -6,11 +6,12 @@ class GoalsController < ApplicationController
   end
 
   def index
-    @goals = Goal.all
+    @goals = Goal.where(user_id: current_user.id)
   end
 
   def create
     @goal = Goal.new(goal_params)
+    @goal.user_id = current_user.id
     if @goal.save
       redirect_to goals_path, notice: "目標を作成しました"
     else
@@ -52,6 +53,6 @@ class GoalsController < ApplicationController
   private
 
   def goal_params
-    params.require(:goal).permit(:id, :title, :due_date, :status) # 必要な属性を指定すること
+    params.require(:goal).permit(:id, :title, :due_date, :status, :user_id) # 必要な属性を指定すること
   end
 end

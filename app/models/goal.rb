@@ -1,4 +1,5 @@
 class Goal < ApplicationRecord
+  belongs_to :user
   # バリデーションやアソシエーションなどがあればここに
   enum status: { 未: 0, 済: 1 }
   validates :title, presence: true
