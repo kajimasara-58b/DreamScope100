@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<%= render "shared/header" %>
+
+<p style="color: green"><%= notice %></p>
+
+<body class="bg-[#FFF5E8]">
+
+  <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
+    <h2 class="text-3xl">目標詳細</h2>
+    <h2 class="card-title">目標： <%= @goal.title %></h2>
+    <h2 class="card-title">達成目標日： <%= @goal.due_date %></h2>
+    <h2 class="card-title">達成状況： <%= @goal.status %></h2>
+
+    <div>
+      <%= link_to "編集", edit_goal_path, class: "bg-gray-300 text-black rounded p-2" %>
+      <%= link_to "一覧へ戻る", goals_path, class: "bg-gray-300 text-black rounded p-2" %>
+      <%= button_to "削除", @goal, method: :delete, class: "bg-gray-300 text-black rounded p-2" %>
+    </div>
+  </main>
+
+</body>
+
+<%= render "shared/footer" %>
+</html>
