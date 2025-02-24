@@ -7,11 +7,11 @@
 
 <body class="bg-[#FFF5E8]">
 
-  <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
+  <main class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">
     <h2 class="text-3xl">目標一覧</h2>
     <%= link_to '目標作成', new_goal_path %>
     
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <% displayed_goals = @goals.map(&:id) %> <!-- すでに表示された目標のIDを取得 -->
       <% current_index = 1 %> <!-- 現在のインデックスを初期化 -->
 

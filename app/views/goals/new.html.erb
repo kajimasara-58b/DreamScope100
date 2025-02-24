@@ -9,7 +9,7 @@
 
 <body class="bg-[#FFF5E8]">
 
-  <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
+  <main class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">
     <h2 class="text-3xl">目標作成</h2>
     <%= form_with model: @goal, local: true do |form| %>
       <div class="mb-4">

@@ -7,11 +7,44 @@
 
 <body class="bg-[#FFF5E8]">
 
-  <main class="flex-grow p-4" style="display: flex; flex-direction: column;">
+  <main class="flex-grow p-4 flex flex-col md:flex-row" style="display: flex; flex-direction: column;">
     <h2 class="text-3xl">ダッシュボード</h2>
-    <a href="goals" class="text-xl">目標一覧</a>
-    <a href="users/show" class="text-xl">ユーザー情報</a>
+    <div class="flex-1 md:w-1/2 md:pr-4">
+      <!-- 円グラフを表示するためのキャンバス -->
+      <canvas id="goalChart" width="200" height="200"></canvas>
+    </div>
+    <div class="flex-1 md:w-1/2">
+      <a href="goals" class="text-xl">目標一覧</a>
+      <a href="users/show" class="text-xl">ユーザー情報</a>
+    </div>
   </main>
+
+  <!-- Chart.jsのCDNを読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // 達成した目標数と全目標数
+    const achievedGoals = 5;
+    const totalGoals = 100;
+    const percentage = achievedGoals / totalGoals * 100;
+
+    const ctx = document.getElementById('goalChart').getContext('2d');
+    const goalChart = new Chart(ctx, {
+      type: 'doughnut', // 円グラフの種類
+      data: {
+        labels: ['達成', '未達成'],
+        datasets: [{
+          label: '目標達成状況',
+          data: [percentage, 100 - percentage], // データ配列（達成率、未達成率）
+          backgroundColor: ['#FFA500', '#D3D3D3'], // オレンジとグレー
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      }
+    });
+  </script>
 
 </body>
 
