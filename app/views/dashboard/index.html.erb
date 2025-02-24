@@ -23,7 +23,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     // 達成した目標数と全目標数
-    const achievedGoals = 5;
+    const achievedGoals = <%= @achieved_goals %>;
     const totalGoals = 100;
     const percentage = achievedGoals / totalGoals * 100;
 
@@ -42,8 +42,46 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-      }
+        plugins: {
+          tooltip: {
+            enabled: false // ツールチップを無効にする
+          }
+        }    
+      },
+      plugins: [{
+        beforeDraw: function(chart) {
+          const ctx = chart.ctx;
+          const x = chart.width / 2;
+          const y = chart.height / 2;
+          ctx.restore();
+
+          // 達成した目標数のフォントサイズ
+          const achievedFontSize = (chart.innerRadius / 1.5).toFixed(2);
+          ctx.font = achievedFontSize + "px Arial";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#000"; // テキストの色
+          ctx.fillText(achievedGoals, x, y - 10); // 数字の位置調整
+          
+          // '/100'のフォントサイズを別に設定
+          const totalFontSize = (chart.innerRadius / 2).toFixed(2);
+          ctx.font = totalFontSize + "px Arial"; // サイズを変える
+          ctx.fillText('/' + totalGoals, x, y + 10); // '/100'の位置調整
+          
+          ctx.save();
+        }
+      }]
     });
+
+    document.getElementById('updateButton').addEventListener('click', updateChart);
+
+    function updateChart() {
+      // 新しいデータを取得するロジックを追加するダ
+      const newAchievedGoals = Math.floor(Math.random() * 100); 
+      const newPercentage = newAchievedGoals / totalGoals * 100;
+
+      goalChart.data.datasets[0].data = [newPercentage, 100 - newPercentage];
+      goalChart.update();
+    }
   </script>
 
 </body>
