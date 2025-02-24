@@ -11,12 +11,32 @@
     <h2 class="text-3xl">目標一覧</h2>
     <%= link_to '目標作成', new_goal_path %>
     
-    <div class="grid grid-cols-5 gap-4">
-      <% @goals.each do |goal| %>
-        <div class="flex items-center">
-          <%= check_box_tag "goals[]", goal.id, false, onclick: "location.href='#{goal_path(goal)}'" %>
-          <label for="goals_<%= goal.id %>" class="ml-2 cursor-pointer"><%= goal.title %></label>
-        </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <% displayed_goals = @goals.map(&:id) %> <!-- すでに表示された目標のIDを取得 -->
+      <% current_index = 1 %> <!-- 現在のインデックスを初期化 -->
+
+      <% (1..100).each do |num| %>
+        <% if displayed_goals.include?(num) %>
+          <% goal = @goals.find { |g| g.id == num } %>
+          <div class="flex items-center">
+            <span class="mr-2"><%= current_index %></span> <!-- 現在のインデックスを表示 -->
+            <%= check_box_tag "goals[]", goal.id, goal.status == "済", disabled: true %>
+            <%= link_to goal.title, goal_path(goal), class: "ml-2 cursor-pointer" %> <!-- link_toで目標タイトルをリンクにする -->
+          </div>
+          <% current_index += 1 %> <!-- インデックスを進める -->
+        <% end %>
+      <% end %>
+
+      <!-- 空いている番号も表示 -->
+      <% (1..100).each do |num| %>
+        <% unless displayed_goals.include?(num) %> <!-- 目標が登録されていない場合 -->
+          <div class="flex items-center">
+            <span class="mr-2"><%= current_index %></span> <!-- 現在のインデックスを表示 -->
+            <%= check_box_tag "goals[]", nil, false, disabled: true %>
+            <%= link_to "新しい目標を作成", new_goal_path, class: "ml-2 cursor-pointer text-gray-300" %> <!-- link_toで目標タイトルをリンクにする -->
+          </div>
+          <% current_index += 1 %> <!-- インデックスを進める -->
+        <% end %>
       <% end %>
     </div>
   </main>
