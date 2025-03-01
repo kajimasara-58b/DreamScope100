@@ -1,5 +1,24 @@
 <!DOCTYPE html>
 <html>
+<style>
+  .button {
+    transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+  }
+
+  .button:hover {
+    background-color: #f0f0f0; /* ホバー時の背景色 */
+    color: #333; /* ホバー時の文字色 */
+  }
+
+  .button:active {
+    background-color: #e0e0e0; /* クリック時の背景色 */
+    color: #111; /* クリック時の文字色 */
+  }
+  .goal-number {
+    font-family: 'Aldrich', sans-serif; /* Aldrichフォントを指定 */
+    color: #FFA230; /* 色を指定 */
+  }
+</style>
 
 <%= render "shared/header" %>
 
@@ -9,9 +28,13 @@
 
   <main class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">
     <h2 class="text-3xl mb-5"><i class="fas fa-tasks mr-2"></i>目標一覧</h2>
-    <%= link_to '目標作成', new_goal_path %>
-    
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="actions mb-5 flex mr-5">
+      <%= link_to "/goals/new", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" do %>
+        <i class="fas fa-pencil-alt mr-2"></i>目標作成
+      <% end %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
       <% displayed_goals = @goals.map(&:id) %> <!-- すでに表示された目標のIDを取得 -->
       <% current_index = 1 %> <!-- 現在のインデックスを初期化 -->
 
@@ -19,7 +42,7 @@
         <% if displayed_goals.include?(num) %>
           <% goal = @goals.find { |g| g.id == num } %>
           <div class="flex items-center">
-            <span class="mr-2"><%= current_index %></span> <!-- 現在のインデックスを表示 -->
+            <span class="mr-2 goal-number"><%= current_index %></span> <!-- 現在のインデックスを表示 -->
             <%= check_box_tag "goals[]", goal.id, goal.status == "済", disabled: true %>
             <%= link_to goal.title, goal_path(goal), class: "ml-2 cursor-pointer" %> <!-- link_toで目標タイトルをリンクにする -->
           </div>
@@ -31,7 +54,7 @@
       <% (1..100).each do |num| %>
         <% unless displayed_goals.include?(num) %> <!-- 目標が登録されていない場合 -->
           <div class="flex items-center">
-            <span class="mr-2"><%= current_index %></span> <!-- 現在のインデックスを表示 -->
+            <span class="mr-2 goal-number"><%= current_index %></span> <!-- 現在のインデックスを表示 -->
             <%= check_box_tag "goals[]", nil, false, disabled: true %>
             <%= link_to "新しい目標を作成", new_goal_path, class: "ml-2 cursor-pointer text-gray-300" %> <!-- link_toで目標タイトルをリンクにする -->
           </div>
