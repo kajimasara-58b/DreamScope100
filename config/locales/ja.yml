@@ -43,6 +43,9 @@ ja:
               too_short: は%{count}文字以上で入力してください
             password_confirmation:
               confirmation: が一致しません
+            current_password:
+              blank: が入力されていません
+              invalid: が誤っています
   devise:
     confirmations:
       confirmed: メールアドレスが確認できました。
