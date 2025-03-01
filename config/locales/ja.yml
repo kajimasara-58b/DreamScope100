@@ -31,6 +31,18 @@ ja:
         due_date: 達成目標日
     models:
       user: ユーザー
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: を入力してください
+              taken: はすでに使用されています
+            password:
+              blank: を入力してください
+              too_short: は%{count}文字以上で入力してください
+            password_confirmation:
+              confirmation: が一致しません
   devise:
     confirmations:
       confirmed: メールアドレスが確認できました。
@@ -144,4 +156,4 @@ ja:
       not_locked: はロックされていません。
       not_saved:
         one: エラーが発生したため %{resource} は保存されませんでした。
-        other: "%{count} 件のエラーが発生したため %{resource} は保存されませんでした。"
+        other: "%{count} 件のエラーが発生したため %{resource} は登録できませんでした。"

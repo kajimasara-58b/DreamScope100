@@ -3,9 +3,6 @@
 
 <%= render "shared/beforelogin_header" %>
 
-<% if flash[:alert].present? %>
-  <div class="flash alert" style="color: red;"><%= flash[:alert] %></div>
-<% end %>
 <%= render 'devise/shared/error_messages', resource: resource %>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
