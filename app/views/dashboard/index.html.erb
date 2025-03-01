@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-  <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-hidden">
+  <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
     <!-- ヘッダー -->
     <%= render "shared/header" %>
     
@@ -40,19 +40,21 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     // 達成した目標数と全目標数
-    const achievedGoals = <%= @achieved_goals %>;
-    const totalGoals = 100;
-    const percentage = achievedGoals / totalGoals * 100;
+    const achievedGoals = <%= @achieved_goals %>; // 達成数  
+    const unachievedGoals = <%= @unachieved_goals %>; // 未達成数  
+    const totalGoals = 100; // 登録可能数
+    const registeredGoals = <%= @registered_goals %>; // 全目標数
+    const unregisteredGoals = 100 - registeredGoals; // 未登録数
 
     const ctx = document.getElementById('goalChart').getContext('2d');
     const goalChart = new Chart(ctx, {
       type: 'doughnut', // 円グラフの種類
       data: {
-        labels: ['達成', '未達成'],
+        labels: ['達成', '未達成', '未登録'],
         datasets: [{
           label: '目標達成状況',
-          data: [percentage, 100 - percentage], // データ配列（達成率、未達成率）
-          backgroundColor: ['#FFA500', '#D3D3D3'], // オレンジとグレー
+          data: [achievedGoals, unachievedGoals, unregisteredGoals], // データ配列（達成率、未達成率）
+          backgroundColor: ['#FFA500', '#A9A9A9', '#E3E3E3'], // オレンジ、濃いグレー、薄いグレー
           borderWidth: 1
         }]
       },

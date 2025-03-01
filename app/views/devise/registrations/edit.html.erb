@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
   
 <%= render "shared/header" %>
 
@@ -7,56 +7,59 @@
   <div class="flash alert" style="color: red;"><%= flash[:alert] %></div>
 <% end %>
 
-<body class="bg-[#FFF5E8]">
-  <main class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">
-    <h2 class="text-3xl">ユーザー情報編集</h2>
+<body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
+  <main class="flex-grow p-4 flex flex-col items-center justify-center">
+    <h2 class="text-3xl mb-4">ユーザー情報編集</h2>
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
       <%= render "devise/shared/error_messages", resource: resource %>
 
-      <div class="field">
+      <div class="field mb-4">
         <%= f.label :name, "ユーザー名" %><br />
-        <%= f.text_field :name, required: true %>
+        <%= f.text_field :name, required: true, class: "rounded w-full py-2 px-3" %>
       </div>
 
-      <div class="field">
+      <div class="field mb-4">
         <%= f.label :email %><br />
-        <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "rounded w-full py-2 px-3" %>
       </div>
 
       <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
         <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
       <% end %>
 
-      <div class="field">
+      <div class="field mb-4">
         <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-        <%= f.password_field :password, autocomplete: "new-password" %>
+        <%= f.password_field :password, autocomplete: "new-password", class: "rounded w-full py-2 px-3" %>
         <% if @minimum_password_length %>
           <br />
           <em><%= @minimum_password_length %> characters minimum</em>
         <% end %>
       </div>
 
-      <div class="field">
+      <div class="field mb-4">
         <%= f.label :password_confirmation %><br />
-        <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "rounded w-full py-2 px-3" %>
       </div>
 
-      <div class="field">
+      <div class="field mb-5">
         <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-        <%= f.password_field :current_password, autocomplete: "current-password" %>
+        <%= f.password_field :current_password, autocomplete: "current-password", class: "rounded w-full py-2 px-3" %>
       </div>
 
-      <div class="actions">
-        <%= f.submit "更新" %>
+      <div class="flex flex-col justify-center items-center md:items-start">
+        <div class="flex justify-between w-full">
+          <div class="actions mb-5 flex mr-5">
+            <%= link_to "キャンセル", "show", class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow" %>
+          </div>
+          <div class="actions mb-5 flex">
+            <%= f.submit "更新", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow" %>
+          </div>
+        </div>
       </div>
+
     <% end %>
 
-    <h3>Cancel my account</h3>
-
-    <div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-    <%= link_to "Back", :back %>
   </main>
 </body>
 <%= render "shared/footer" %>
