@@ -5,24 +5,51 @@
     .font-aldrich  {
       font-family: 'Aldrich', sans-serif; /* Aldrichフォントを適用 */
     }
+    body {
+      flex-wrap: wrap; /* 要素を折り返す */
+    }
+    .link {
+      transition: color 0.3s; /* スムーズなトランジション */
+    }
+
+    .link:hover {
+      color: #E3E3E3; /* ホバー時の文字色 */
+    }
+
+    .link:active {
+      color: #A9A9A9; /* クリック時の文字色 */
+    }
+    .tytle-link {
+      transition: color 0.3s; /* スムーズなトランジション */
+    }
+
+    .tytle-link:hover {
+      color: #FFC276; /* ホバー時の文字色 */
+    }
+
+    .tytle-link:active {
+      color: #FFA230; /* クリック時の文字色 */
+    }
+    
   </style>
 
 <header class="bg-[#FFC276] text-white p-6 flex justify-between items-center">
-  <h2 class="text-4xl"><%= link_to "DreamScope100", root_path, class: "text-white" %></h2>
-  <%= link_to 'ログイン', new_user_session_path, class: "text-white" %>
+  <h2 class="text-4xl"><%= link_to "DreamScope100", root_path, class: "text-white link" %></h2>
+  <%= link_to 'ログイン', new_user_session_path, class: "text-white link" %>
 </header>
 
 <p style="color: red"><%= notice %></p>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <div class="flex flex-col items-center justify-center flex-grow text-center">
     <!-- タイトル -->
-    <h1 class="text-7xl font-bold text-[#FFC276] font-aldrich">DreamScope100</h1>
+    <%= link_to "DreamScope100", new_user_session_path, class:"text-7xl font-bold text-[#C9C9C9] font-aldrich tytle-link" %>
     <!-- 横線 -->
     <div class="border-t border-[#FFC276] w-[600px] mt-2"></div>
     <!-- サブタイトル -->
-    <h2 class="text-xl text-black mt-4">100の夢をかなえよう</h2>
+    <h2 class="text-xl text-[#A9A9A9] mt-4">100の夢をかなえよう</h2>
   </div>
 
 </body>
