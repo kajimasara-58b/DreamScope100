@@ -3,9 +3,6 @@
 
 <%= render "shared/beforelogin_header" %>
 
-<% if flash[:alert].present? %>
-  <div class="flash alert" style="color: red;"><%= flash[:alert] %></div>
-<% end %>
 <%= render 'devise/shared/error_messages', resource: resource %>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
@@ -14,31 +11,39 @@
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "w-full max-w-md" }) do |f| %>
 
-    <div class="field mb-4">
-      <%= f.label :ユーザー名 %>
-      <%= f.text_field :name, required: true, class: "rounded w-full py-2 px-3" %>
-    </div>
+      <div class="field mb-4">
+        <%= f.label :ユーザー名 %>
+        <%= f.text_field :name, required: true, class: "rounded w-full py-2 px-3" %>
+      </div>
 
-    <div class="field mb-4">
-      <%= f.label :メールアドレス %>
-      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "rounded w-full py-2 px-3" %>
-    </div>
+      <div class="field mb-4">
+        <%= f.label :メールアドレス %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "rounded w-full py-2 px-3" %>
+      </div>
 
-    <div class="field mb-4">
-      <%= f.label :パスワード %>
-      <% if @minimum_password_length %>
-      <em><%= @minimum_password_length %>文字以上で設定してください</em>
-      <% end %><br />
-      <%= f.password_field :password, autocomplete: "new-password", class: "rounded w-full py-2 px-3" %>
-    </div>
+      <div class="field mb-4">
+        <%= f.label :パスワード %>
+        <% if @minimum_password_length %>
+          ※<%= @minimum_password_length %>文字以上で設定してください
+        <% end %><br />
+        <%= f.password_field :password, autocomplete: "new-password", class: "rounded w-full py-2 px-3" %>
+      </div>
 
-    <div class="field mb-4">
-      <%= f.label :パスワード（確認） %><br />
-      <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "rounded w-full py-2 px-3 mb-5" %>
-    </div>
+      <div class="field mb-6">
+        <%= f.label :パスワード（確認） %><br />
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "rounded w-full py-2 px-3 mb-5" %>
+      </div>
 
-    <div class="actions mb-5 flex justify-center">
-      <%= f.submit "登録", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow" %>
+      <div class="flex flex-col justify-center items-center md:items-start mb-5">
+        <div class="flex justify-between w-full">
+          <div class="actions mb-5 flex mr-5">
+            <%= link_to "キャンセル", "sign_in", class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow" %>
+          </div>
+          <div class="actions mb-5 flex">
+            <%= f.submit "登録", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow" %>
+          </div>
+        </div>
+      </div>
     </div>
     <% end %>
   </main>
