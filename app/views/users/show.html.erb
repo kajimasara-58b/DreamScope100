@@ -1,5 +1,20 @@
 <!DOCTYPE html>
 <html>
+<style>
+  .button {
+    transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+  }
+
+  .button:hover {
+    background-color: #f0f0f0; /* ホバー時の背景色 */
+    color: #333; /* ホバー時の文字色 */
+  }
+
+  .button:active {
+    background-color: #e0e0e0; /* クリック時の背景色 */
+    color: #111; /* クリック時の文字色 */
+  }
+</style>
 
 <%= render "shared/header" %>
 <p style="color: green"><%= notice %></p>
@@ -17,7 +32,7 @@
     </div>
 
     <div class="actions flex justify-center">
-      <%= link_to "編集", edit_user_registration_path, class: "bg-white text-black flex items-center px-4 py-2 rounded shadow" %> 
+      <%= link_to "編集", edit_user_registration_path, class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %> 
     </div>
   </main>
 </body>

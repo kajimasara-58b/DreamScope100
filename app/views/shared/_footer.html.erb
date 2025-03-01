@@ -11,13 +11,24 @@
     header h2 {
       font-family: 'Aldrich', sans-serif; /* Aldrichフォントを適用 */
     }
+    .link {
+      transition: color 0.3s; /* スムーズなトランジション */
+    }
+
+    .link:hover {
+      color: #E3E3E3; /* ホバー時の文字色 */
+    }
+
+    .link:active {
+      color: #A9A9A9; /* クリック時の文字色 */
+    }
   </style>
   
 <footer class="bg-[#FFC276] text-white p-4 flex justify-between">
   <div>
-    <a href="#" class="text-white mr-4">プライバシーポリシー</a>
-    <a href="#" class="text-white mr-4">利用規約</a>
-    <a href="#" class="text-white">お問い合わせ</a>
+    <a href="#" class="text-white link mr-4">プライバシーポリシー</a>
+    <a href="#" class="text-white link mr-4">利用規約</a>
+    <a href="#" class="text-white link">お問い合わせ</a>
   </div>
   <p>© 2025 DreamScope100. All rights reserved.</p>
 </footer>

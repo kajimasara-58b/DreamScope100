@@ -1,5 +1,20 @@
 <!DOCTYPE html>
 <html>
+<style>
+  .button {
+    transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+  }
+
+  .button:hover {
+    background-color: #f0f0f0; /* ホバー時の背景色 */
+    color: #333; /* ホバー時の文字色 */
+  }
+
+  .button:active {
+    background-color: #e0e0e0; /* クリック時の背景色 */
+    color: #111; /* クリック時の文字色 */
+  }
+</style>
 
 <%= render "shared/beforelogin_header" %>
 
@@ -31,7 +46,7 @@
       <% end %>
 
       <div class="actions mb-5 flex justify-center">
-        <%= button_tag type: 'submit', class: "bg-white text-black flex items-center px-4 py-2 rounded shadow" do %>
+        <%= button_tag type: 'submit', class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" do %>
           <i class="fas fa-sign-in-alt mr-2"></i>ログイン
         <% end %>
       </div>
