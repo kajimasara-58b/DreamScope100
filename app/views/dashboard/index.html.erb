@@ -1,23 +1,40 @@
 <!DOCTYPE html>
 <html>
 
-<%= render "shared/header" %>
+  <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-hidden">
+    <!-- ヘッダー -->
+    <%= render "shared/header" %>
+    
+    <p style="color: green"><%= notice %></p>
 
-<p style="color: green"><%= notice %></p>
+    <!-- メインコンテンツ -->
+    <main class="flex-grow p-4 flex flex-col md:flex-row">
+      <h2 class="text-3xl mb-4">ダッシュボード</h2>
 
-<body class="bg-[#FFF5E8]">
+      <!-- 円グラフ -->
+      <div class="flex-1 md:w-1/2 md:pr-3 flex justify-center items-center md:mt-8">
+        <canvas id="goalChart" class="w-[300px] h-[300px] md:w-[400px] md:h-[400px]"></canvas>
+      </div>
 
-  <main class="flex-grow p-4 flex flex-col md:flex-row" style="display: flex; flex-direction: column;">
-    <h2 class="text-3xl">ダッシュボード</h2>
-    <div class="flex-1 md:w-1/2 md:pr-4">
-      <!-- 円グラフを表示するためのキャンバス -->
-      <canvas id="goalChart" width="200" height="200"></canvas>
-    </div>
-    <div class="flex-1 md:w-1/2">
-      <a href="goals" class="text-xl">目標一覧</a>
-      <a href="users/show" class="text-xl">ユーザー情報</a>
-    </div>
-  </main>
+      <!-- ボタン -->
+      <div class="flex-1 md:w-1/2 p-5 flex flex-col justify-center items-center md:items-start">
+        <div class="flex flex-col space-y-4">
+          <a href="goals" class="bg-white text-black text-xl flex items-center px-4 py-2 rounded shadow w-50">
+            <i class="fas fa-tasks mr-2"></i>目標一覧
+          </a>
+          <a href="users/show" class="bg-white text-black text-xl flex items-center px-4 py-2 rounded shadow w-50">
+            <i class="fas fa-user mr-2"></i>ユーザー情報
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- フッター -->
+    <%= render "shared/footer" %>
+  </body>
+
+  <!-- Font AwesomeのCDNを読み込む -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <!-- Chart.jsのCDNを読み込む -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -55,19 +72,26 @@
           const y = chart.height / 2;
           ctx.restore();
 
-          // 達成した目標数のフォントサイズ
-          const achievedFontSize = (chart.innerRadius / 1.5).toFixed(2);
-          ctx.font = achievedFontSize + "px Arial";
-          ctx.textBaseline = "middle";
-          ctx.fillStyle = "#000"; // テキストの色
-          ctx.fillText(achievedGoals, x, y - 10); // 数字の位置調整
-          
-          // '/100'のフォントサイズを別に設定
-          const totalFontSize = (chart.innerRadius / 2).toFixed(2);
-          ctx.font = totalFontSize + "px Arial"; // サイズを変える
-          ctx.fillText('/' + totalGoals, x, y + 10); // '/100'の位置調整
-          
-          ctx.save();
+          ctx.clearRect(0, 0, chart.width, chart.height); // クリア
+
+          ctx.restore();
+
+          // フォントサイズを計算する関数
+        function calculateFontSize(radius, divisor) {
+          return (radius / divisor).toFixed(2) + "px Arial";
+        }
+
+        // 達成した目標数のフォントサイズ
+        ctx.font = calculateFontSize(chart.innerRadius, 1.5);
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#000"; // テキストの色
+        ctx.fillText(achievedGoals, x, y - 10); // 数字の位置調整
+        
+        // '/100'のフォントサイズを別に設定
+        ctx.font = calculateFontSize(chart.innerRadius, 2); // サイズを変える
+        ctx.fillText('/' + totalGoals, x, y + 10); // '/100'の位置調整
+        
+        ctx.save();
         }
       }]
     });
@@ -75,7 +99,7 @@
     document.getElementById('updateButton').addEventListener('click', updateChart);
 
     function updateChart() {
-      // 新しいデータを取得するロジックを追加するダ
+      // 新しいデータを取得するロジック
       const newAchievedGoals = Math.floor(Math.random() * 100); 
       const newPercentage = newAchievedGoals / totalGoals * 100;
 
@@ -84,7 +108,5 @@
     }
   </script>
 
-</body>
 
-<%= render "shared/footer" %>
 </html>
