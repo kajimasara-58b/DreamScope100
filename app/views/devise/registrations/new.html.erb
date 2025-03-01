@@ -16,12 +16,12 @@
 
     <div class="field mb-4">
       <%= f.label :ユーザー名 %>
-      <%= f.text_field :name, required: true, class: "border rounded w-full py-2 px-3" %>
+      <%= f.text_field :name, required: true, class: "rounded w-full py-2 px-3" %>
     </div>
 
     <div class="field mb-4">
       <%= f.label :メールアドレス %>
-      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "border rounded w-full py-2 px-3" %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "rounded w-full py-2 px-3" %>
     </div>
 
     <div class="field mb-4">
@@ -29,12 +29,12 @@
       <% if @minimum_password_length %>
       <em><%= @minimum_password_length %>文字以上で設定してください</em>
       <% end %><br />
-      <%= f.password_field :password, autocomplete: "new-password", class: "border rounded w-full py-2 px-3" %>
+      <%= f.password_field :password, autocomplete: "new-password", class: "rounded w-full py-2 px-3" %>
     </div>
 
     <div class="field mb-4">
       <%= f.label :パスワード（確認） %><br />
-      <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "border rounded w-full py-2 px-3 mb-5" %>
+      <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "rounded w-full py-2 px-3 mb-5" %>
     </div>
 
     <div class="actions mb-5 flex justify-center">
