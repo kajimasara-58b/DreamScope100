@@ -58,7 +58,7 @@
   <!-- Chart.jsのCDNを読み込む -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('turbo:load', function() {
       // 達成した目標数と全目標数（デフォルト値0を設定）
       const achievedGoals = <%= @achieved_goals.nil? ? 0 : @achieved_goals %>; // デフォルト0
       const unachievedGoals = <%= @unachieved_goals.nil? ? 0 : @unachieved_goals %>; // デフォルト0
