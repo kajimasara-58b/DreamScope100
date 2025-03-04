@@ -5,20 +5,36 @@
 
 <p style="color: green"><%= notice %></p>
 
-<body class="bg-[#FFF5E8]">
+<body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
+  <main class="flex-grow p-4 flex flex-col items-center justify-center">
+    <h2 class="text-3xl mb-7">目標詳細</h2>
 
-  <main class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">
-    <h2 class="text-3xl">目標詳細</h2>
-    <h2 class="card-title">目標： <%= @goal.title %></h2>
-    <h2 class="card-title">達成目標日： <%= @goal.due_date %></h2>
-    <h2 class="card-title">達成状況： <%= @goal.status %></h2>
-
-    <div>
-      <%= link_to "編集", edit_goal_path, class: "bg-gray-300 text-black rounded p-2" %>
-      <%= link_to "一覧へ戻る", goals_path, class: "bg-gray-300 text-black rounded p-2" %>
-      <%= button_to "削除", @goal, method: :delete, class: "bg-gray-300 text-black rounded p-2", onclick: "return confirm('削除しますか？');" %>
+    <div class="bg-white p-4 w-80 mb-5">
+      <h2 class="text-lg mb-2">目標： <%= @goal.title %></h2>
     </div>
+    <div class="bg-white p-4 w-80 mb-5">
+      <h2 class="text-lg mb-2">達成目標日： <%= @goal.due_date %> まで</h2>
+    </div>
+    <div class="bg-white p-4 w-80 mb-8">
+      <h2 class="text-lg mb-2">達成状況： <%= @goal.status %></h2>
+    </div>
+
+    <div class="flex flex-col justify-center items-center md:items-start mb-5">
+      <div class="flex justify-between w-full">
+        <div class="actions mb-5 flex mr-5">
+          <%= link_to "一覧へ戻る", goals_path, class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow button" %>
+        </div>
+        <div class="actions mb-5 flex mr-5">
+          <%= link_to "編集", edit_goal_path, class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %>
+        </div>
+        <div class="actions mb-5 flex">
+          <%= button_to "削除", @goal, method: :delete, class: "bg-[#FFDADA] text-black flex items-center px-4 py-2 rounded shadow button", onclick: "return confirm('削除しますか？');" %>
+        </div>
+      </div>
+    </div>  
   </main>
+</div>
+
 
 </body>
 
