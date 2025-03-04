@@ -14,6 +14,10 @@
     background-color: #e0e0e0; /* クリック時の背景色 */
     color: #111; /* クリック時の文字色 */
   }
+  .goalChart {
+    max-width: 100%;
+    height: auto;
+  }
 </style>
 
   <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
@@ -54,75 +58,77 @@
   <!-- Chart.jsのCDNを読み込む -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // 達成した目標数と全目標数
-    const achievedGoals = <%= @achieved_goals %>; // 達成数  
-    const unachievedGoals = <%= @unachieved_goals %>; // 未達成数  
-    const totalGoals = 100; // 登録可能数
-    const registeredGoals = <%= @registered_goals %>; // 全目標数
-    const unregisteredGoals = 100 - registeredGoals; // 未登録数
+    document.addEventListener('DOMContentLoaded', function() {
+      // 達成した目標数と全目標数（デフォルト値0を設定）
+      const achievedGoals = <%= @achieved_goals.nil? ? 0 : @achieved_goals %>; // デフォルト0
+      const unachievedGoals = <%= @unachieved_goals.nil? ? 0 : @unachieved_goals %>; // デフォルト0
+      const totalGoals = 100; // 登録可能数
+      const registeredGoals = <%= @registered_goals.nil? ? 0 : @registered_goals %>; // デフォルト0
+      const unregisteredGoals = 100 - registeredGoals; // 未登録数
 
-    const ctx = document.getElementById('goalChart').getContext('2d');
-    const goalChart = new Chart(ctx, {
-      type: 'doughnut', // 円グラフの種類
-      data: {
-        labels: ['達成', '未達成', '未登録'],
-        datasets: [{
-          label: '目標達成状況',
-          data: [achievedGoals, unachievedGoals, unregisteredGoals], // データ配列（達成率、未達成率）
-          backgroundColor: ['#FFA500', '#A9A9A9', '#E3E3E3'], // オレンジ、濃いグレー、薄いグレー
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          tooltip: {
-            enabled: false // ツールチップを無効にする
-          }
-        }    
-      },
-      plugins: [{
-        beforeDraw: function(chart) {
-          const ctx = chart.ctx;
-          const x = chart.width / 2;
-          const y = chart.height / 2;
-          ctx.restore();
+      // <canvas>要素が存在するか確認
+      const canvas = document.getElementById('goalChart');
+      if (!canvas) {
+        console.error('Canvas element "#goalChart" not found.');
+        return;
+      }
 
-          ctx.clearRect(0, 0, chart.width, chart.height); // クリア
-
-          ctx.restore();
-
-          // フォントサイズを計算する関数
-        function calculateFontSize(radius, divisor) {
-          return (radius / divisor).toFixed(2) + "px Arial";
-        }
-
-        // 達成した目標数のフォントサイズ
-        ctx.font = calculateFontSize(chart.innerRadius, 1.5);
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "#000"; // テキストの色
-        ctx.fillText(achievedGoals, x, y - 10); // 数字の位置調整
-        
-        // '/100'のフォントサイズを別に設定
-        ctx.font = calculateFontSize(chart.innerRadius, 2); // サイズを変える
-        ctx.fillText('/' + totalGoals, x, y + 10); // '/100'の位置調整
-        
-        ctx.save();
-        }
-      }]
+      try {
+        const ctx = canvas.getContext('2d');
+        const goalChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['達成', '未達成', '未登録'],
+            datasets: [{
+              label: '目標達成状況',
+              data: [achievedGoals, unachievedGoals, unregisteredGoals],
+              backgroundColor: ['#FFA500', '#A9A9A9', '#E3E3E3'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 1, // 円グラフの縦横比を1:1（正円）に固定
+            plugins: {
+              tooltip: {
+                enabled: false // ツールチップを無効にする
+              }
+            }
+          },
+          plugins: [{
+            beforeDraw: function(chart) {
+              const ctx = chart.ctx;
+              const x = chart.width / 2;
+              const y = chart.height / 2;
+  
+              // Canvasをクリア（一度だけ）
+              ctx.clearRect(0, 0, chart.width, chart.height);
+  
+              // フォントサイズを計算する関数
+              function calculateFontSize(radius, divisor) {
+                return (radius / divisor).toFixed(2) + "px Arial";
+              }
+  
+              // 達成した目標数（大きく表示）
+              ctx.font = calculateFontSize(chart.innerRadius, 1.2); // より大きなフォントサイズ（例: 1.2で調整）
+              ctx.textBaseline = "middle";
+              ctx.fillStyle = "#000";
+              ctx.fillText(achievedGoals, x, y - 10);
+  
+              // '/100'（小さく表示）
+              ctx.font = calculateFontSize(chart.innerRadius, 2.5); // より小さなフォントサイズ（例: 2.5で調整）
+              ctx.fillText('/' + totalGoals, x, y + 10);
+  
+              // 状態を保存（必要に応じて）
+              ctx.save();
+            }
+          }]
+        });
+      } catch (error) {
+        console.error('Failed to initialize chart:', error);
+      }
     });
-
-    document.getElementById('updateButton').addEventListener('click', updateChart);
-
-    function updateChart() {
-      // 新しいデータを取得するロジック
-      const newAchievedGoals = Math.floor(Math.random() * 100); 
-      const newPercentage = newAchievedGoals / totalGoals * 100;
-
-      goalChart.data.datasets[0].data = [newPercentage, 100 - newPercentage];
-      goalChart.update();
-    }
   </script>
 
 
