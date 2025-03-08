@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
     # ログイン状態をチェックする処理
   end
 
-    # ログイン後のリダイレクト先を指定
+  # ログイン後のリダイレクト先を指定
   def after_sign_in_path_for(resource)
     dashboard_index_path # ダッシュボードにリダイレクト
   end
