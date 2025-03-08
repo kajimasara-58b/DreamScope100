@@ -32,7 +32,8 @@
 
       <!-- 円グラフ -->
       <div id="goal-chart-container" class="flex-1 md:w-1/2 md:pr-3 flex justify-center items-center md:mt-8">
-        <canvas id="goalChart" class="w-[300px] h-[300px] md:w-[400px] md:h-[400px]"></canvas>
+        <canvas id="goalChart" class="max-w-[500px] max-h-[500px] md:w-[400px] md:h-[400px] goalChart"></canvas>
+
       </div>
 
       <!-- ボタン -->
@@ -157,6 +158,22 @@
               plugins: {
                 tooltip: {
                   enabled: false
+                }
+              },
+              layout: {
+                padding: 10
+              },
+              scales: {
+                x: {
+                  display: false
+                },
+                y: {
+                  display: false
+                }
+              },
+              elements: {
+                arc: {
+                  borderWidth: 1
                 }
               }
             },

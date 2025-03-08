@@ -13,11 +13,12 @@ class GoalsController < ApplicationController
     @goal = Goal.new(goal_params)
     @goal.user_id = current_user.id
     if @goal.save
+      session.delete(:goal_params) # 成功時にセッションをクリア
       redirect_to goals_path, notice: "目標を作成しました"
     else
       session[:goal_params] = goal_params # 編集内容をセッションに保存
-      flash[:alert] = "目標の更新に失敗しました。入力内容を確認してください。"
-      redirect_to new_goal_path
+      flash.now[:alert] = @goal.errors.full_messages # 具体的なエラーメッセージをフラッシュに
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -37,8 +38,8 @@ class GoalsController < ApplicationController
       redirect_to goal_path(@goal), notice: "目標を更新しました"
     else
       session[:goal_params] = goal_params # 編集内容をセッションに保存
-      flash[:alert] = "目標の更新に失敗しました。入力内容を確認してください。"
-      redirect_to edit_goal_path(@goal)
+      flash.now[:alert] = @goal.errors.full_messages # 具体的なエラーメッセージをフラッシュに
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -53,6 +54,6 @@ class GoalsController < ApplicationController
   private
 
   def goal_params
-    params.require(:goal).permit(:id, :title, :due_date, :status, :user_id) # 必要な属性を指定すること
+    params.require(:goal).permit(:title, :due_date, :status, :user_id) # 必要な属性を指定すること
   end
 end
