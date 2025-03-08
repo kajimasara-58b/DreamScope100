@@ -1,12 +1,12 @@
 Rails.application.routes.draw do
   get "users/show"
   get "home/index"
-  root "home#index"
+  root "home#index" # 未ログイン時のトップページ
   devise_for :users, controllers: {
     sessions: "users/sessions",
     registrations: "users/registrations"
   }
-  get "dashboard", to: "dashboard#index"
+  get "dashboard", to: "dashboard#index", as: "dashboard_index" # ダッシュボードへのルート
   get "/dashboard/data", to: "dashboard#data"
   get "users/show", to: "users#show"
   resources :goals
