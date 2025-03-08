@@ -31,6 +31,7 @@ ja:
         due_date: 達成目標日
     models:
       user: ユーザー
+      goal: 目標
     errors:
       models:
         user:
@@ -46,6 +47,12 @@ ja:
             current_password:
               blank: が入力されていません
               invalid: が誤っています
+        goal:
+          attributes:
+            status:
+              blank: を入力してください
+            due_date:
+              blank: を入力してください
   devise:
     confirmations:
       confirmed: メールアドレスが確認できました。

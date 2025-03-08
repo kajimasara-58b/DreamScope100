@@ -35,35 +35,31 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-      <% displayed_goals = @goals.map(&:id) %> <!-- すでに表示された目標のIDを取得 -->
-      <% current_index = 1 %> <!-- 現在のインデックスを初期化 -->
+      <% goals = @goals.order(:id) %> <!-- ID順にソート -->
+      <% goals_count = goals.count %> <!-- 現在の目標数 -->
+      <% current_index = 1 %>
 
-      <% (1..100).each do |num| %>
-        <% if displayed_goals.include?(num) %>
-          <% goal = @goals.find { |g| g.id == num } %>
-          <div class="flex items-center">
-            <span class="mr-2 goal-number"><%= current_index %></span> <!-- 現在のインデックスを表示 -->
-            <%= check_box_tag "goals[]", goal.id, goal.status == "済", disabled: true %>
-            <%= link_to goal.title, goal_path(goal), class: "ml-2 cursor-pointer" %> <!-- link_toで目標タイトルをリンクにする -->
-          </div>
-          <% current_index += 1 %> <!-- インデックスを進める -->
-        <% end %>
+      <!-- 現在の目標を表示 -->
+      <% goals.each do |goal| %>
+        <div class="flex items-center">
+          <span class="mr-2 goal-number"><%= current_index %></span>
+          <%= check_box_tag "goals[]", goal.id, goal.status == "済", disabled: true %>
+          <%= link_to goal.title, goal_path(goal), class: "ml-2 cursor-pointer" %>
+        </div>
+        <% current_index += 1 %>
       <% end %>
 
-      <!-- 空いている番号も表示 -->
-      <% (1..100).each do |num| %>
-        <% unless displayed_goals.include?(num) %> <!-- 目標が登録されていない場合 -->
-          <div class="flex items-center">
-            <span class="mr-2 goal-number"><%= current_index %></span> <!-- 現在のインデックスを表示 -->
-            <%= check_box_tag "goals[]", nil, false, disabled: true %>
-            <%= link_to "新しい目標を作成", new_goal_path, class: "ml-2 cursor-pointer text-gray-300" %> <!-- link_toで目標タイトルをリンクにする -->
-          </div>
-          <% current_index += 1 %> <!-- インデックスを進める -->
-        <% end %>
+      <!-- 残りのスロットを「新しい目標を作成」で埋める（最大100まで） -->
+      <% (goals_count + 1..100).each do |num| %>
+        <div class="flex items-center">
+          <span class="mr-2 goal-number"><%= current_index %></span>
+          <%= check_box_tag "goals[]", nil, false, disabled: true %>
+          <%= link_to "新しい目標を作成", new_goal_path, class: "ml-2 cursor-pointer text-gray-300" %>
+        </div>
+        <% current_index += 1 %>
       <% end %>
     </div>
   </main>
-
 </body>
 
 <%= render "shared/footer" %>
