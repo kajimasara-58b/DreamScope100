@@ -34,7 +34,7 @@ class Users::SessionsController < Devise::SessionsController
 
   def after_sign_in_path_for(resource)
     # リダイレクト先を指定する
-    dashboard_path # ここで任意のパスを指定するカ
+    dashboard_index_path 
   end
 
   private

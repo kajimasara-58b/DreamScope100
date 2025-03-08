@@ -1,4 +1,5 @@
 class GoalsController < ApplicationController
+  before_action :authenticate_user! # ログインしていない場合、ログインページにリダイレクト
   def new
     @goal = Goal.new
     @goal.assign_attributes(session[:goal_params]) if session[:goal_params]

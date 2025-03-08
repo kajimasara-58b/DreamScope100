@@ -10,9 +10,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # POST /resource
-  # def create
-  #   super
-  # end
+  def create
+    super do |resource|
+      if resource.persisted?
+        sign_out(resource) # 自動ログイン解除
+        redirect_to new_user_session_path, notice: "登録が完了しました。ログインしてください。" and return
+      end
+    end
+  end
 
   # GET /resource/edit
   def edit
@@ -60,8 +65,4 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   super(resource)
   # end
 
-  def after_update_path_for(resource)
-    # 自分で設定した「マイページ」へのパス
-    users_show_path(current_user)
-  end
 end

@@ -1,4 +1,6 @@
 class DashboardController < ApplicationController
+  before_action :authenticate_user! # ログインしていない場合、ログインページにリダイレクト
+
   def index
     @achieved_goals = Goal.where(status: "済", user_id: current_user.id).count
     @unachieved_goals = Goal.where(status: "未", user_id: current_user.id).count
