@@ -17,9 +17,9 @@ class Goal < ApplicationRecord
     # 現在のユーザーの目標数をカウント（削除された目標は含まない）
     existing_goals_count = user.goals.count
     if new_record? && existing_goals_count >= 100
-      errors.add(:base, '登録できる目標は100個までです。')
+      errors.add(:base, "登録できる目標は100個までです")
     elsif !new_record? && user.goals.where.not(id: id).count >= 100
-      errors.add(:base, '登録できる目標は100個までです。')
+      errors.add(:base, "登録できる目標は100個までです")
     end
   end
 end

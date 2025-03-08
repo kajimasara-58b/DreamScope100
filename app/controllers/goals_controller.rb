@@ -17,7 +17,7 @@ class GoalsController < ApplicationController
       redirect_to goals_path, notice: "目標を作成しました"
     else
       session[:goal_params] = goal_params # 編集内容をセッションに保存
-      flash.now[:alert] = @goal.errors.full_messages.join(', ') # 具体的なエラーメッセージをフラッシュに
+      flash.now[:alert] = @goal.errors.full_messages # 具体的なエラーメッセージをフラッシュに
       render :new, status: :unprocessable_entity
     end
   end
@@ -38,7 +38,7 @@ class GoalsController < ApplicationController
       redirect_to goal_path(@goal), notice: "目標を更新しました"
     else
       session[:goal_params] = goal_params # 編集内容をセッションに保存
-      flash.now[:alert] = @goal.errors.full_messages.join(', ') # 具体的なエラーメッセージをフラッシュに
+      flash.now[:alert] = @goal.errors.full_messages # 具体的なエラーメッセージをフラッシュに
       render :edit, status: :unprocessable_entity
     end
   end
