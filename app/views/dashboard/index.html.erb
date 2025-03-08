@@ -31,7 +31,7 @@
       <h2 class="text-3xl mb-4">ダッシュボード</h2>
 
       <!-- 円グラフ -->
-      <div class="flex-1 md:w-1/2 md:pr-3 flex justify-center items-center md:mt-8">
+      <div id="goal-chart-container" class="flex-1 md:w-1/2 md:pr-3 flex justify-center items-center md:mt-8">
         <canvas id="goalChart" class="w-[300px] h-[300px] md:w-[400px] md:h-[400px]"></canvas>
       </div>
 
@@ -59,75 +59,145 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     document.addEventListener('turbo:load', function() {
-      // 達成した目標数と全目標数（デフォルト値0を設定）
-      const achievedGoals = <%= @achieved_goals.nil? ? 0 : @achieved_goals %>; // デフォルト0
-      const unachievedGoals = <%= @unachieved_goals.nil? ? 0 : @unachieved_goals %>; // デフォルト0
-      const totalGoals = 100; // 登録可能数
-      const registeredGoals = <%= @registered_goals.nil? ? 0 : @registered_goals %>; // デフォルト0
-      const unregisteredGoals = 100 - registeredGoals; // 未登録数
+      console.log('Turbo Load triggered');
+      // 親コンテナをIDで検索
+      let container = document.querySelector('#goal-chart-container');
+      if (!container) {
+        console.error('Canvas container not found, attempting to recreate');
+        // 親コンテナが存在しない場合、動的に作成
+        const main = document.querySelector('main.flex-grow.p-4.flex.flex-col.md\\:flex-row');
+        if (main) {
+          container = document.createElement('div');
+          container.id = 'goal-chart-container';
+          container.className = 'flex-1 md:w-1/2 md:pr-3 flex justify-center items-center md:mt-8';
+          const canvas = document.createElement('canvas');
+          canvas.id = 'goalChart';
+          canvas.className = 'w-[300px] h-[300px] md:w-[400px] md:h-[400px] goalChart';
+          container.appendChild(canvas);
+          main.insertBefore(container, main.children[1]); // mainの2番目の子要素の前に挿入
+        } else {
+          console.error('Main container not found.');
+          return;
+        }
+      }
 
-      // <canvas>要素が存在するか確認
-      const canvas = document.getElementById('goalChart');
+      let canvas = document.getElementById('goalChart');
       if (!canvas) {
-        console.error('Canvas element "#goalChart" not found.');
+        console.log('Canvas not found, creating new canvas');
+        // <canvas>が存在しない場合、新しく追加
+        canvas = document.createElement('canvas');
+        canvas.id = 'goalChart';
+        canvas.className = 'w-[300px] h-[300px] md:w-[400px] md:h-[400px] goalChart';
+        container.appendChild(canvas);
+      }
+
+      console.log('Canvas element:', canvas);
+      if (!canvas) {
+        console.error('Canvas element "#goalChart" not found after creation.');
         return;
       }
 
-      try {
-        const ctx = canvas.getContext('2d');
-        const goalChart = new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: ['達成', '未達成', '未登録'],
-            datasets: [{
-              label: '目標達成状況',
-              data: [achievedGoals, unachievedGoals, unregisteredGoals],
-              backgroundColor: ['#FFA500', '#A9A9A9', '#E3E3E3'],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            aspectRatio: 1, // 円グラフの縦横比を1:1（正円）に固定
-            plugins: {
-              tooltip: {
-                enabled: false // ツールチップを無効にする
-              }
+      // データを非同期で取得する関数
+      async function fetchDashboardData() {
+        try {
+          const response = await fetch('/dashboard/data', {
+            headers: {
+              'Accept': 'application/json',
+              'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
             }
-          },
-          plugins: [{
-            beforeDraw: function(chart) {
-              const ctx = chart.ctx;
-              const x = chart.width / 2;
-              const y = chart.height / 2;
-  
-              // Canvasをクリア（一度だけ）
-              ctx.clearRect(0, 0, chart.width, chart.height);
-  
-              // フォントサイズを計算する関数
-              function calculateFontSize(radius, divisor) {
-                return (radius / divisor).toFixed(2) + "px Arial";
-              }
-  
-              // 達成した目標数（大きく表示）
-              ctx.font = calculateFontSize(chart.innerRadius, 1.2); // より大きなフォントサイズ（例: 1.2で調整）
-              ctx.textBaseline = "middle";
-              ctx.fillStyle = "#000";
-              ctx.fillText(achievedGoals, x, y - 10);
-  
-              // '/100'（小さく表示）
-              ctx.font = calculateFontSize(chart.innerRadius, 2.5); // より小さなフォントサイズ（例: 2.5で調整）
-              ctx.fillText('/' + totalGoals, x, y + 10);
-  
-              // 状態を保存（必要に応じて）
-              ctx.save();
-            }
-          }]
-        });
-      } catch (error) {
-        console.error('Failed to initialize chart:', error);
+          });
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          console.log('Fetched Data:', data);
+          return {
+            achievedGoals: data.achieved_goals || 0,
+            unachievedGoals: data.unachieved_goals || 0,
+            registeredGoals: data.registered_goals || 0
+          };
+        } 
+        catch (error) {
+          console.error('Failed to fetch dashboard data:', error);
+          return {
+            achievedGoals: 0,
+            unachievedGoals: 0,
+            registeredGoals: 0
+          };
+        }
       }
+  
+      // チャートを初期化または更新する関数
+      let goalChart;
+      async function initializeOrUpdateChart() {
+        const data = await fetchDashboardData();
+        const { achievedGoals, unachievedGoals, registeredGoals } = data;
+        const totalGoals = 100;
+        const unregisteredGoals = totalGoals - registeredGoals;
+  
+        console.log('Chart Data:', { achievedGoals, unachievedGoals, unregisteredGoals });
+  
+        try {
+          const ctx = canvas.getContext('2d');
+          const goalChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: ['達成', '未達成', '未登録'],
+              datasets: [{
+                label: '目標達成状況',
+                data: [achievedGoals, unachievedGoals, unregisteredGoals],
+                backgroundColor: ['#FFA500', '#A9A9A9', '#E3E3E3'],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              aspectRatio: 1,
+              plugins: {
+                tooltip: {
+                  enabled: false
+                }
+              }
+            },
+            plugins: [{
+              beforeDraw: function(chart) {
+                const ctx = chart.ctx;
+                const x = chart.width / 2;
+                const y = chart.height / 2;
+
+                // Canvasをクリア（一度だけ）
+                ctx.clearRect(0, 0, chart.width, chart.height);
+
+                // フォントサイズを計算する関数
+                function calculateFontSize(radius, divisor) {
+                  const safeRadius = radius || 50;
+                  const fontSize = (safeRadius / divisor).toFixed(2) + "px Arial";
+                  console.log('Font Size:', fontSize, 'Radius:', safeRadius, 'Divisor:', divisor);
+                  return fontSize;
+                }
+
+                // 達成した目標数（大きく表示）
+                ctx.font = calculateFontSize(chart.innerRadius, 1.5);
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = "#000";
+                ctx.fillText(achievedGoals, x - 40, y + 10);
+
+                // '/100'（小さく表示）
+                ctx.font = calculateFontSize(chart.innerRadius, 3.0);
+                ctx.fillText('/' + totalGoals, x + 15, y + 30);
+
+                ctx.save();
+              }
+            }]
+          });
+        } catch (error) {
+          console.error('Failed to initialize chart:', error);
+        }
+      }
+
+      // 初期化を実行
+      initializeOrUpdateChart();
     });
   </script>
 
