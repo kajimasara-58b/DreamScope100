@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     registrations: "users/registrations"
   }
   get "dashboard", to: "dashboard#index"
+  get "/dashboard/data", to: "dashboard#data"
   get "users/show", to: "users#show"
   resources :goals
   # get "login", to: "sessions#new"
