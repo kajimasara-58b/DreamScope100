@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get "home/index"
   get "riyoukiyaku/index"
   get "privacypolicy/index"
+  get "inquiry/index"
   root "home#index" # 未ログイン時のトップページ
   devise_for :users, controllers: {
     sessions: "users/sessions",
