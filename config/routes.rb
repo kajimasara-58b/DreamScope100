@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   get "users/show"
   get "home/index"
   get "riyoukiyaku/index"
+  get "privacypolicy/index"
   root "home#index" # 未ログイン時のトップページ
   devise_for :users, controllers: {
     sessions: "users/sessions",
