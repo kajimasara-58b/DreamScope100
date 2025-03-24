@@ -56,17 +56,4 @@
 </body>
 
 <%= render "shared/footer" %>
-
-<script>
-  // ページ読み込み時に警告を設定
-  window.onbeforeunload = function(e) {
-    return "このページを離れると入力内容が失われます。よろしいですか？";
-  };
-
-  // フォーム送信時に警告を無効化
-  document.querySelectorAll('form').forEach(form => {
-    form.addEventListener('submit', function() {
-      window.onbeforeunload = null;
-    });
-  });
-</script>
+</html>
