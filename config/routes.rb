@@ -1,4 +1,14 @@
 Rails.application.routes.draw do
+  namespace :public do
+    resources :contacts, only: [:new, :create] do
+      collection do
+        post 'confirm'
+        get 'confirm'
+        post 'back'
+        get 'done'
+      end
+    end
+  end
   get "users/show"
   get "home/index"
   get "riyoukiyaku/index"

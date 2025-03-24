@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<%= render "shared/beforelogin_header" %>
+
+<body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
+  <main class="flex-grow p-4 flex flex-col items-center justify-center">
+    <h2 class="text-3xl mb-3">お問い合わせ内容確認</h2>
+      <div class="w-full max-w-md">
+        <!-- 入力内容を白いメモ風の背景で囲む -->
+        <div class="bg-white rounded p-5 mb-5">
+        <div class="mb-2">
+            <span class="text-left">お名前：</span>
+            <span class="text-left"><%= @contact.name %></span>
+        </div>
+        <div class="mb-2">
+            <span class="text-left">メールアドレス：</span>
+            <span class="text-left"><%= @contact.email %></span>
+        </div>
+        <div class="mb-2">
+            <span class="text-left">件名：</span>
+            <span class="text-left"><%= @contact.subject %></span>
+        </div>
+        <!-- 件名とメッセージの間に仕切り線 -->
+        <div class="border-b border-gray-300 my-2"></div>
+        <div class="mb-2">
+            <span class="text-left">【お問い合わせ内容】</span>
+            <span class="text-left block mt-1 min-h-[72px] w-full word-break: break-all" style="white-space: pre-wrap;"><%= @contact.message %></span>
+        </div>
+      </div>
+
+      <div class="flex flex-col justify-center items-center md:items-start mb-5">
+        <div class="flex mb-5 justify-between w-full">
+          <div class="actions mb-5 flex mr-5">
+            <%= form_with model: @contact, url: back_public_contacts_path, local: true, data: { turbo: false } do |f| %>
+                <%= f.hidden_field :name %>
+                <%= f.hidden_field :email %>
+                <%= f.hidden_field :subject %>
+                <%= f.hidden_field :message %>
+                <div><%= f.submit '入力画面に戻る', class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow button", data: { disable_with: "処理中..." } %></div>
+            <% end %>
+          </div>
+          <div class="actions mb-5 flex">
+            <%= form_with model: @contact, url: public_contacts_path, local: true, data: { turbo: false } do |f| %>
+              <%= f.hidden_field :name %>
+              <%= f.hidden_field :email %>
+              <%= f.hidden_field :subject %>
+              <%= f.hidden_field :message %>
+              <div><%= f.submit '送信', class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button", data: { disable_with: "送信中..." } %></div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+
+<%= render "shared/footer" %>
+
+<script>
+  // ページ読み込み時に警告を設定
+  window.onbeforeunload = function(e) {
+    return "このページを離れると入力内容が失われます。よろしいですか？";
+  };
+
+  // フォーム送信時に警告を無効化
+  document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function() {
+      window.onbeforeunload = null;
+    });
+  });
+</script>
