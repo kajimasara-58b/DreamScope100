@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   namespace :public do
-    resources :contacts, only: [ :new , :create ] do
+    resources :contacts, only: [ :new, :create ] do
       collection do
         post "confirm"
         get "confirm"
