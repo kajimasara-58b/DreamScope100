@@ -23,9 +23,14 @@
             <%= form.date_field :due_date, class: "rounded w-full py-2 px-3" %>
         </div>
 
-        <div class="mb-9">
+        <div class="mb-4">
             <%= form.label :status, "達成状況" %>
             <%= form.select :status, Goal.statuses.keys.map { |status| [status.humanize, status] }, { prompt: '選択してください' }, { class: "rounded w-full py-2 px-3" } %>
+        </div>
+
+        <div class="mb-9">
+            <%= form.label :category, "カテゴリー" %>
+            <%= form.select :category, Goal.categories.keys.map { |category| [category.humanize, category] }, { prompt: '選択してください' }, { class: "rounded w-full py-2 px-3" } %>
         </div>
 
         <div class="flex flex-col justify-center items-center md:items-start mb-5">
