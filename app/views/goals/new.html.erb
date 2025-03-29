@@ -6,6 +6,12 @@
 <%= render 'devise/shared/error_messages', resource: @goal %>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
+  <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">  
+    <div class="actions mb-4 flex mr-5">
+      <% breadcrumb :goal_new %>
+      <%= breadcrumbs separator: " &rsaquo; " %>
+    </div>
+  </div>
   <main class="flex-grow p-4 flex flex-col items-center justify-center">
     <h2 class="text-3xl mb-3">目標作成</h2>
     <%= form_with model: @goal, local: true, html: { class: "w-full max-w-md" } do |form| %>
@@ -42,4 +48,7 @@
 </body>
 
 <%= render "shared/footer" %>
+<!-- Font AwesomeのCDNを読み込む -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </html>

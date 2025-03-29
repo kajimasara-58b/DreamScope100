@@ -42,12 +42,12 @@ crumb :goal_new do
 end
 
 crumb :goal_show do
-  link "目標詳細",goal_path(goal)
+  link "目標詳細",goal_path
   parent :goals_index
 end
 
 crumb :goal_edit do
-  link "目標編集",edit_goal_path(goal)
+  link "目標編集",edit_goal_path
   parent :goal_show
 end
 
