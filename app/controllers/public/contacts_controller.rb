@@ -16,13 +16,11 @@ class Public::ContactsController < ApplicationController
     elsif request.get?
       if session[:contact_submitted]
         redirect_to root_path, notice: "お問い合わせはすでに送信済みです。"
-        return
       end
       if session[:contact_params].present?
         @contact = Contact.new(session[:contact_params])
       else
         redirect_to new_public_contact_path, alert: "確認データがありません。入力からやり直してください。"
-        return
       end
     end
   end
