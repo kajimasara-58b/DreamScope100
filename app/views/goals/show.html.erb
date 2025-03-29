@@ -6,37 +6,43 @@
 <p style="color: green"><%= notice %></p>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
-  <main class="flex-grow p-4 flex flex-col items-center justify-center">
-    <h2 class="text-3xl mb-7">目標詳細</h2>
-
-    <div class="bg-white p-4 w-full max-w-md mb-5">
-      <h2 class="text-lg mb-2">目標： <%= @goal.title %></h2>
+  <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">  
+    <div class="actions mb-4 flex mr-5">
+      <% breadcrumb :goal_show %>
+      <%= breadcrumbs separator: " &rsaquo; " %>
     </div>
-    <div class="bg-white p-4 w-full max-w-md mb-5">
-      <h2 class="text-lg mb-2">達成目標日： <%= @goal.due_date %> まで</h2>
-    </div>
-    <div class="bg-white p-4 w-full max-w-md mb-8">
-      <h2 class="text-lg mb-2">達成状況： <%= @goal.status %></h2>
-    </div>
+    <main class="flex-grow p-4 flex flex-col items-center justify-center">
 
-    <div class="flex flex-col justify-center items-center md:items-start mb-5">
-      <div class="flex justify-between w-full">
-        <div class="actions mb-5 flex mr-40">
-          <%= link_to "一覧へ戻る", goals_path, class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow button" %> 
+        <div class="bg-white p-4 w-full max-w-md mb-5">
+        <h2 class="text-lg mb-2">目標： <%= @goal.title %></h2>
         </div>
-        <div class="actions mb-5 flex mr-5">
-          <%= button_to "削除", @goal, method: :delete, class: "bg-[#FFDADA] text-black flex items-center px-4 py-2 rounded shadow button", onclick: "return confirm('削除しますか？');" %>
+        <div class="bg-white p-4 w-full max-w-md mb-5">
+        <h2 class="text-lg mb-2">達成目標日： <%= @goal.due_date %> まで</h2>
         </div>
-        <div class="actions mb-5 flex">
-          <%= link_to "編集", edit_goal_path, class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %>
+        <div class="bg-white p-4 w-full max-w-md mb-8">
+        <h2 class="text-lg mb-2">達成状況： <%= @goal.status %></h2>
         </div>
-      </div>
-    </div>  
-  </main>
-</div>
 
-
+        <div class="flex flex-col justify-center items-center md:items-start mb-5">
+        <div class="flex justify-between w-full">
+            <div class="actions mb-5 flex mr-40">
+            <%= link_to "一覧へ戻る", goals_path, class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow button" %> 
+            </div>
+            <div class="actions mb-5 flex mr-5">
+            <%= button_to "削除", @goal, method: :delete, class: "bg-[#FFDADA] text-black flex items-center px-4 py-2 rounded shadow button", onclick: "return confirm('削除しますか？');" %>
+            </div>
+            <div class="actions mb-5 flex">
+            <%= link_to "編集", edit_goal_path, class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %>
+            </div>
+        </div>
+        </div>  
+    </main>
+  </div>
 </body>
 
 <%= render "shared/footer" %>
+
+<!-- Font AwesomeのCDNを読み込む -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </html>

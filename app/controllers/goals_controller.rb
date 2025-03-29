@@ -55,6 +55,6 @@ class GoalsController < ApplicationController
   private
 
   def goal_params
-    params.require(:goal).permit(:title, :due_date, :status, :user_id) # 必要な属性を指定すること
+    params.require(:goal).permit(:id, :title, :due_date, :status, :user_id) # 必要な属性を指定すること
   end
 end
