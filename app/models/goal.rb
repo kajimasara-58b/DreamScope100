@@ -6,6 +6,7 @@ class Goal < ApplicationRecord
   validates :title, presence: true
   validates :status, presence: true
   validates :due_date, presence: true
+  validates :category, presence: true
 
   # ユーザーごとの目標数制限（100個まで）のカスタムバリデーション
   validate :goals_limit_per_user
