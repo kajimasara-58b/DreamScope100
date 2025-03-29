@@ -29,7 +29,7 @@
         </div>
 
         <div class="mb-9">
-          <%= form.label :category, "カテゴリ" %>
+          <%= form.label :category, "カテゴリー" %>
           <%= form.select :category, Goal.categories.keys.map { |category| [category.humanize, category] }, { prompt: '選択してください' }, { class: "rounded p-2 w-full" } %>
         </div>
 
