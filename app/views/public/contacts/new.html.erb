@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<%= render "shared/beforelogin_header" %>
+
+<%= render 'devise/shared/error_messages', resource: @content %>
+
+<body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
+  <main class="flex-grow p-4 flex flex-col items-center justify-center">
+    <h2 class="text-3xl mb-3">お問い合わせフォーム</h2>
+    <%= form_with model: @contact, url: confirm_public_contacts_path, local: true, data: { turbo: false }, html: { class: "w-full max-w-md" } do |form| %>
+        <div class="mb-4">
+          <%= form.label :name, "お名前" %>
+          <%= form.text_field :name, required: true, class: "rounded p-2 w-full" %>
+        </div>
+  
+        <div class="mb-9">
+          <%= form.label :email, "メールアドレス" %>
+          <%= form.text_field :email, required: true, class: "rounded p-2 w-full" %>
+        </div>
+  
+        <div class="mb-4">
+          <%= form.label :subject, "件名" %>
+          <%= form.text_field :subject, required: true, class: "rounded p-2 w-full" %>
+        </div>
+
+        <div class="mb-9">
+          <%= form.label :message, "お問い合わせ内容" %>
+          <%= form.text_area :message, required: true, class: "rounded p-2 w-full" %>
+        </div>
+  
+        <div class="flex flex-col justify-center items-center md:items-start mb-5">
+          <div class="flex mb-5 justify-between w-full">
+            <div class="actions mb-5 flex mr-5">
+              <%= link_to "キャンセル", root_path, class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow button" %>
+            </div>
+            <div class="actions mb-5 flex">
+              <%= form.submit "入力内容確認", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %>
+            </div>
+          </div>  
+        </div>
+      <% end %> 
+    </div>
+  </main>
+</body>
+
+<%= render "shared/footer" %>
+</html>
