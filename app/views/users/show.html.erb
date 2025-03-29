@@ -20,7 +20,12 @@
 <p style="color: green"><%= notice %></p>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
-
+  <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">  
+    <div class="actions mb-4 flex mr-5">
+      <% breadcrumb :goal_new %>
+      <%= breadcrumbs separator: " &rsaquo; " %>
+    </div>
+  </div>
   <main class="flex-grow p-4 flex flex-col items-center justify-center">
     <h2 class="text-3xl mb-7"><i class="fas fa-user mr-2"></i>ユーザー情報</h2>
 

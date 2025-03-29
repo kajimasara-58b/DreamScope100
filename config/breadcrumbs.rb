@@ -32,31 +32,31 @@ crumb :dashboard do
 end
 
 crumb :goals_index do
-  link "目標一覧",goals_path
+  link "目標一覧", goals_path
   parent :dashboard
 end
 
 crumb :goal_new do
-  link "目標作成",new_goal_path
+  link "目標作成", new_goal_path
   parent :goals_index
 end
 
 crumb :goal_show do
-  link "目標詳細",goal_path
+  link "目標詳細", goal_path
   parent :goals_index
 end
 
 crumb :goal_edit do
-  link "目標編集",edit_goal_path
+  link "目標編集", edit_goal_path
   parent :goal_show
 end
 
 crumb :users_show do
-  link 'ユーザー情報',users_show_path
+  link "ユーザー情報", users_show_path
   parent :dashboard
 end
 
 crumb :users_edit do
-  link 'ユーザー編集',edit_user_registration_path
+  link "ユーザー編集", edit_user_registration_path
   parent :users_show
 end
