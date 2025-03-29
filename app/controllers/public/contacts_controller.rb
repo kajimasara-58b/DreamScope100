@@ -31,7 +31,7 @@ class Public::ContactsController < ApplicationController
   end
 
   def create
-    if session[:contact_params].present?
+    if session[:contact_params].present? && session[:contact_params]["name"].present?
       @contact = Contact.new(session[:contact_params])
       if @contact.save
         ContactMailer.send_mail(@contact).deliver_now
