@@ -29,6 +29,7 @@ ja:
         title: タイトル
         status: 達成状況
         due_date: 達成目標日
+        category: カテゴリー
     models:
       user: ユーザー
       goal: 目標
@@ -52,6 +53,8 @@ ja:
             status:
               blank: を入力してください
             due_date:
+              blank: を入力してください
+            category:
               blank: を入力してください
   devise:
     confirmations:
