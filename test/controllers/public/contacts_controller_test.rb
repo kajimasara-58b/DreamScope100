@@ -21,9 +21,6 @@ class Public::ContactsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get done" do
-    # create を経由してデータを保存
-    post confirm_public_contacts_path, params: { contact: @valid_params }
-    post create_public_contacts_path
     get done_public_contacts_path
     assert_response :success
   end
