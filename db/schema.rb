@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_23_130952) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_29_094330) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -26,7 +26,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_23_130952) do
   create_table "goals", force: :cascade do |t|
     t.string "title"
     t.integer "status"
-    t.integer "category"
+    t.integer "category", null: false
     t.date "due_date"
     t.datetime "reminder_at"
     t.datetime "created_at", null: false
