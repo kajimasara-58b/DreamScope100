@@ -13,7 +13,6 @@
     </div>
   </div>
   <main class="flex-grow p-4 flex flex-col items-center justify-center">
-    <h2 class="text-3xl mb-3">目標作成</h2>
     <%= form_with model: @goal, local: true, html: { class: "w-full max-w-md" } do |form| %>
       <div class="mb-4">
         <%= form.label :title, "目標" %>
