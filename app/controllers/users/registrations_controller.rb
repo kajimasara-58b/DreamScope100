@@ -31,7 +31,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def send_password_reset
     @user = User.find_by(name: params[:user][:name], email: params[:user][:email])
-    
+
     if @user && @user.valid_password?(params[:user][:current_password])
       @user.send_reset_password_instructions
       redirect_to registration_done_path

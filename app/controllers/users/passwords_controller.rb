@@ -2,7 +2,7 @@
 
 class Users::PasswordsController < Devise::PasswordsController
   # ログイン状態に関係なく edit と update アクションを許可
-  skip_before_action :require_no_authentication, only: [:edit, :update]
+  skip_before_action :require_no_authentication, only: [ :edit, :update ]
 
   # GET /resource/password/new
   # def new
