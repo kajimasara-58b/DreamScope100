@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     end
   end
   get "users/show"
+  resources :users, only: [:edit, :update]
   get "home/index"
   get "riyoukiyaku/index"
   get "privacypolicy/index"

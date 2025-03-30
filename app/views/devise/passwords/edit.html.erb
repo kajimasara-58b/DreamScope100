@@ -35,34 +35,32 @@
 <%= render "devise/shared/error_messages", resource: resource %>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
-  <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">
-    <main class="flex-grow p-4 flex flex-col items-center justify-center">
-      <h2 class="text-3xl mb-4">パスワード再設定</h2>
+  <main class="flex-grow p-4 flex flex-col items-center justify-center">
+    <h2 class="text-3xl mb-4">パスワード再設定</h2>
 
-      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-        <%= f.hidden_field :reset_password_token %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { class: "w-full max-w-md" }) do |f| %>
+      <%= f.hidden_field :reset_password_token %>
 
-        <div class="field">
-          <%= f.label :password, "新しいパスワード" %><br />
-          <% if @minimum_password_length %>
-            ※<%= @minimum_password_length %>文字以上で設定してください
-          <% end %>
-        </div>
-        <div class="field mb-4">
-          <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
-        </div>
+      <div class="field">
+        <%= f.label :password, "新しいパスワード" %>
+        <% if @minimum_password_length %>
+          ※<%= @minimum_password_length %>文字以上で設定してください
+        <% end %>
+      </div>
+      <div class="field mb-4">
+        <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "rounded w-full py-2 px-3" %>
+      </div>
 
-        <div class="field mb-7">
-          <%= f.label :password_confirmation, "新しいパスワード（確認）" %><br />
-          <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-        </div>
+      <div class="field mb-7">
+        <%= f.label :password_confirmation, "新しいパスワード（確認）" %><br />
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "rounded w-full py-2 px-3" %>
+      </div>
 
-        <div class="actions">
-          <%= f.submit "パスワード変更", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %>
-        </div>
-      <% end %>
-    </main>
-  </div>
+      <div class="actions flex justify-center">
+        <%= f.submit "パスワード変更", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %>
+      </div>
+    <% end %>
+  </main>
 </body>
 
 <footer class="bg-[#FFC276] text-white p-4 flex items-center justify-center">

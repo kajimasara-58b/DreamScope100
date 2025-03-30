@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<style>
+  .button {
+    transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+  }
+
+  .button:hover {
+    background-color: #f0f0f0; /* ホバー時の背景色 */
+    color: #333; /* ホバー時の文字色 */
+  }
+
+  .button:active {
+    background-color: #e0e0e0; /* クリック時の背景色 */
+    color: #111; /* クリック時の文字色 */
+  }
+</style>
+
+<%= render "shared/header" %>
+<p style="color: green"><%= notice %></p>
+
+<body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
+  <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">  
+    <div class="actions mb-4 flex mr-5">
+      <% breadcrumb :users_edit %>
+      <%= breadcrumbs separator: " &rsaquo; " %>
+    </div>
+    <main class="flex-grow p-4 flex flex-col items-center justify-center">
+      <%= form_with model: @user, local: true, html: { class: "w-full max-w-md" } do |form| %>
+        <div class="mb-4">
+          <%= form.label :name, "ユーザー名" %>
+          <%= form.text_area :name, required: true, class: "rounded w-full py-2 px-3" %>
+        </div>
+
+        <div class="mb-4">
+          <%= form.label :email, "メールアドレス" %>
+          <%= form.text_area :email, required: true, class: "rounded w-full py-2 px-3" %>
+        </div>
+
+        <div class="flex flex-col justify-center items-center md:items-start mb-5">
+            <div class="flex mb-5 justify-between w-full">
+            <div class="actions mb-5 flex mr-5">
+                <%= link_to "キャンセル", users_show_path, class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow button" %>
+            </div>
+            <div class="actions mb-5 flex">
+                <%= form.submit "更新", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %>
+            </div>
+            </div>
+        </div>
+      <% end %>
+    </main>
+  </div>  
+</body>
+
+<!-- Font AwesomeのCDNを読み込む -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<%= render "shared/footer" %>
+
+</html>
