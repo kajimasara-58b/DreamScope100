@@ -18,6 +18,77 @@
     font-family: 'Aldrich', sans-serif; /* Aldrichフォントを指定 */
     color: #FFA230; /* 色を指定 */
   }
+  /* 並び替えメニュー */
+  .sort-menu {
+    display: none;
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    width: 180px;
+  }
+
+  .sort-menu a {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: black;
+  }
+
+  .sort-menu a:hover {
+    background-color: #f0f0f0;
+  }
+
+  .category-button {
+    display: inline-block;
+    padding: 3px 6px; /* ボタンのサイズを小さく */
+    border-radius: 5px;
+    color: #4E4D4D; /* 文字色を白に変更 */
+    font-size: 12px; /* 文字の大きさを小さく */
+    margin-left: 10px; /* ボタンと目標タイトルの間にスペースを追加 */
+    white-space: nowrap; /* 文字を折り返さないようにする */
+  }  
+
+  .健康 {
+    background-color: #D4F2C4;
+  }
+
+  .美容 {
+    background-color: #FFDADA;
+  }
+
+  .運動・フィットネス {
+    background-color: #B3D8C6;
+  }
+
+  .仕事 {
+    background-color: #D0E2F3;
+  }
+
+  .学習 {
+    background-color: #B7C4F9;
+  }
+
+  .ライフスタイル {
+    background-color: #FDB5B6;
+  }
+
+  .旅行・アクティビティ {
+    background-color: #FFBC9D;
+  }
+
+  .お金（貯金・投資・資産形成など） {
+    background-color: #FEDD91;
+  }
+
+  .人間関係（家族・友人・恋愛など） {
+    background-color: #E2B4FF;
+  }
+
+  .その他 {
+    background-color: #D0CECE;
+  }
 </style>
 
 <%= render "shared/header" %>
@@ -32,22 +103,49 @@
       <%= breadcrumbs separator: " &rsaquo; " %>
     </div>
     <div class="actions mb-5 flex mr-5">
-      <%= link_to "/goals/new", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" do %>
+      <form method="GET" action="<%= request.path %>">
+        <div class="bg-white text-black flex items-center px-4 py-2 rounded shadow">
+          <i class="fas fa-sort mr-2"></i>
+          <label for="sort-select" class="mr-2">並び替え:</label>
+          <select id="sort-select" name="sort" onchange="this.form.submit()">
+            <option value="id" <%= "selected" if params[:sort] == "id" %>>登録順</option>
+            <option value="due_date" <%= "selected" if params[:sort] == "due_date" %>>達成予定日が近い順</option>
+            <option value="status" <%= "selected" if params[:sort] == "status" %>>達成状況別</option>
+            <option value="category" <%= "selected" if params[:sort] == "category" %>>カテゴリ別</option>
+          </select>
+        </div>
+      </form> 
+      <%= link_to "/goals/new", class: "ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow button" do %>
         <i class="fas fa-pencil-alt mr-2"></i>目標作成
       <% end %>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-      <% goals = @goals.order(:id) %> <!-- ID順にソート -->
-      <% goals_count = goals.count %> <!-- 現在の目標数 -->
+      <% 
+        sorted_goals = case params[:sort]
+          when "category"
+            @goals.order(:category)
+          when "due_date"
+            @goals.order(:due_date)
+          when "status"
+            @goals.order(:status)
+          else
+            @goals.order(:id)
+        end
+      %>
+      <% goals_count = sorted_goals.count %> <!-- 現在の目標数 -->
       <% current_index = 1 %>
 
       <!-- 現在の目標を表示 -->
-      <% goals.each do |goal| %>
+      <% sorted_goals.each do |goal| %>
         <div class="flex items-center">
           <span class="mr-2 goal-number"><%= current_index %></span>
           <%= check_box_tag "goals[]", goal.id, goal.status == "済", disabled: true %>
           <%= link_to goal.title, goal_path(goal), class: "ml-2 cursor-pointer" %>
+          
+          <% if params[:sort] == "category" %>
+            <span class="category-button <%= goal.category %>"><%= goal.category %></span>
+          <% end %>
         </div>
         <% current_index += 1 %>
       <% end %>
@@ -69,5 +167,20 @@
 
 <!-- Font AwesomeのCDNを読み込む -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<script>
+  document.getElementById('sort-button').addEventListener('click', function() {
+    let menu = document.getElementById('sort-menu');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  });
+
+  document.addEventListener('click', function(event) {
+    let sortButton = document.getElementById('sort-button');
+    let sortMenu = document.getElementById('sort-menu');
+    if (!sortButton.contains(event.target) && !sortMenu.contains(event.target)) {
+      sortMenu.style.display = 'none';
+    }
+  });
+</script>
 
 </html>
