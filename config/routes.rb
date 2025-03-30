@@ -17,8 +17,13 @@ Rails.application.routes.draw do
   root "home#index" # 未ログイン時のトップページ
   devise_for :users, controllers: {
     sessions: "users/sessions",
-    registrations: "users/registrations"
+    registrations: "users/registrations",
+    passwords: "users/passwords"
   }
+  devise_scope :user do
+    post 'send_password_reset', to: 'users/registrations#send_password_reset', as: 'send_password_reset'
+    get 'users/done', to: 'users/registrations#done', as: 'registration_done'
+  end
   get "dashboard", to: "dashboard#index", as: "dashboard_index" # ダッシュボードへのルート
   get "/dashboard/data", to: "dashboard#data"
   get "users/show", to: "users#show"

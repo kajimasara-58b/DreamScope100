@@ -25,8 +25,24 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   # PUT /resource
-  def update
-    super
+  # def update
+  #   super
+  # end
+
+  def send_password_reset
+    @user = User.find_by(name: params[:user][:name], email: params[:user][:email])
+    
+    if @user && @user.valid_password?(params[:user][:current_password])
+      @user.send_reset_password_instructions
+      redirect_to registration_done_path
+    else
+      flash[:alert] = "ユーザー名またはメールアドレス、現在のパスワードが正しくありません。"
+      render :edit # フォームを再表示
+    end
+  end
+
+  def done
+    # 特に何も処理しない　ビューを表示するだけ
   end
 
   # DELETE /resource
