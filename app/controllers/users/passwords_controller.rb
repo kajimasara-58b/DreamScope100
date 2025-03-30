@@ -23,7 +23,6 @@ class Users::PasswordsController < Devise::PasswordsController
   def update
     sign_out(resource_name) # リソースをログアウトさせる
     redirect_to new_user_session_path
-
   end
 
   # protected

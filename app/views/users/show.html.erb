@@ -26,15 +26,17 @@
       <%= breadcrumbs separator: " &rsaquo; " %>
     </div>
     <main class="flex-grow p-4 flex flex-col items-center justify-center">
-      <div class="bg-white p-4 w-80 mb-5">
-        <h2 class="text-lg mb-2">ユーザー名： <%= current_user.name %></h2>
+      <div class="bg-white p-4 w-80 mb-5 flex justify-between items-center">
+        <span class="text-lg mb-2">ユーザー名： <%= current_user.name %></span>
+        <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), "#", class: "text-black" %>
       </div>
-      <div class="bg-white p-4 w-80 mb-5">
-        <h2 class="text-lg mb-2">メールアドレス： <%= current_user.email %></h2>
+      <div class="bg-white p-4 w-80 mb-5 flex justify-between items-center">
+        <span class="text-lg mb-2">メールアドレス： <%= current_user.email %></span>
+        <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), "#", class: "text-black" %>
       </div>
 
       <div class="actions flex justify-center">
-        <%= link_to "編集", edit_user_registration_path, class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %> 
+        <%= link_to "パスワード変更", edit_user_registration_path, class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %> 
       </div>
     </main>
   </div>  
