@@ -39,6 +39,56 @@
   .sort-menu a:hover {
     background-color: #f0f0f0;
   }
+
+  .category-button {
+    display: inline-block;
+    padding: 3px 6px; /* ボタンのサイズを小さく */
+    border-radius: 5px;
+    color: #4E4D4D; /* 文字色を白に変更 */
+    font-size: 12px; /* 文字の大きさを小さく */
+    margin-left: 10px; /* ボタンと目標タイトルの間にスペースを追加 */
+    white-space: nowrap; /* 文字を折り返さないようにする */
+  }  
+
+  .健康 {
+    background-color: #D4F2C4;
+  }
+
+  .美容 {
+    background-color: #FFDADA;
+  }
+
+  .運動・フィットネス {
+    background-color: #B3D8C6;
+  }
+
+  .仕事 {
+    background-color: #D0E2F3;
+  }
+
+  .学習 {
+    background-color: #B7C4F9;
+  }
+
+  .ライフスタイル {
+    background-color: #FDB5B6;
+  }
+
+  .旅行・アクティビティ {
+    background-color: #FFBC9D;
+  }
+
+  .お金（貯金・投資・資産形成など） {
+    background-color: #FEDD91;
+  }
+
+  .人間関係（家族・友人・恋愛など） {
+    background-color: #E2B4FF;
+  }
+
+  .その他 {
+    background-color: #D0CECE;
+  }
 </style>
 
 <%= render "shared/header" %>
@@ -53,15 +103,18 @@
       <%= breadcrumbs separator: " &rsaquo; " %>
     </div>
     <div class="actions mb-5 flex mr-5">
-      <div class="bg-white text-black flex items-center px-4 py-2 rounded shadow">
-        <i class="fas fa-sort mr-2"></i>
-        <label for="sort-select" class="mr-2">並び替え:</label>
-        <select id="sort-select">
-          <option value="id" <%= "selected" if params[:sort] == "id" %>>登録順</option>
-          <option value="category" <%= "selected" if params[:sort] == "category" %>>カテゴリ別</option>
-          <option value="due_date" <%= "selected" if params[:sort] == "due_date" %>>達成予定日が近い順</option>
-        </select>
-      </div>  
+      <form method="GET" action="<%= request.path %>">
+        <div class="bg-white text-black flex items-center px-4 py-2 rounded shadow">
+          <i class="fas fa-sort mr-2"></i>
+          <label for="sort-select" class="mr-2">並び替え:</label>
+          <select id="sort-select" name="sort" onchange="this.form.submit()">
+            <option value="id" <%= "selected" if params[:sort] == "id" %>>登録順</option>
+            <option value="due_date" <%= "selected" if params[:sort] == "due_date" %>>達成予定日が近い順</option>
+            <option value="status" <%= "selected" if params[:sort] == "status" %>>達成状況別</option>
+            <option value="category" <%= "selected" if params[:sort] == "category" %>>カテゴリ別</option>
+          </select>
+        </div>
+      </form> 
       <%= link_to "/goals/new", class: "ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow button" do %>
         <i class="fas fa-pencil-alt mr-2"></i>目標作成
       <% end %>
@@ -74,6 +127,8 @@
             @goals.order(:category)
           when "due_date"
             @goals.order(:due_date)
+          when "status"
+            @goals.order(:status)
           else
             @goals.order(:id)
         end
@@ -87,6 +142,10 @@
           <span class="mr-2 goal-number"><%= current_index %></span>
           <%= check_box_tag "goals[]", goal.id, goal.status == "済", disabled: true %>
           <%= link_to goal.title, goal_path(goal), class: "ml-2 cursor-pointer" %>
+          
+          <% if params[:sort] == "category" %>
+            <span class="category-button <%= goal.category %>"><%= goal.category %></span>
+          <% end %>
         </div>
         <% current_index += 1 %>
       <% end %>

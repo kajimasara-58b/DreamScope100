@@ -28,7 +28,7 @@ ja:
       goal:
         title: タイトル
         status: 達成状況
-        due_date: 達成目標日
+        due_date: 達成予定日
         category: カテゴリー
     models:
       user: ユーザー
