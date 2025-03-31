@@ -38,7 +38,7 @@
   <main class="flex-grow p-4 flex flex-col items-center justify-center">
     <h2 class="text-3xl mb-4">パスワード再設定</h2>
 
-    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { class: "w-full max-w-md" }) do |f| %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :patch }) do |f| %>
       <%= f.hidden_field :reset_password_token %>
 
       <div class="field">
