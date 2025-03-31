@@ -37,7 +37,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       redirect_to registration_done_path
     else
       flash[:alert] = "ユーザー名またはメールアドレス、現在のパスワードが正しくありません。"
-      render :edit # フォームを再表示
+      render :edit, status: :unprocessable_entity # フォームを再表示
     end
   end
 
