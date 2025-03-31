@@ -17,7 +17,8 @@
 </style>
 
 <%= render "shared/header" %>
-<p style="color: green"><%= notice %></p>
+<%= render 'devise/shared/error_messages', resource: @user %>
+
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
   <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">  
@@ -27,14 +28,14 @@
     </div>
     <main class="flex-grow p-4 flex flex-col items-center justify-center">
       <%= form_with model: @user, local: true, html: { class: "w-full max-w-md" } do |form| %>
-        <div class="mb-4">
+        <div class="field mb-4">
           <%= form.label :name, "ユーザー名" %>
-          <%= form.text_area :name, required: true, class: "rounded w-full py-2 px-3" %>
+          <%= form.text_field :name, required: true, class: "rounded w-full py-2 px-3" %>
         </div>
 
-        <div class="mb-4">
+        <div class="field mb-6">
           <%= form.label :email, "メールアドレス" %>
-          <%= form.text_area :email, required: true, class: "rounded w-full py-2 px-3" %>
+          <%= form.email_field :email, required: true, class: "rounded w-full py-2 px-3" %>
         </div>
 
         <div class="flex flex-col justify-center items-center md:items-start mb-5">

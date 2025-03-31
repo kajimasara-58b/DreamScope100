@@ -5,9 +5,23 @@ class UsersController < ApplicationController
   end
 
   def edit
+    @user = User.find(params[:id])
   end
 
   def update
+    @user = User.find(params[:id])
+    if @user.update(user_params)
+      redirect_to users_show_path, notice: "登録情報を更新しました"
+    else
+      session[:user_params] = user_params # 編集内容をセッションに保存
+      flash.now[:alert] = @user.errors.full_messages # 具体的なエラーメッセージをフラッシュに
+      render :edit, status: :unprocessable_entity
+    end
   end
 
+  private
+
+  def user_params
+    params.require(:user).permit(:id, :email) # 必要な属性を指定すること
+  end
 end
