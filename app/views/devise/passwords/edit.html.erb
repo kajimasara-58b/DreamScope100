@@ -1,56 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet"> <!-- Aldrichフォントをインポート -->
+  <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet">
   <style>
     body {
       display: flex;
       flex-direction: column;
-      min-height: 100vh; /* 高さを画面いっぱいにする */
+      min-height: 100vh;
     }
     footer {
-      margin-top: auto; /* フッターを下に寄せる */
+      margin-top: auto;
     }
     header h2 {
-      font-family: 'Aldrich', sans-serif; /* Aldrichフォントを適用 */
+      font-family: 'Aldrich', sans-serif;
     }
     .link {
-      transition: color 0.3s; /* スムーズなトランジション */
+      transition: color 0.3s;
     }
-
     .link:hover {
-      color: #E3E3E3; /* ホバー時の文字色 */
+      color: #E3E3E3;
     }
-
     .link:active {
-      color: #A9A9A9; /* クリック時の文字色 */
+      color: #A9A9A9;
     }
-
     .field_with_errors {
       display: inline-block;
-      width: 100%; /* 親要素の幅を維持 */
+      width: 100%;
+    }
+    #error_explanation {
+      width: 100%;
+      max-width: 28rem;
+      color: red;
     }
   </style>
 </head>
-
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
   <header class="bg-[#FFC276] text-white p-6 flex justify-between items-center mb-5">
-    <div class: "text-white link">
+    <div class="text-white link">
       <h2 class="text-4xl">DreamScope100</h2>
     </div>
   </header>
-
   <%= render "devise/shared/error_messages", resource: resource %>
-
-  <% if flash[:alert].present? %>
-    <div class="flash alert" style="color: red;"><%= flash[:alert] %></div>
-  <% end %>
-
-  <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">
-    <main class="flex-grow p-4 flex flex-col items-center justify-center">
+  <div class="flex-grow p-4 flex-col md:flex-row w-full max-w-md mx-auto" style="display: flex; flex-direction: column;">
+    <main class="flex-grow p-4 flex flex-col items-center justify-center w-full max-w-md">
       <h2 class="text-3xl mb-4">パスワード再設定</h2>
 
-      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :patch, class: "new_user", id: "new_user" }) do |f| %>
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :patch, class: "new_user w-full", id: "new_user" }) do |f| %>
         <%= f.hidden_field :reset_password_token %>
 
         <div class="field">
@@ -74,12 +69,9 @@
       <% end %>
     </main>
   </div>
+
   <footer class="bg-[#FFC276] text-white p-4 flex items-center justify-center">
     <p>© 2025 DreamScope100. All rights reserved.</p>
   </footer>
 </body>
-
-<!-- Font AwesomeのCDNを読み込む -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
 </html>
