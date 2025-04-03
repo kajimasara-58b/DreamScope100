@@ -26,16 +26,23 @@
       <%= breadcrumbs separator: " &rsaquo; " %>
     </div>
     <main class="flex-grow p-4 flex flex-col items-center justify-center">
-      <div class="bg-white p-4 w-80 mb-5">
-        <h2 class="text-lg mb-2">ユーザー名： <%= current_user.name %></h2>
-      </div>
-      <div class="bg-white p-4 w-80 mb-5">
-        <h2 class="text-lg mb-2">メールアドレス： <%= current_user.email %></h2>
-      </div>
+      <div class="w-full max-w-md">
+        <!-- 入力内容を白いメモ風の背景で囲む -->
+        <div class="bg-white rounded p-8 mb-8">
+          <div class="bg-white p-4 mb-3 flex justify-between items-center">
+            <span class="text-lg">ユーザー名： <%= current_user.name %></span>
+            <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_path(current_user.id), class: "text-black", style: "margin-left: 10px;" %>
+          </div>
+          <div class="bg-white p-4 flex justify-between items-center">
+            <span class="text-lg">メールアドレス： <%= current_user.email %></span>
+            <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_path(current_user.id), class: "text-black", style: "margin-left: 10px;" %>
+          </div>
+        </div>  
 
-      <div class="actions flex justify-center">
-        <%= link_to "編集", edit_user_registration_path, class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %> 
-      </div>
+        <div class="actions flex justify-center">
+          <%= link_to "パスワード変更はこちら", edit_user_registration_path, class: "underline" %> 
+        </div> 
+      </div>  
     </main>
   </div>  
 </body>

@@ -1,25 +1,77 @@
-<h2>Change your password</h2>
-
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    footer {
+      margin-top: auto;
+    }
+    header h2 {
+      font-family: 'Aldrich', sans-serif;
+    }
+    .link {
+      transition: color 0.3s;
+    }
+    .link:hover {
+      color: #E3E3E3;
+    }
+    .link:active {
+      color: #A9A9A9;
+    }
+    .field_with_errors {
+      display: inline-block;
+      width: 100%;
+    }
+    #error_explanation {
+      width: 100%;
+      max-width: 28rem;
+      color: red;
+    }
+  </style>
+</head>
+<body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
+  <header class="bg-[#FFC276] text-white p-6 flex justify-between items-center mb-5">
+    <div class="text-white link">
+      <h2 class="text-4xl">DreamScope100</h2>
+    </div>
+  </header>
   <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
+  <div class="flex-grow p-4 flex-col md:flex-row w-full max-w-md mx-auto" style="display: flex; flex-direction: column;">
+    <main class="flex-grow p-4 flex flex-col items-center justify-center w-full max-w-md">
+      <h2 class="text-3xl mb-4">パスワード再設定</h2>
 
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :patch, class: "new_user w-full", id: "new_user" }) do |f| %>
+        <%= f.hidden_field :reset_password_token %>
+
+        <div class="field">
+          <%= f.label :password, "新しいパスワード" %>
+          <% if @minimum_password_length %>
+            ※<%= @minimum_password_length %>文字以上で設定してください
+          <% end %>
+        </div>
+        <div class="field mb-4">
+          <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "rounded w-full py-2 px-3" %>
+        </div>
+
+        <div class="field mb-7">
+          <%= f.label :password_confirmation, "新しいパスワード（確認）" %><br />
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "rounded w-full py-2 px-3" %>
+        </div>
+
+        <div class="actions flex justify-center">
+          <%= f.submit "パスワード変更", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %>
+        </div>
+      <% end %>
+    </main>
   </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+  <footer class="bg-[#FFC276] text-white p-4 flex items-center justify-center">
+    <p>© 2025 DreamScope100. All rights reserved.</p>
+  </footer>
+</body>
+</html>

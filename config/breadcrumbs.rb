@@ -60,3 +60,8 @@ crumb :users_edit do
   link "編集", edit_user_registration_path
   parent :users_show
 end
+
+crumb :users_password_reset do
+  link "パスワード変更", edit_user_registration_path
+  parent :users_show
+end

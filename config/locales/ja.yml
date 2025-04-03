@@ -48,6 +48,9 @@ ja:
             current_password:
               blank: が入力されていません
               invalid: が誤っています
+            reset_password_token:
+              invalid: 無効なパスワードリセットURLです
+          invalid: ユーザー情報が無効です
         goal:
           attributes:
             status:
@@ -168,5 +171,5 @@ ja:
       not_found: は見つかりませんでした。
       not_locked: はロックされていません。
       not_saved:
-        one: エラーが発生したため %{resource} は保存されませんでした。
-        other: "%{count} 件のエラーが発生したため %{resource} は登録できませんでした。"
+        one: エラーが発生したため保存されませんでした
+        other: "%{count} 件のエラーが発生したため保存されませんでした"
