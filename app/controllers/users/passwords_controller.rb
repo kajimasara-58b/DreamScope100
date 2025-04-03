@@ -21,8 +21,16 @@ class Users::PasswordsController < Devise::PasswordsController
 
   # PUT /resource/password
   def update
-    sign_out(resource_name) # リソースをログアウトさせる
-    redirect_to new_user_session_path
+    @user = User.reset_password_by_token(user_params)
+
+    if @user.errors.empty?
+      # パスワード更新が成功した場合、ログアウトしてログインページにリダイレクト
+      sign_out(@user)
+      redirect_to new_user_session_path, notice: "パスワードが正常に更新されました。再度ログインしてください。"
+    else
+      # 更新に失敗した場合（バリデーションエラーなど）、フォームを再表示
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   # protected
@@ -35,4 +43,10 @@ class Users::PasswordsController < Devise::PasswordsController
   # def after_sending_reset_password_instructions_path_for(resource_name)
   #   super(resource_name)
   # end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:password, :password_confirmation, :reset_password_token) # 必要な属性を指定すること
+  end
 end
