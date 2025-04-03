@@ -19,7 +19,7 @@ Rails.application.routes.draw do
       end
     end
   end
-  resources :users, only: [:edit, :update]
+  resources :users, only: [ :edit, :update ]
   get "home/index"
   get "riyoukiyaku/index"
   get "privacypolicy/index"
