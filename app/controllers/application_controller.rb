@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :set_user_id_cookie
 
   private
 
@@ -17,6 +18,15 @@ class ApplicationController < ActionController::Base
   # ログイン後のリダイレクト先を指定
   def after_sign_in_path_for(resource)
     dashboard_index_path # ダッシュボードにリダイレクト
+  end
+
+  # ログイン時にクッキーに user_id を設定
+  def set_user_id_cookie
+    if user_signed_in?
+      cookies.signed[:user_id] = { value: current_user.id, expires: 1.hour.from_now }
+    else
+      cookies.delete(:user_id)
+    end
   end
 
   protected

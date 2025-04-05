@@ -174,7 +174,8 @@ Devise.setup do |config|
 
   # Options to be passed to the created cookie. For instance, you can set
   # secure: true in order to force SSL only cookies.
-  # config.rememberable_options = {}
+  config.rememberable_options = { secure: Rails.env.production? }
+  # config.cookie_options = { secure: Rails.env.production? }
 
   # ==> Configuration for :validatable
   # Range for password length.
@@ -279,7 +280,7 @@ Devise.setup do |config|
   #
   # config.warden do |manager|
   #   manager.intercept_401 = false
-  #   manager.default_strategies(scope: :user).unshift :some_external_strategy
+  #   manager.default_strategies(scope: :user).unshift :cookie
   # end
 
   # ==> Mountable engine configurations
@@ -310,4 +311,10 @@ Devise.setup do |config|
   # When set to false, does not sign a user in automatically after their password is
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
+
+  # Warden のデフォルト戦略を明示的に設定
+  config.warden do |manager|
+    manager.default_strategies(scope: :user).clear # 既存の戦略をクリア
+    manager.default_strategies(scope: :user) << :database_authenticatable # デフォルト戦略を設定
+  end
 end
