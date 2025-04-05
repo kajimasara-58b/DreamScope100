@@ -12,6 +12,7 @@
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.12",
+    "@rails/actioncable": "^8.0.200",
     "autoprefixer": "^10.4.20",
     "jquery": "^3.7.1",
     "postcss": "^8.5.2"

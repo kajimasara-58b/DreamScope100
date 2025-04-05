@@ -1,8 +1,11 @@
-オープンチャット
+<h1>オープンチャット</h1>
 
 <div id='tweets'>
   <%= render partial: "shared/message", collection: @tweets, as: :tweet %>
 </div>
 
+<%= label_tag :message, 'Say something:' %>
+<%= text_field_tag :message, nil, data: { behavior: 'room_speaker' }, class: "border rounded p-2" %>
+<button id="send-message" class="bg-blue-500 text-white px-4 py-2 rounded">送信</button>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
