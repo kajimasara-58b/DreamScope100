@@ -9,9 +9,13 @@ class RoomChannel < ApplicationCable::Channel
 
   def speak(data)
     begin
-      Tweet.create! message: data['message']
+      Rails.logger.info "Creating tweet with message: #{data['message']}"
+      tweet = Tweet.create!(message: data['message'], user: current_user)
+      Rails.logger.info "Tweet created: #{tweet.inspect}"
+      TweetBroadcastJob.perform_later(tweet, current_user.id)
     rescue ActiveRecord::RecordInvalid => e
-      ActionCable.server.broadcast 'room_channel', message: "Error: #{e.message}"
+      Rails.logger.error("Failed to create tweet: #{e.message}")
+      ActionCable.server.broadcast('room_channel', message: "Error: #{e.message}")
     end
   end
 end

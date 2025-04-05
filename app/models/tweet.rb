@@ -1,4 +1,4 @@
 class Tweet < ApplicationRecord
+    belongs_to :user
     validates :message, presence: true
-    after_create_commit { TweetBroadcastJob.perform_now self }
 end
