@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   end
   resources :users, only: [ :edit, :update ]
   get "home/index"
+  get "openchat/index"
   get "riyoukiyaku/index"
   get "privacypolicy/index"
   get "inquiry/index"
