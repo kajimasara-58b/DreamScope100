@@ -9,12 +9,12 @@ class TweetBroadcastJob < ApplicationJob
       tweet_id: tweet.id
     })
   end
-  
+
   private
 
   def render_tweet(tweet, current_user_id)
     ApplicationController.render(
-      partial: 'shared/message',
+      partial: "shared/message",
       locals: { tweet: tweet, is_current_user: current_user_id && tweet.user_id == current_user_id }
     )
   end

@@ -91,10 +91,10 @@ Rails.application.configure do
   # ActionCable の設定
   config.action_cable.mount_path = "/cable"
   config.action_cable.url = "ws://localhost:3000/cable"
-  config.action_cable.allowed_request_origins = ['http://localhost:3000']
+  config.action_cable.allowed_request_origins = [ "http://localhost:3000" ]
 
   # セッションの共有を有効化
-  config.session_store :cookie_store, key: '_dreamscope100_session'
+  config.session_store :cookie_store, key: "_dreamscope100_session"
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
