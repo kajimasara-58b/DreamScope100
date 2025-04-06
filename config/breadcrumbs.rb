@@ -65,3 +65,8 @@ crumb :users_password_reset do
   link "パスワード変更", edit_user_registration_path
   parent :users_show
 end
+
+crumb :openchat do
+  link '<i class="fas fa-comments mr-1"></i>チャット'.html_safe, tweet_index_path
+  parent :dashboard
+end
