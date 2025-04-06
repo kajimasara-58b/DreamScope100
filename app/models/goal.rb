@@ -24,4 +24,8 @@ class Goal < ApplicationRecord
       errors.add(:base, "登録できる目標は100個までです")
     end
   end
+
+  def fetch_goals
+    Goal.all # 目標を100件取得
+  end
 end
