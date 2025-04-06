@@ -14,7 +14,7 @@
 <%= render "shared/header" %>
 
 
-<body class="bg-[#FFF5E8] flex flex-col min-h-screen">
+<body class="bg-[#FFF5E8] flex flex-col h-screen">
   <div class="fixed top-20 left-0 w-full bg-[#FFF5E8] p-3fixed top-16 left-0 w-full bg-[#FFF5E8] z-10 p-4">  
     <div class="actions flex mr-5">
       <% breadcrumb :openchat %>
@@ -48,20 +48,28 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  // ページ読み込み時に一番下にスクロール
-  document.addEventListener('DOMContentLoaded', () => {
+  function scrollToBottom() {
     const tweetsContainer = document.getElementById('tweets');
     if (tweetsContainer) {
       tweetsContainer.scrollTop = tweetsContainer.scrollHeight;
     }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(scrollToBottom, 100);
   });
 
-  // Turbo によるページ遷移後にもスクロール
   document.addEventListener('turbo:load', () => {
-    const tweetsContainer = document.getElementById('tweets');
-    if (tweetsContainer) {
-      tweetsContainer.scrollTop = tweetsContainer.scrollHeight;
-    }
+    setTimeout(scrollToBottom, 100);
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const sendButton = document.getElementById('send-message');
+    const inputField = document.querySelector('input[data-behavior="room_speaker"]');
+
+    sendButton?.addEventListener('click', () => {
+      setTimeout(scrollToBottom, 100);
+    });
   });
 </script>
 </html>
