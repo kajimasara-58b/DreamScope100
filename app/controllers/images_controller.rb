@@ -12,7 +12,7 @@ class ImagesController < ApplicationController
   end
 
   def create_image(goals)
-    require 'mini_magick'
+    require "mini_magick"
 
     image = MiniMagick::Image.create("png") do |f|
       f.write("A4サイズのキャンバスに目標を描く処理")
