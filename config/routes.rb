@@ -30,6 +30,8 @@ Rails.application.routes.draw do
   get "/dashboard/data", to: "dashboard#data"
   get "users/show", to: "users#show"
   resources :goals
+  # 画像生成ルーティング設定
+  post "generate_image", to: "images#generate_image", as: :generate_image
   # get "login", to: "sessions#new"
   # /loginにアクセスするとSessionsControllerのnewアクションがよばれる
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

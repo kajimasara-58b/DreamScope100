@@ -118,9 +118,22 @@
       <%= link_to "/goals/new", class: "ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow button" do %>
         <i class="fas fa-pencil-alt mr-2"></i>目標作成
       <% end %>
-      <%= link_to "#", class: "ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow button" do %>
+
+      <% puts "generate_image_path: #{generate_image_path.inspect}" %>
+      <a href="/generate_image" data-method="post" class="ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow button">
         <i class="fas fa-image mr-2"></i>画像生成
-      <% end %>
+      </a>
+
+      <script>
+      $(document).on('click', '.button', function(event) {
+        event.preventDefault(); // デフォルトの動作を防ぐ
+
+        $.post('/generate_image', function(data) {
+          // 画像生成が成功した場合の処理
+          // 生成された画像を表示するなど
+        });
+      });
+      </script>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
