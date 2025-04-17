@@ -2,3 +2,6 @@
 import "@hotwired/turbo-rails"
 import "./controllers"
 import "./channels"
+import $ from 'jquery';
+window.jQuery = window.$ = $;
+import "./goals";

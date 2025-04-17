@@ -1,27 +1,61 @@
 class ImagesController < ApplicationController
+  before_action :authenticate_user! # ユーザーがログインしていることを確認
+
   def generate_image
-    goals = fetch_goals # 目標を取得するメソッドを呼び出す
-    image = create_image(goals) # 画像を生成するメソッドを呼び出す
-    send_data image.to_blob, filename: "output.jpg", type: "image/jpeg", disposition: "attachment" # 画像を返す
+    goals = fetch_goals
+    image = create_image(goals)
+
+    # 画像を一時ファイルに保存
+    temp_file = Tempfile.new(['generated_image', '.png'])
+    image.write(temp_file.path)
+
+    # GoalSummaryImage に保存
+    goal_summary_image = GoalSummaryImage.create(user: current_user)
+    goal_summary_image.image.attach(
+      io: File.open(temp_file.path),
+      filename: 'goal_summary_image.png',
+      content_type: 'image/png'
+    )
+
+    # 一時ファイルを削除
+    temp_file.close
+    temp_file.unlink
+
+    # 画像の URL を取得
+    image_url = url_for(goal_summary_image.image)
+
+    # JSON 形式で画像の URL を返す
+    render json: { image_url: image_url, message: '画像が生成されました！' }, status: :ok
+  rescue StandardError => e
+    Rails.logger.error("Image generation failed: #{e.message}")
+    render json: { error: '画像生成に失敗しました。' }, status: :unprocessable_entity
   end
 
   private
 
   def fetch_goals
-    Goal.all # 目標を100件取得
+    current_user.goals # 現在のユーザーの目標を取得
   end
 
   def create_image(goals)
-    require "mini_magick"
+    require 'mini_magick'
 
-    image = MiniMagick::Image.create("png") do |f|
-      f.write("A4サイズのキャンバスに目標を描く処理")
+    # A4サイズのキャンバスを作成（595x842ピクセル、解像度72dpi）
+    image = MiniMagick::Image.open('white') # 白い背景を作成
+    image.resize '595x842' # A4サイズにリサイズ
+    image.format 'png'
+
+    # フォント設定
+    image.combine_options do |c|
+      c.font 'Arial' # 環境に合わせてフォントを指定
+      c.fill 'black'
+      c.pointsize 20
     end
 
-    # ここで目標を2列に分けて描画する処理を追加
+    # 目標を2列に分けて描画
     goals.each_with_index do |goal, index|
-      x = (index % 2) * 300 # x座標の計算
-      y = (index / 2) * 50   # y座標の計算
+      x = 50 + (index % 2) * 300
+      y = 50 + (index / 2) * 30
       image.combine_options do |c|
         c.draw "text #{x},#{y} '#{goal.title}'"
       end

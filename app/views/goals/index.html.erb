@@ -89,6 +89,29 @@
   .その他 {
     background-color: #D0CECE;
   }
+
+  #image-preview.hidden {
+    display: none;
+  }
+  
+  #image-preview img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  #image-preview .mt-2 {
+    margin-top: 0.5rem;
+  }
+  
+  #image-preview .bg-blue-500, #image-preview .bg-blue-400, #image-preview .bg-blue-600 {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    color: white;
+  }
+  
+  #image-preview .mr-2 {
+    margin-right: 0.5rem;
+  }
 </style>
 
 <%= render "shared/header" %>
@@ -119,21 +142,23 @@
         <i class="fas fa-pencil-alt mr-2"></i>目標作成
       <% end %>
 
-      <% puts "generate_image_path: #{generate_image_path.inspect}" %>
-      <a href="/generate_image" data-method="post" class="ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow button">
+      <a href="#" class="ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow generate-image-button">
         <i class="fas fa-image mr-2"></i>画像生成
       </a>
-
-      <script>
-      $(document).on('click', '.button', function(event) {
-        event.preventDefault(); // デフォルトの動作を防ぐ
-
-        $.post('/generate_image', function(data) {
-          // 画像生成が成功した場合の処理
-          // 生成された画像を表示するなど
-        });
-      });
-      </script>
+      
+      <!-- プレビュー用のコンテナ -->
+      <div id="image-preview" class="mt-4 hidden">
+        <h3>生成された画像</h3>
+        <p class="text-green-500">画像が生成されました！以下のボタンで操作してください。</p>
+        <img id="preview-image" class="w-64 h-auto rounded" alt="Generated Image">
+        <div class="mt-2">
+          <a id="download-button" href="#" class="bg-blue-500 text-white px-4 py-2 rounded mr-2">ダウンロード</a>
+          <button id="share-twitter" class="bg-blue-400 text-white px-4 py-2 rounded mr-2">Twitterでシェア</button>
+          <button id="share-facebook" class="bg-blue-600 text-white px-4 py-2 rounded">Facebookでシェア</button>
+        </div>
+      </div>
+      
+      <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -177,26 +202,25 @@
       <% end %>
     </div>
   </main>
+  <script>
+    document.getElementById('sort-button').addEventListener('click', function() {
+      let menu = document.getElementById('sort-menu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function(event) {
+      let sortButton = document.getElementById('sort-button');
+      let sortMenu = document.getElementById('sort-menu');
+      if (!sortButton.contains(event.target) && !sortMenu.contains(event.target)) {
+        sortMenu.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 
 <%= render "shared/footer" %>
 
 <!-- Font AwesomeのCDNを読み込む -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-<script>
-  document.getElementById('sort-button').addEventListener('click', function() {
-    let menu = document.getElementById('sort-menu');
-    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-  });
-
-  document.addEventListener('click', function(event) {
-    let sortButton = document.getElementById('sort-button');
-    let sortMenu = document.getElementById('sort-menu');
-    if (!sortButton.contains(event.target) && !sortMenu.contains(event.target)) {
-      sortMenu.style.display = 'none';
-    }
-  });
-</script>
 
 </html>
