@@ -24,7 +24,15 @@
     }
   </style>
   
-<header class="bg-[#FFC276] text-white p-6 flex justify-between items-center">
-  <h2 class="text-4xl"><%= link_to "DreamScope100", dashboard_index_path, class: "text-white link" %></h2>
-  <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-white link", onclick: "return confirm('ログアウトしますか？');" %>
-</header>
+<head>
+  <header class="bg-[#FFC276] text-white p-6 flex justify-between items-center">
+    <h2 class="text-4xl"><%= link_to "DreamScope100", dashboard_index_path, class: "text-white link" %></h2>
+    <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-white link", onclick: "return confirm('ログアウトしますか？');" %>
+  </header>
+
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+</head>

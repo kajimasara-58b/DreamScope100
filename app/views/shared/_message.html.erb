@@ -1,7 +1,7 @@
 <div class="tweet flex <%= is_current_user ? 'justify-end' : 'justify-start' %>" data-tweet-id="<%= tweet.id %>">
   <div class="flex flex-col <%= is_current_user ? 'items-end' : 'items-start' %>">
     <span class="text-xs text-gray-500 mb-1">
-      <%= tweet.user.name || "Anonymous" %> • <%= tweet.created_at.in_time_zone('Tokyo').strftime("%H:%M") %>
+      <%= tweet.user.name || "Anonymous" %> • <%= tweet.created_at.in_time_zone('Tokyo').strftime("%Y/%m/%d %H:%M") %>
     </span>
     <div class="<%= is_current_user ? 'bg-green-200' : 'bg-white' %> text-black p-3 rounded-lg max-w-xs shadow">
       <p><%= tweet.message %></p>
