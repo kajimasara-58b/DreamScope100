@@ -89,6 +89,14 @@
   .その他 {
     background-color: #D0CECE;
   }
+  .dialog {
+    max-height: 80vh;
+    overflow: auto;
+  }
+  .image-container {
+    max-height: 50vh;
+    overflow: auto;
+  }
 </style>
 
 <%= render "shared/header" %>
@@ -123,13 +131,15 @@
       </a>
     </div>
 
-    <div id="image-preview" style="display: none;" class="fixed inset-0 w-full h-full flex items-center justify-center bg-black/50 z-50">
-      <div class="bg-white p-6 rounded shadow-lg text-center">
+    <div id="image-preview" style="display: none;" class="fixed inset-0 w-full flex items-center justify-center bg-black/50 overflow-auto">
+      <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md w-full max-h-[80vh] overflow-auto">
         <h3 class="text-lg font-bold mb-4">生成された画像</h3>
-        <img id="preview-image" class="w-64 h-auto mx-auto rounded" alt="Generated Image">
+        <div class="max-h-[50vh] overflow-auto">
+          <img id="preview-image" class="w-full max-h-[50vh] object-contain mx-auto rounded border border-gray-300" alt="Generated Image">
+        </div>
         <div class="mt-4">
           <a id="share-twitter" class="bg-blue-400 px-4 py-2 rounded inline-block">
-            <i class="fa-brands fa-x-twitter"></i>
+            <i class="fa-brands fa-x-twitter"></i> シェアする
           </a>
         </div>
         <div class="mt-2">
@@ -139,7 +149,7 @@
     </div>
   
     <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("turbo:load", () => {
       const button = document.getElementById("generate-image-button");
       const preview = document.getElementById("image-preview");
       const image = document.getElementById("preview-image");
@@ -147,28 +157,63 @@
       const closeButton = document.getElementById("close-preview");
       closeButton.addEventListener("click", () => {
         preview.style.display = "none";
+        document.body.classList.remove('overflow-hidden'); // スクロール復活
       });
 
       button.addEventListener("click", (e) => {
         e.preventDefault();
-        fetch("/generate_image", {
-          method: "POST",
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          image.src = data.image_data;
-          preview.style.display = "block";
 
-          const tweetText = encodeURIComponent("目標達成に向けてがんばっています！💪");
-          const url = encodeURIComponent(window.location.href);
-          twitterButton.href = `https://twitter.com/intent/tweet?text=${tweetText}&url=${url}`;
-        })
-        .catch(error => {
-          console.error("画像生成失敗", error);
+        // ---- ここからCanvas作成する処理 ----
+        const canvas = document.createElement('canvas');
+        canvas.width = 794;
+        canvas.height = 1123;
+        const ctx = canvas.getContext('2d');
+    
+        // 背景を白に塗る
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+        // テキスト設定
+        ctx.fillStyle = "#000000";
+        ctx.font = "16px sans-serif";
+        ctx.textBaseline = "top";
+    
+        // ここに目標一覧を2列に並べる処理を書く
+        const goals = [...document.querySelectorAll('.goal-item')].map(el => {
+          const titleLink = el.querySelector('a.goal-title');
+          return titleLink ? titleLink.textContent.trim() : "";
         });
+    
+        goals.forEach((goal, index) => {
+          const col = index < 50 ? 0 : 1; // 左列 or 右列
+          const row = index % 50;         // 何行目か
+          const x = col === 0 ? 40 : 400;  // 左列:40px、右列:400pxスタート
+          const y = 40 + row * 20;         // 上から40px、1行20px間隔
+          ctx.fillText(`${index + 1}. ${goal}`, x, y);
+        });
+    
+        // CanvasからBase64画像データを生成
+        const imageData = canvas.toDataURL('image/png');
+    
+        // ---- ここまでCanvas作成する処理 ----
+    
+        // 作った画像をプレビューに表示
+        image.src = imageData;
+        preview.style.display = "flex";
+        document.body.classList.add('overflow-hidden'); // 背景スクロール禁止！
+
+        // 画像読み込み後にコンテナの高さを調整
+        image.onload = () => {
+          const imageContainer = image.parentElement;
+          imageContainer.scrollTop = 0; // スクロール位置をリセット
+        };
+
+        const tweetText = encodeURIComponent("目標達成に向けてがんばっています！💪");
+        const url = encodeURIComponent(window.location.href);
+        twitterButton.href = `https://twitter.com/intent/tweet?text=${tweetText}&url=${url}`;
+      })
+      .catch(error => {
+        console.error("画像生成失敗", error);
       });
     });
     </script>
@@ -191,10 +236,10 @@
 
       <!-- 現在の目標を表示 -->
       <% sorted_goals.each do |goal| %>
-        <div class="flex items-center">
+        <div class="flex items-center goal-item">
           <span class="mr-2 goal-number"><%= current_index %></span>
           <%= check_box_tag "goals[]", goal.id, goal.status == "済", disabled: true %>
-          <%= link_to goal.title, goal_path(goal), class: "ml-2 cursor-pointer" %>
+          <%= link_to goal.title, goal_path(goal), class: "ml-2 cursor-pointer goal-title" %>
           
           <% if params[:sort] == "category" %>
             <span class="category-button <%= goal.category %>"><%= goal.category %></span>
