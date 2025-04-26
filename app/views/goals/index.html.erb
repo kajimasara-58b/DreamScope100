@@ -118,10 +118,60 @@
       <%= link_to "/goals/new", class: "ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow button" do %>
         <i class="fas fa-pencil-alt mr-2"></i>目標作成
       <% end %>
-      <a href="#" class="ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow generate-image-button">
+      <a href="#" id="generate-image-button" class="ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow generate-image-button">
         <i class="fas fa-image mr-2"></i>画像生成
       </a>
     </div>
+
+    <div id="image-preview" style="display: none;" class="fixed inset-0 w-full h-full flex items-center justify-center bg-black/50 z-50">
+      <div class="bg-white p-6 rounded shadow-lg text-center">
+        <h3 class="text-lg font-bold mb-4">生成された画像</h3>
+        <img id="preview-image" class="w-64 h-auto mx-auto rounded" alt="Generated Image">
+        <div class="mt-4">
+          <a id="share-twitter" class="bg-blue-400 px-4 py-2 rounded inline-block">
+            <i class="fa-brands fa-x-twitter"></i>
+          </a>
+        </div>
+        <div class="mt-2">
+          <button id="close-preview" class="text-gray-500 mt-4 underline">閉じる</button>
+        </div>
+      </div>
+    </div>
+  
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const button = document.getElementById("generate-image-button");
+      const preview = document.getElementById("image-preview");
+      const image = document.getElementById("preview-image");
+      const twitterButton = document.getElementById("share-twitter");
+      const closeButton = document.getElementById("close-preview");
+      closeButton.addEventListener("click", () => {
+        preview.style.display = "none";
+      });
+
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        fetch("/generate_image", {
+          method: "POST",
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          image.src = data.image_data;
+          preview.style.display = "block";
+
+          const tweetText = encodeURIComponent("目標達成に向けてがんばっています！💪");
+          const url = encodeURIComponent(window.location.href);
+          twitterButton.href = `https://twitter.com/intent/tweet?text=${tweetText}&url=${url}`;
+        })
+        .catch(error => {
+          console.error("画像生成失敗", error);
+        });
+      });
+    });
+    </script>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
       <% 
@@ -169,7 +219,7 @@
 <%= render "shared/footer" %>
 
 <!-- Font AwesomeのCDNを読み込む -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <script>
   document.getElementById('sort-button').addEventListener('click', function() {
