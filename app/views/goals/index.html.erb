@@ -89,13 +89,20 @@
   .その他 {
     background-color: #D0CECE;
   }
+
   .dialog {
     max-height: 80vh;
-    overflow: auto;
   }
   .image-container {
     max-height: 50vh;
     overflow: auto;
+  }
+  .preview-image {
+    max-width: 100% !important;
+    max-height: 50vh !important;
+    object-fit: contain;
+    width: auto;
+    height: auto;
   }
 </style>
 
@@ -131,19 +138,19 @@
       </a>
     </div>
 
-    <div id="image-preview" style="display: none;" class="fixed inset-0 w-full flex items-center justify-center bg-black/50 overflow-auto">
-      <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md w-full max-h-[80vh] overflow-auto">
+    <div id="image-preview" style="display: none;" class="fixed inset-0 w-full flex items-center justify-center bg-black/50 dialog">
+      <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md max-h-[80vh] overflow-y-auto">
         <h3 class="text-lg font-bold mb-4">生成された画像</h3>
-        <div class="max-h-[50vh] overflow-auto">
-          <img id="preview-image" class="w-full max-h-[50vh] object-contain mx-auto rounded border border-gray-300" alt="Generated Image">
+        <div class="mb-6 image-container">
+          <img id="preview-image" class="max-w-full block border border-gray-300" alt="Generated Image">
         </div>
-        <div class="mt-4">
+        <div class="mt-10">
           <a id="share-twitter" class="bg-blue-400 px-4 py-2 rounded inline-block">
             <i class="fa-brands fa-x-twitter"></i> シェアする
           </a>
         </div>
-        <div class="mt-2">
-          <button id="close-preview" class="text-gray-500 mt-4 underline">閉じる</button>
+        <div class="mt-4">
+          <button id="close-preview" class="text-gray-500 underline">閉じる</button>
         </div>
       </div>
     </div>
@@ -157,7 +164,6 @@
       const closeButton = document.getElementById("close-preview");
       closeButton.addEventListener("click", () => {
         preview.style.display = "none";
-        document.body.classList.remove('overflow-hidden'); // スクロール復活
       });
 
       button.addEventListener("click", (e) => {
@@ -170,7 +176,7 @@
         const ctx = canvas.getContext('2d');
     
         // 背景を白に塗る
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = "#FFF5E8";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     
         // テキスト設定
@@ -199,8 +205,13 @@
     
         // 作った画像をプレビューに表示
         image.src = imageData;
-        preview.style.display = "flex";
-        document.body.classList.add('overflow-hidden'); // 背景スクロール禁止！
+        preview.style.display = "flex"
+
+        image.onload = () => {
+          const imageContainer = image.parentElement;
+          console.log("画像の幅:", image.width, "高さ:", image.height);
+          console.log("コンテナの幅:", imageContainer.clientWidth, "高さ:", imageContainer.clientHeight);
+        };    
 
         // 画像読み込み後にコンテナの高さを調整
         image.onload = () => {
