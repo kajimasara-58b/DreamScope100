@@ -50,45 +50,16 @@
     white-space: nowrap; /* 文字を折り返さないようにする */
   }  
 
-  .健康 {
-    background-color: #D4F2C4;
-  }
-
-  .美容 {
-    background-color: #FFDADA;
-  }
-
-  .運動・フィットネス {
-    background-color: #B3D8C6;
-  }
-
-  .仕事 {
-    background-color: #D0E2F3;
-  }
-
-  .学習 {
-    background-color: #B7C4F9;
-  }
-
-  .ライフスタイル {
-    background-color: #FDB5B6;
-  }
-
-  .旅行・アクティビティ {
-    background-color: #FFBC9D;
-  }
-
-  .お金（貯金・投資・資産形成など） {
-    background-color: #FEDD91;
-  }
-
-  .人間関係（家族・友人・恋愛など） {
-    background-color: #E2B4FF;
-  }
-
-  .その他 {
-    background-color: #D0CECE;
-  }
+  .健康 { background-color: #D4F2C4; }
+  .美容 { background-color: #FFDADA; }
+  .運動・フィットネス { background-color: #B3D8C6; }
+  .仕事 { background-color: #D0E2F3; }
+  .学習 { background-color: #B7C4F9; }
+  .ライフスタイル { background-color: #FDB5B6; }
+  .旅行・アクティビティ { background-color: #FFBC9D; }
+  .お金（貯金・投資・資産形成など） { background-color: #FEDD91; }
+  .人間関係（家族・友人・恋愛など） { background-color: #E2B4FF; }
+  .その他 { background-color: #D0CECE; }
 
   .dialog {
     max-height: 80vh;
@@ -128,7 +99,7 @@
   <main class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">
     <div class="actions mb-5 flex mr-5">
       <% breadcrumb :goals_index %>
-      <%= breadcrumbs separator: " &rsaquo; " %>
+      <%= breadcrumbs separator: " › " %>
     </div>
     <div class="actions mb-5 flex mr-5">
       <form method="GET" action="<%= request.path %>">
@@ -152,7 +123,7 @@
     </div>
 
     <div id="image-preview" style="display: none;" class="fixed inset-0 w-full flex items-center justify-center bg-black/50 dialog">
-      <div class="bg-white p-6 rounded-lg shadow text-center max-w-md max-h-[80vh] overflow-y-auto  dialog-box">
+      <div class="bg-white p-6 rounded-lg shadow text-center max-w-md max-h-[80vh] overflow-y-auto dialog-box">
         <h3 class="text-lg font-bold mb-4">生成された画像</h3>
         <div class="mb-6 image-container">
           <img id="preview-image" class="max-w-full block border border-gray-300" alt="Generated Image">
@@ -175,69 +146,252 @@
       const image = document.getElementById("preview-image");
       const twitterButton = document.getElementById("share-twitter");
       const closeButton = document.getElementById("close-preview");
+    
       closeButton.addEventListener("click", () => {
         preview.style.display = "none";
       });
-
+    
       button.addEventListener("click", (e) => {
         e.preventDefault();
-
-        // ---- ここからCanvas作成する処理 ----
+    
+        // ---- Canvas作成処理 ----
         const canvas = document.createElement('canvas');
         canvas.width = 794;
-        canvas.height = 1123;
+        const canvasHeight = 1223; // 固定の高さ
+        const creditSpace = 40; // クレジット用のスペース
+        const maxContentHeight = canvasHeight - creditSpace - 80; // 上部タイトル(80px)とクレジット用のスペースを除いた最大高さ
+    
         const ctx = canvas.getContext('2d');
+    
+        // 目標リストを取得
+        const goals = [...document.querySelectorAll('.goal-item')].map(el => {
+          const titleLink = el.querySelector('a.goal-title');
+          const checkbox = el.querySelector('input[type="checkbox"]');
+          return {
+            title: titleLink ? titleLink.textContent.trim() : "",
+            isChecked: checkbox ? checkbox.checked : false
+          };
+        });
+    
+        // 全体の高さを計算する関数
+        const calculateTotalHeight = (fontSize) => {
+          const lineHeight = fontSize + 4; // フォントサイズに比例した行間
+          const leftMaxWidth = 330;
+          const rightMaxWidth = 364;
+          let currentYLeft = 80;
+          let currentYRight = 80;
+    
+          ctx.font = `${fontSize}px sans-serif`;
+    
+          goals.forEach((goal, index) => {
+            const col = index < 50 ? 0 : 1;
+            const maxWidth = col === 0 ? leftMaxWidth : rightMaxWidth;
+            let startY = col === 0 ? currentYLeft : currentYRight;
+    
+            // 長い文字列を強制的に分割
+            const words = [];
+            let tempWord = '';
+            for (let char of goal.title) {
+              tempWord += char;
+              if (tempWord.length > 20) {
+                words.push(tempWord);
+                tempWord = '';
+              }
+            }
+            if (tempWord) words.push(tempWord);
+            const finalWords = [];
+            words.forEach(word => {
+              finalWords.push(...word.split(' '));
+            });
+    
+            let line = '';
+            let i = 0;
+            const maxLines = 5;
+            let lineCount = 0;
+    
+            while (i < finalWords.length && lineCount < maxLines) {
+              const word = finalWords[i];
+              const testLine = line + word + ' ';
+              const metrics = ctx.measureText(testLine);
+    
+              if (metrics.width > maxWidth) {
+                if (line.trim() === '') {
+                  startY += lineHeight;
+                  lineCount++;
+                  i++;
+                  line = '';
+                } else {
+                  line = word + ' ';
+                  startY += lineHeight;
+                  lineCount++;
+                  i++;
+                }
+              } else {
+                line = testLine;
+                i++;
+              }
+            }
+    
+            if (line.trim() !== '' && lineCount < maxLines) {
+              startY += lineHeight;
+              lineCount++;
+            }
+    
+            if (col === 0) {
+              currentYLeft = startY + 4;
+            } else {
+              currentYRight = startY + 4;
+            }
+          });
+    
+          return Math.max(currentYLeft, currentYRight);
+        };
+    
+        // フォントサイズを調整
+        let fontSize = 14; // 初期フォントサイズ
+        let totalHeight = calculateTotalHeight(fontSize);
+    
+        while (totalHeight > maxContentHeight && fontSize > 8) { // 最小フォントサイズを8pxに設定
+          fontSize -= 1;
+          totalHeight = calculateTotalHeight(fontSize);
+        }
+    
+        // 最終的なフォントサイズでキャンバスの高さを設定
+        canvas.height = canvasHeight;
     
         // 背景を白に塗る
         ctx.fillStyle = "#FFF5E8";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-        // テキスト設定
-        ctx.fillStyle = "#000000";
-        ctx.font = "16px sans-serif";
+        // 上部に「DreamScope100」タイトルを描画
+        ctx.fillStyle = "#FFC276";
+        ctx.font = "bold 40px 'Aldrich', sans-serif";
+        ctx.textAlign = "center";
         ctx.textBaseline = "top";
+        ctx.fillText("DreamScope100", canvas.width / 2, 30);
     
-        // ここに目標一覧を2列に並べる処理を書く
-        const goals = [...document.querySelectorAll('.goal-item')].map(el => {
-          const titleLink = el.querySelector('a.goal-title');
-          return titleLink ? titleLink.textContent.trim() : "";
-        });
+        // 目標リストを描画（調整済みのフォントサイズを使用）
+        const lineHeight = fontSize + 4;
+        const leftMaxWidth = 330;
+        const rightMaxWidth = 364;
+        let currentYLeft = 100;
+        let currentYRight = 100;
     
         goals.forEach((goal, index) => {
-          const col = index < 50 ? 0 : 1; // 左列 or 右列
-          const row = index % 50;         // 何行目か
-          const x = col === 0 ? 40 : 400;  // 左列:40px、右列:400pxスタート
-          const y = 40 + row * 20;         // 上から40px、1行20px間隔
-          ctx.fillText(`${index + 1}. ${goal}`, x, y);
+          const col = index < 50 ? 0 : 1;
+          const baseX = col === 0 ? 40 : 400;
+          const maxWidth = col === 0 ? leftMaxWidth : rightMaxWidth;
+          const y = col === 0 ? currentYLeft : currentYRight;
+    
+          // チェックボックスを描画
+          const checkboxX = baseX;
+          const checkboxY = y + 2;
+          ctx.strokeStyle = "#000000";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(checkboxX, checkboxY, 12, 12);
+          if (goal.isChecked) {
+            ctx.beginPath();
+            ctx.moveTo(checkboxX + 2, checkboxY + 6);
+            ctx.lineTo(checkboxX + 5, checkboxY + 9);
+            ctx.lineTo(checkboxX + 10, checkboxY + 3);
+            ctx.stroke();
+          }
+    
+          // 数字を描画
+          const numberText = `${index + 1}.`;
+          ctx.fillStyle = "#FFC276";
+          ctx.font = `${fontSize}px 'Aldrich', sans-serif`; // 調整済みのフォントサイズ
+          ctx.textAlign = "left";
+          ctx.fillText(numberText, baseX + 20, y);
+    
+          // 目標タイトルを描画
+          let textX = baseX + 50;
+          ctx.fillStyle = "#000000";
+          ctx.font = `${fontSize}px sans-serif`;
+    
+          let startY = y;
+          let line = '';
+          const maxLines = 5;
+          let lineCount = 0;
+    
+          // 長い文字列を強制的に分割
+          const words = [];
+          let tempWord = '';
+          for (let char of goal.title) {
+            tempWord += char;
+            if (tempWord.length > 20) {
+              words.push(tempWord);
+              tempWord = '';
+            }
+          }
+          if (tempWord) words.push(tempWord);
+          const finalWords = [];
+          words.forEach(word => {
+            finalWords.push(...word.split(' '));
+          });
+    
+          let i = 0;
+          while (i < finalWords.length && lineCount < maxLines) {
+            const word = finalWords[i];
+            const testLine = line + word + ' ';
+            const metrics = ctx.measureText(testLine);
+    
+            if (metrics.width > maxWidth) {
+              if (line.trim() === '') {
+                const truncatedWord = word.length > 20 ? word.substring(0, 20) + '...' : word;
+                ctx.fillText(truncatedWord, textX, startY);
+                startY += lineHeight;
+                lineCount++;
+                i++;
+                line = '';
+              } else {
+                ctx.fillText(line.trim(), textX, startY);
+                line = word + ' ';
+                startY += lineHeight;
+                lineCount++;
+                i++;
+              }
+            } else {
+              line = testLine;
+              i++;
+            }
+          }
+    
+          if (line.trim() !== '' && lineCount < maxLines) {
+            ctx.fillText(line.trim(), textX, startY);
+            startY += lineHeight;
+            lineCount++;
+          }
+    
+          if (col === 0) {
+            currentYLeft = startY + 4;
+          } else {
+            currentYRight = startY + 4;
+          }
         });
+    
+        // 下部にクレジットを描画
+        ctx.fillStyle = "#FFC276";
+        ctx.font = "12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("© 2025 DreamScope100. All rights reserved.", canvas.width / 2, canvas.height - 20);
     
         // CanvasからBase64画像データを生成
         const imageData = canvas.toDataURL('image/png');
     
-        // ---- ここまでCanvas作成する処理 ----
-    
         // 作った画像をプレビューに表示
         image.src = imageData;
-        preview.style.display = "flex"
-
+        preview.style.display = "flex";
+    
         image.onload = () => {
           const imageContainer = image.parentElement;
           console.log("画像の幅:", image.width, "高さ:", image.height);
           console.log("コンテナの幅:", imageContainer.clientWidth, "高さ:", imageContainer.clientHeight);
-        };    
-
-        // 画像読み込み後にコンテナの高さを調整
-        image.onload = () => {
-          const imageContainer = image.parentElement;
-          imageContainer.scrollTop = 0; // スクロール位置をリセット
         };
-
+    
         const tweetText = encodeURIComponent("目標達成に向けてがんばっています！💪");
         const url = encodeURIComponent(window.location.href);
         twitterButton.href = `https://twitter.com/intent/tweet?text=${tweetText}&url=${url}`;
-      })
-      .catch(error => {
-        console.error("画像生成失敗", error);
       });
     });
     </script>
