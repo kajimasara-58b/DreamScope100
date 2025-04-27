@@ -1,12 +1,12 @@
 # app/controllers/generate_images_controller.rb
 class GenerateImagesController < ApplicationController
   protect_from_forgery with: :null_session # fetch API対応（セキュリティ注意）
-  
+
   def create
     # 仮で、白背景の空画像を作る（あとでカスタマイズする）
-    require 'mini_magick'
+    require "mini_magick"
 
-    image = MiniMagick::Image.create('png') do |f|
+    image = MiniMagick::Image.create("png") do |f|
       f.write ""
     end
     image.combine_options do |c|
