@@ -3,7 +3,7 @@ class Goal < ApplicationRecord
   # バリデーションやアソシエーションなどがあればここに
   enum status: { 未: 0, 済: 1 }
   enum category: { 健康: 0, 美容: 1, 運動・フィットネス: 2, 仕事: 3, 学習: 4, ライフスタイル: 5, 旅行・アクティビティ: 6, お金（貯金・投資・資産形成など）: 7, 人間関係（家族・友人・恋愛など）: 8, その他: 9 }
-  validates :title, presence: true
+  validates :title, presence: true, length: { maximum: 40, message: "は40文字以内にしてください" } 
   validates :status, presence: true
   validates :due_date, presence: true
   validates :category, presence: true

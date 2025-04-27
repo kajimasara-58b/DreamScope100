@@ -200,53 +200,28 @@
             const maxWidth = col === 0 ? leftMaxWidth : rightMaxWidth;
             let startY = col === 0 ? currentYLeft : currentYRight;
     
-            const words = [];
-            let tempWord = '';
-            for (let char of goal.title) {
-              tempWord += char;
-              if (tempWord.length > 20) {
-                words.push(tempWord);
-                tempWord = '';
+            // タイトルを20文字ごとに分割
+            const lines = [];
+            let tempLine = '';
+            for (let i = 0; i < goal.title.length; i++) {
+              tempLine += goal.title[i];
+              if (tempLine.length >= 20) {
+                lines.push(tempLine);
+                tempLine = '';
               }
             }
-            if (tempWord) words.push(tempWord);
-            const finalWords = [];
-            words.forEach(word => {
-              finalWords.push(...word.split(' '));
-            });
+            if (tempLine) lines.push(tempLine);
     
-            let line = '';
-            let i = 0;
-            const maxLines = 5;
+            // 行数カウント
             let lineCount = 0;
+            const maxLines = 5;
     
-            while (i < finalWords.length && lineCount < maxLines) {
-              const word = finalWords[i];
-              const testLine = line + word + ' ';
-              const metrics = ctx.measureText(testLine);
-    
-              if (metrics.width > maxWidth) {
-                if (line.trim() === '') {
-                  startY += lineHeight;
-                  lineCount++;
-                  i++;
-                  line = '';
-                } else {
-                  line = word + ' ';
-                  startY += lineHeight;
-                  lineCount++;
-                  i++;
-                }
-              } else {
-                line = testLine;
-                i++;
+            lines.forEach(line => {
+              if (lineCount < maxLines) {
+                startY += lineHeight;
+                lineCount++;
               }
-            }
-    
-            if (line.trim() !== '' && lineCount < maxLines) {
-              startY += lineHeight;
-              lineCount++;
-            }
+            });
     
             if (col === 0) {
               currentYLeft = startY + 4;
@@ -320,57 +295,39 @@
           ctx.font = `${fontSize}px sans-serif`;
     
           let startY = y;
-          let line = '';
-          const maxLines = 5;
           let lineCount = 0;
+          const maxLines = 5;
     
-          const words = [];
-          let tempWord = '';
-          for (let char of goal.title) {
-            tempWord += char;
-            if (tempWord.length > 20) {
-              words.push(tempWord);
-              tempWord = '';
+          // タイトルを20文字ごとに分割
+          const lines = [];
+          let tempLine = '';
+          for (let i = 0; i < goal.title.length; i++) {
+            tempLine += goal.title[i];
+            if (tempLine.length >= 20) {
+              lines.push(tempLine);
+              tempLine = '';
             }
           }
-          if (tempWord) words.push(tempWord);
-          const finalWords = [];
-          words.forEach(word => {
-            finalWords.push(...word.split(' '));
-          });
+          if (tempLine) lines.push(tempLine);
     
-          let i = 0;
-          while (i < finalWords.length && lineCount < maxLines) {
-            const word = finalWords[i];
-            const testLine = line + word + ' ';
-            const metrics = ctx.measureText(testLine);
-    
-            if (metrics.width > maxWidth) {
-              if (line.trim() === '') {
-                const truncatedWord = word.length > 20 ? word.substring(0, 20) + '...' : word;
-                ctx.fillText(truncatedWord, textX, startY);
-                startY += lineHeight;
-                lineCount++;
-                i++;
-                line = '';
+          // 各行を描画
+          lines.forEach(line => {
+            if (lineCount < maxLines) {
+              const metrics = ctx.measureText(line);
+              if (metrics.width > maxWidth) {
+                // 幅を超える場合は切り詰める
+                let truncatedLine = line;
+                while (ctx.measureText(truncatedLine + '...').width > maxWidth && truncatedLine.length > 0) {
+                  truncatedLine = truncatedLine.slice(0, -1);
+                }
+                ctx.fillText(truncatedLine + '...', textX, startY);
               } else {
-                ctx.fillText(line.trim(), textX, startY);
-                line = word + ' ';
-                startY += lineHeight;
-                lineCount++;
-                i++;
+                ctx.fillText(line, textX, startY);
               }
-            } else {
-              line = testLine;
-              i++;
+              startY += lineHeight;
+              lineCount++;
             }
-          }
-    
-          if (line.trim() !== '' && lineCount < maxLines) {
-            ctx.fillText(line.trim(), textX, startY);
-            startY += lineHeight;
-            lineCount++;
-          }
+          });
     
           if (col === 0) {
             currentYLeft = startY + 4;
@@ -394,9 +351,9 @@
     
         // ダウンロードボタンの設定
         downloadButton.href = imageData;
-        downloadButton.download = 'dreamscope100.png'; // ダウンロード時のファイル名
+        downloadButton.download = 'dreamscope100.png';
     
-        // Xシェアボタンの設定（達成済み目標数を反映）
+        // Xシェアボタンの設定
         const tweetText = encodeURIComponent(`人生でしたい100のこと\n${completedGoalsCount}個の目標を達成しました！🎉\n#DreamScope100`);
         const url = encodeURIComponent(window.location.href);
         twitterButton.href = `https://twitter.com/intent/tweet?text=${tweetText}&url=${url}`;
