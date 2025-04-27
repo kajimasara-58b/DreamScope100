@@ -88,6 +88,11 @@
     background-color: #333;
     transition: background-color 0.3s ease;
   }
+
+  #download-png {
+    background-color: #FFA230; /* オレンジ色で目立つように */
+    transition: background-color 0.3s ease;
+  }
 </style>
 
 <%= render "shared/header" %>
@@ -124,12 +129,15 @@
 
     <div id="image-preview" style="display: none;" class="fixed inset-0 w-full flex items-center justify-center bg-black/50 dialog">
       <div class="bg-white p-6 rounded-lg shadow text-center max-w-md max-h-[80vh] overflow-y-auto dialog-box">
-        <h3 class="text-lg font-bold mb-4">生成された画像</h3>
+        <h3 class="text-lg font-bold mb-4">画像プレビュー</h3>
         <div class="mb-6 image-container">
           <img id="preview-image" class="max-w-full block border border-gray-300" alt="Generated Image">
         </div>
-        <div class="mt-10">
-          <a id="share-twitter" class="bg-[#FFFFFF] text-white items-center px-4 py-2 rounded shadow">
+        <div class="mt-10 flex justify-center gap-4">
+          <a id="download-png" href="#" class="bg-[#FFA230] text-white flex items-center px-4 py-2 rounded shadow">
+            <i class="fas fa-download fa-xl mr-2"></i> PNGダウンロード
+          </a>
+          <a id="share-twitter" href="#" class="bg-[#333] text-white flex items-center px-4 py-2 rounded shadow">
             <i class="fa-brands fa-x-twitter fa-xl mr-2"></i> シェアする
           </a>
         </div>
@@ -144,6 +152,7 @@
       const button = document.getElementById("generate-image-button");
       const preview = document.getElementById("image-preview");
       const image = document.getElementById("preview-image");
+      const downloadButton = document.getElementById("download-png");
       const twitterButton = document.getElementById("share-twitter");
       const closeButton = document.getElementById("close-preview");
     
@@ -157,9 +166,9 @@
         // ---- Canvas作成処理 ----
         const canvas = document.createElement('canvas');
         canvas.width = 794;
-        const canvasHeight = 1223; // 固定の高さ
-        const creditSpace = 40; // クレジット用のスペース
-        const maxContentHeight = canvasHeight - creditSpace - 80; // 上部タイトル(80px)とクレジット用のスペースを除いた最大高さ
+        const canvasHeight = 1223;
+        const creditSpace = 40;
+        const maxContentHeight = canvasHeight - creditSpace - 80;
     
         const ctx = canvas.getContext('2d');
     
@@ -173,9 +182,12 @@
           };
         });
     
+        // 達成済みの目標数を計算
+        const completedGoalsCount = goals.filter(goal => goal.isChecked).length;
+    
         // 全体の高さを計算する関数
         const calculateTotalHeight = (fontSize) => {
-          const lineHeight = fontSize + 4; // フォントサイズに比例した行間
+          const lineHeight = fontSize + 4;
           const leftMaxWidth = 330;
           const rightMaxWidth = 364;
           let currentYLeft = 80;
@@ -188,7 +200,6 @@
             const maxWidth = col === 0 ? leftMaxWidth : rightMaxWidth;
             let startY = col === 0 ? currentYLeft : currentYRight;
     
-            // 長い文字列を強制的に分割
             const words = [];
             let tempWord = '';
             for (let char of goal.title) {
@@ -248,15 +259,14 @@
         };
     
         // フォントサイズを調整
-        let fontSize = 14; // 初期フォントサイズ
+        let fontSize = 14;
         let totalHeight = calculateTotalHeight(fontSize);
     
-        while (totalHeight > maxContentHeight && fontSize > 8) { // 最小フォントサイズを8pxに設定
+        while (totalHeight > maxContentHeight && fontSize > 8) {
           fontSize -= 1;
           totalHeight = calculateTotalHeight(fontSize);
         }
     
-        // 最終的なフォントサイズでキャンバスの高さを設定
         canvas.height = canvasHeight;
     
         // 背景を白に塗る
@@ -270,7 +280,7 @@
         ctx.textBaseline = "top";
         ctx.fillText("DreamScope100", canvas.width / 2, 30);
     
-        // 目標リストを描画（調整済みのフォントサイズを使用）
+        // 目標リストを描画
         const lineHeight = fontSize + 4;
         const leftMaxWidth = 330;
         const rightMaxWidth = 364;
@@ -300,7 +310,7 @@
           // 数字を描画
           const numberText = `${index + 1}.`;
           ctx.fillStyle = "#FFC276";
-          ctx.font = `${fontSize}px 'Aldrich', sans-serif`; // 調整済みのフォントサイズ
+          ctx.font = `${fontSize}px 'Aldrich', sans-serif`;
           ctx.textAlign = "left";
           ctx.fillText(numberText, baseX + 20, y);
     
@@ -314,7 +324,6 @@
           const maxLines = 5;
           let lineCount = 0;
     
-          // 長い文字列を強制的に分割
           const words = [];
           let tempWord = '';
           for (let char of goal.title) {
@@ -383,15 +392,20 @@
         image.src = imageData;
         preview.style.display = "flex";
     
+        // ダウンロードボタンの設定
+        downloadButton.href = imageData;
+        downloadButton.download = 'dreamscope100.png'; // ダウンロード時のファイル名
+    
+        // Xシェアボタンの設定（達成済み目標数を反映）
+        const tweetText = encodeURIComponent(`人生でしたい100のこと\n${completedGoalsCount}個の目標を達成しました！☑️`);
+        const url = encodeURIComponent(window.location.href);
+        twitterButton.href = `https://twitter.com/intent/tweet?text=${tweetText}&url=${url}`;
+    
         image.onload = () => {
           const imageContainer = image.parentElement;
           console.log("画像の幅:", image.width, "高さ:", image.height);
           console.log("コンテナの幅:", imageContainer.clientWidth, "高さ:", imageContainer.clientHeight);
         };
-    
-        const tweetText = encodeURIComponent("目標達成に向けてがんばっています！💪");
-        const url = encodeURIComponent(window.location.href);
-        twitterButton.href = `https://twitter.com/intent/tweet?text=${tweetText}&url=${url}`;
       });
     });
     </script>
@@ -409,7 +423,7 @@
             @goals.order(:id)
         end
       %>
-      <% goals_count = sorted_goals.count %> <!-- 現在の目標数 -->
+      <% goals_count = sorted_goals.count %>
       <% current_index = 1 %>
 
       <!-- 現在の目標を表示 -->
