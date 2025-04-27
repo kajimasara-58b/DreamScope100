@@ -93,6 +93,10 @@
   .dialog {
     max-height: 80vh;
   }
+  .dialog-box {
+    border: 3px solid #FFA230; /* 濃いめのオレンジで枠線 */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  }
   .image-container {
     max-height: 50vh;
     overflow: auto;
@@ -148,7 +152,7 @@
     </div>
 
     <div id="image-preview" style="display: none;" class="fixed inset-0 w-full flex items-center justify-center bg-black/50 dialog">
-      <div class="bg-white p-6 rounded-lg shadow text-center max-w-md max-h-[80vh] overflow-y-auto">
+      <div class="bg-white p-6 rounded-lg shadow text-center max-w-md max-h-[80vh] overflow-y-auto  dialog-box">
         <h3 class="text-lg font-bold mb-4">生成された画像</h3>
         <div class="mb-6 image-container">
           <img id="preview-image" class="max-w-full block border border-gray-300" alt="Generated Image">
