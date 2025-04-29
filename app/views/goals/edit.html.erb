@@ -1,8 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style>
   <!-- Turboのキャッシュを無効化 -->
   <meta name="turbo-cache-control" content="no-cache">
+
+  .button {
+    transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+  }
+
+  .button:hover {
+    background-color: #f0f0f0; /* ホバー時の背景色 */
+    color: #333; /* ホバー時の文字色 */
+  }
+
+  .button:active {
+    background-color: #e0e0e0; /* クリック時の背景色 */
+    color: #111; /* クリック時の文字色 */
+  }
+
+  .calendar-icon {
+    color: #FFC276;
+    transition: color 0.3s;
+  }
+
+  .calendar-icon:hover {
+    color: #FFA230;
+  }
+</style>
 </head>
 
 <%= render "shared/header" %>
@@ -25,9 +50,14 @@
           </div>
         </div>
 
-        <div class="mb-4">
+        <div>
           <%= form.label :due_date, "達成予定日" %>
-          <%= form.date_field :due_date, class: "rounded w-full py-2 px-3" %>
+        </div>
+        <div class="mb-4 flex items-center space-x-2">
+          <%= form.date_field :due_date, class: "rounded w-full py-2 px-3 mr-3", id: "goal-due-date-input-edit"%>
+          <button type="button" onclick="addToGoogleCalendar()" class="flex items-center cursor-pointer" title="Googleカレンダーに追加">
+            <i class="fas fa-calendar-plus text-3xl mr-2 calendar-icon"></i>
+          </button>
         </div>
 
         <div class="mb-4">
@@ -46,7 +76,7 @@
               <%= link_to "キャンセル", goal_path, class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow button" %>
             </div>
             <div class="actions mb-5 flex">
-              <%= form.submit "更新", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %>
+              <%= form.submit "更新", class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button cursor-pointer" %>
             </div>
           </div>
         </div>
@@ -81,6 +111,44 @@
 
       // 入力時のリアルタイム更新
       titleInput.addEventListener("input", updateCharCount);
+    };
+
+    function generateGoogleCalendarLink(title, date, description = "DreamScope100からの目標") {
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate)) {
+        throw new Error("無効な日付です。正しい日付を入力してください。");
+      }
+
+      const formattedDate = parsedDate.toISOString().replace(/[-:]/g, "").split(".")[0].slice(0, 8);
+      const encodedTitle = encodeURIComponent(title);
+      const encodedDescription = encodeURIComponent(description);
+      const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodedTitle}&dates=${formattedDate}/${formattedDate}&details=${encodedDescription}`;
+      return url;
+    }
+
+    function addToGoogleCalendar() {
+      const originalTitle = document.getElementById("goal-title-input-edit").value.trim();
+      const title = `達成予定日：${originalTitle}`;
+      const date = document.getElementById("goal-due-date-input-edit").value;
+
+      if (!title) {
+        alert("目標を入力してください！");
+        return;
+      }
+      if (!date) {
+        alert("達成予定日を選択してください！");
+        return;
+      }
+
+      // 古い予定の削除を促すアラート
+      alert("Googleカレンダーで古い予定（「" + title + "」）を削除してください。");
+
+      try {
+        const calendarUrl = generateGoogleCalendarLink(title, date);
+        window.open(calendarUrl, "_blank");
+      } catch (error) {
+        alert(error.message);
+      }
     };
 
     // Turboのレンダリング後に実行
