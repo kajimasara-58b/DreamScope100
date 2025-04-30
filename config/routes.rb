@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
+  get 'test', to: 'test#index'
   devise_for :users, controllers: {
     sessions: "users/sessions",
     registrations: "users/registrations",
-    passwords: "users/passwords"
+    passwords: "users/passwords",
+    omniauth_callbacks: "users/omniauth_callbacks"
   }
   devise_scope :user do
     post "send_password_reset", to: "users/registrations#send_password_reset", as: "send_password_reset"

@@ -13,6 +13,8 @@ class Users::SessionsController < Devise::SessionsController
   def create
     super
     if @resource.present?
+      # セッションにユーザーIDのみ保存
+      session[:user_id] = user.id
       flash[:notice] = "ログインしました"
     else
       flash.now[:warning] = "ログインできませんでした"
@@ -21,6 +23,7 @@ class Users::SessionsController < Devise::SessionsController
 
   # DELETE /resource/sign_out
   def destroy
+    session[:user_id] = nil # セッションをクリア
     super
     flash[:notice] = "ログアウトしました"
   end
