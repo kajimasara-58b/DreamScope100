@@ -23,7 +23,6 @@ class Users::SessionsController < Devise::SessionsController
 
   # DELETE /resource/sign_out
   def destroy
-    session[:user_id] = nil # セッションをクリア
     super
     flash[:notice] = "ログアウトしました"
   end
