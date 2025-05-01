@@ -21,6 +21,6 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:id, :email) # 必要な属性を指定すること
+    params.require(:user).permit(:id, :email, :provider) # 必要な属性を指定すること
   end
 end

@@ -28,14 +28,20 @@
     <main class="flex-grow p-4 flex flex-col items-center justify-center">
       <div class="w-full max-w-md">
         <!-- 入力内容を白いメモ風の背景で囲む -->
-        <div class="bg-white rounded p-8 mb-8">
-          <div class="bg-white p-4 mb-3 flex justify-between items-center">
-            <span class="text-lg">ユーザー名： <%= current_user.name %></span>
-            <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_path(current_user.id), class: "text-black", style: "margin-left: 10px;" %>
+        <div class="bg-white rounded p-8 mb-10">
+          <div class="bg-white p-4 mb-2">
+            <span class="text-left block mb-1">ユーザー名</span>
+            <div class="flex justify-between items-center">
+              <span class="text-lg block mt-1 w-full word-break: break-all" style="white-space: pre-wrap;"><%= current_user.name %></span>
+              <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_path(current_user.id), class: "text-black ml-2" %>
+            </div>
           </div>
-          <div class="bg-white p-4 flex justify-between items-center">
-            <span class="text-lg">メールアドレス： <%= current_user.email %></span>
-            <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_path(current_user.id), class: "text-black", style: "margin-left: 10px;" %>
+          <div class="bg-white p-4 mb-2">
+            <span class="text-left block mb-1">メールアドレス</span>
+            <div class="flex justify-between items-center">
+              <span class="text-lg block mt-1 w-full word-break: break-all" style="white-space: pre-wrap;"><%= current_user.email %></span>
+              <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_path(current_user.id), class: "text-black ml-2" %>
+            </div>
           </div>
         </div>  
 
