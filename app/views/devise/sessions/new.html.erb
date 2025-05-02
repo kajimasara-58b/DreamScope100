@@ -2,6 +2,8 @@
 <html>
 <style>
   .button {
+    width: 180px; /* 固定幅（LINEボタンに合わせる） */
+    height: 48px; /* 固定高さ */
     border-radius: 5px;
     text-align: center;
     display: inline-block;
@@ -20,6 +22,8 @@
     color: #111; /* クリック時の文字色 */
   }
   .btn-line {
+    width: 180px; /* 固定幅（LINEボタンに合わせる） */
+    height: 48px; /* 固定高さ */
     background-color: #00C300;
     color: white;
     padding: 10px 20px;
@@ -31,6 +35,25 @@
   }
   .btn-line:hover {
     background-color: #00A300;
+  }
+
+  /* 「または」のスタイル */
+  .or-container {
+    display: flex;
+    align-items: center;
+    width: 200px; /* ボタンと同じ幅 */
+    margin: 20px 0;
+  }
+
+  .or-line {
+    flex: 1;
+    height: 1px;
+    background-color: black; /* 薄いグレー */
+  }
+
+  .or-text {
+    margin: 0 10px;
+    font-size: 13px;
   }
 </style>
 
@@ -70,7 +93,14 @@
       </div>
     <% end %>
 
-    <div class="mt-2 mb-7">
+    <!-- 「または」のセクション -->
+    <div class="or-container">
+      <div class="or-line"></div>
+      <span class="or-text">または</span>
+      <div class="or-line"></div>
+    </div>
+
+    <div class="mt-2 mb-10">
       <%= button_to "LINEでログイン", user_line_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "btn btn-line" %>
     </div>
 
