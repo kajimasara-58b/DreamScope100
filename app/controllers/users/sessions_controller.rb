@@ -13,6 +13,8 @@ class Users::SessionsController < Devise::SessionsController
   def create
     super
     if @resource.present?
+      # セッションにユーザーIDのみ保存
+      session[:user_id] = user.id
       flash[:notice] = "ログインしました"
     else
       flash.now[:warning] = "ログインできませんでした"

@@ -2,6 +2,13 @@
 <html>
 <style>
   .button {
+    width: 180px; /* 固定幅（LINEボタンに合わせる） */
+    height: 48px; /* 固定高さ */
+    border-radius: 5px;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+    padding: 10px 20px;
     transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
   }
 
@@ -13,6 +20,40 @@
   .button:active {
     background-color: #e0e0e0; /* クリック時の背景色 */
     color: #111; /* クリック時の文字色 */
+  }
+  .btn-line {
+    width: 180px; /* 固定幅（LINEボタンに合わせる） */
+    height: 48px; /* 固定高さ */
+    background-color: #00C300;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+  }
+  .btn-line:hover {
+    background-color: #00A300;
+  }
+
+  /* 「または」のスタイル */
+  .or-container {
+    display: flex;
+    align-items: center;
+    width: 200px; /* ボタンと同じ幅 */
+    margin: 20px 0;
+  }
+
+  .or-line {
+    flex: 1;
+    height: 1px;
+    background-color: black; /* 薄いグレー */
+  }
+
+  .or-text {
+    margin: 0 10px;
+    font-size: 13px;
   }
 </style>
 
@@ -33,7 +74,7 @@
         <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "rounded w-full py-2 px-3" %>
       </div>
 
-      <div class="field mb-4">
+      <div class="field mb-1">
         <%= f.label :password %>
         <%= f.password_field :password, autocomplete: "current-password", class: "rounded w-full py-2 px-3 mb-5" %>
       </div>
@@ -45,12 +86,23 @@
         </div>
       <% end %>
 
-      <div class="actions mb-5 flex justify-center">
+      <div class="actions mb-2 flex justify-center">
         <%= button_tag type: 'submit', class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" do %>
           <i class="fas fa-sign-in-alt mr-2"></i>ログイン
         <% end %>
       </div>
     <% end %>
+
+    <!-- 「または」のセクション -->
+    <div class="or-container">
+      <div class="or-line"></div>
+      <span class="or-text">または</span>
+      <div class="or-line"></div>
+    </div>
+
+    <div class="mt-2 mb-10">
+      <%= button_to "LINEでログイン", user_line_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "btn btn-line" %>
+    </div>
 
     <%= render "devise/shared/links", class: "mt-4" %>
   </main>

@@ -103,4 +103,8 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   config.action_mailer.delivery_method = :letter_opener_web
+  config.force_ssl = false
+  # config.ssl_options = { redirect: { port: 3001 } }
+
+  config.log_level = :debug
 end

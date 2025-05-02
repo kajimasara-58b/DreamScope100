@@ -43,3 +43,5 @@
 .DS_Store
 /vendor/bundle
 /.env
+
+localhost-key.pem
