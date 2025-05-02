@@ -3,11 +3,30 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
+  before_action :authenticate_user!, except: [ :email, :update_email ]
+  skip_before_action :require_no_authentication, only: [ :email, :update_email ]
 
   # GET /resource/sign_up
   # def new
   #   super
   # end
+
+  def email
+    @user = User.new(name: session[:line_auth]&.dig("name"))
+  end
+
+  def update_email
+    @user = User.new(user_params.merge(line_uid: session[:line_auth]["uid"], provider: "line"))
+    if @user.save
+      sign_in(@user)
+      session.delete(:line_auth)
+      redirect_to dashboard_index_path, notice: "メールアドレスを登録しました！"
+    else
+      flash.now[:alert] = @user.errors.full_messages.join(", ")
+      render :email, status: :unprocessable_entity
+    end
+  end
+
 
   # POST /resource
   def create

@@ -67,8 +67,8 @@
   <main class="flex-grow p-4 flex flex-col items-center justify-center">
     <h2 class="text-3xl mb-4">ログイン</h2>
 
-    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "w-full max-w-md" }) do |f| %>
-
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "w-full max-w-md", data: { turbo: false } }) do |f| %>
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
       <div class="field mb-4">
         <%= f.label :email %>
         <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "rounded w-full py-2 px-3" %>

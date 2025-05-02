@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<style>
+  .button { width: 160px; height: 48px; border-radius: 5px; text-align: center; display: inline-block; text-decoration: none; padding: 10px 20px; transition: background-color 0.3s, color 0.3s; }
+  .button:hover { background-color: #f0f0f0; color: #333; }
+  .button:active { background-color: #e0e0e0; color: #111; }
+</style>
+<%= render "shared/beforelogin_header" %>
+
+<% if flash[:alert].present? %>
+  <div class="flash alert" style="color: red;"><%= flash[:alert] %></div>
+<% end %>
+
+<body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
+  <main class="flex-grow p-4 flex flex-col items-center justify-center">
+    <h2 class="text-3xl mb-4">メールアドレス登録</h2>
+    <p class="mb-6 text-center">
+      ◆アカウントを保護するため、メールアドレスとパスワードの登録をお願いします◆
+    </p>
+
+    <%= form_with model: @user, url: user_update_email_path, local: true, html: { class: "w-full max-w-md", data: { turbo: false } } do |f| %>
+      <div class="field mb-4">
+        <%= f.label :email, "メールアドレス" %>
+        <%= f.email_field :email, class: "rounded w-full py-2 px-3" %>
+      </div>
+      <div class="field mb-4">
+        <%= f.label :password, "パスワード" %>
+        <%= f.password_field :password, required: true, class: "rounded w-full py-2 px-3" %>
+      </div>
+      <div class="field mb-8">
+        <%= f.label :password_confirmation, "パスワード（確認）" %>
+        <%= f.password_field :password_confirmation, required: true, class: "rounded w-full py-2 px-3" %>
+      </div>
+      <div class="actions flex justify-center">
+        <%= f.submit "登録", class: "bg-white text-black px-4 py-2 rounded shadow button" %>
+        <%= link_to "あとで登録する", dashboard_index_path, class: "bg-gray-300 text-black px-4 py-2 rounded shadow button", data: { turbo: false } %>
+      </div>
+    <% end %>
+  </main>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <%= render "shared/footer" %>
+</body>
+</html>

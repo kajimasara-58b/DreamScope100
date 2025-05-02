@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   devise_scope :user do
     post "send_password_reset", to: "users/registrations#send_password_reset", as: "send_password_reset"
     get "users/done", to: "users/registrations#done", as: "registration_done"
+    get "users/email", to: "users/registrations#email", as: "user_email_registration"
+    post "users/email", to: "users/registrations#update_email", as: "user_update_email"
   end
 
   namespace :public do
