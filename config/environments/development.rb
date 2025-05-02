@@ -105,4 +105,6 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :letter_opener_web
   config.force_ssl = false
   # config.ssl_options = { redirect: { port: 3001 } }
+
+  config.log_level = :debug
 end

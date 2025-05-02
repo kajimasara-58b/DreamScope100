@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_user_id_cookie
+  protect_from_forgery with: :exception
 
   private
 
