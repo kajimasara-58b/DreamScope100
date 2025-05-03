@@ -39,7 +39,11 @@
           <div class="bg-white p-4 mb-2">
             <span class="text-left block mb-1">メールアドレス</span>
             <div class="flex justify-between items-center">
-              <span class="text-lg block mt-1 w-full word-break: break-all" style="white-space: pre-wrap;"><%= current_user.email %></span>
+              <% if current_user.email.present? %>
+                <span class="text-lg block mt-1 w-full word-break: break-all" style="white-space: pre-wrap;"><%= current_user.email %></span>
+              <% else %>
+                <span class="text-lg block mt-1 w-full text-gray-500" style="white-space: pre-wrap;">未設定</span>
+              <% end %>
               <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_path(current_user.id), class: "text-black ml-2" %>
             </div>
           </div>
