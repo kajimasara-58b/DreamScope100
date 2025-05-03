@@ -16,11 +16,15 @@ class User < ApplicationRecord
   validates :uid, presence: true, uniqueness: { scope: :provider }, on: :save
 
   # デフォルト値を設定
-  # before_validation :set_default_provider_and_uid, on: :create
+  before_validation :set_default_provider_and_uid, on: :create
 
   # メールアドレスの必須性をproviderに応じて設定
   def email_required?
     provider == "email"
+  end
+
+  def password_required?
+    provider == "email" && super
   end
 
   def self.from_omniauth(auth)
@@ -32,5 +36,10 @@ class User < ApplicationRecord
   def set_default_provider_and_uid
     self.provider ||= "email" if provider.blank? # 通常ログインの場合
     self.uid ||= SecureRandom.uuid if uid.blank? # 一意の値を生成
+  end
+
+  def encrypted_password_changed?
+    return false if provider == "line" && encrypted_password.blank?
+    super
   end
 end

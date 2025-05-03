@@ -3,8 +3,8 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
-  before_action :authenticate_user!, except: [ :email, :update_email ]
-  skip_before_action :require_no_authentication, only: [ :email, :update_email ]
+  before_action :authenticate_user!, except: [ :email, :update_email, :skip_email_registration ]
+  skip_before_action :require_no_authentication, only: [ :email, :update_email, :skip_email_registration ]
 
   # GET /resource/sign_up
   # def new
@@ -16,7 +16,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def update_email
-    @user = User.new(user_params.merge(line_uid: session[:line_auth]["uid"], provider: "line"))
+    @user = User.new(user_params.merge(
+      line_uid: session[:line_auth]["uid"],
+      provider: "line",
+      name: session[:line_auth]["name"] || "LINEユーザー"
+    ))
     if @user.save
       sign_in(@user)
       session.delete(:line_auth)
@@ -27,6 +31,31 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  def skip_email_registration
+    Rails.logger.debug "skip_email_registration called with params: #{params.inspect}, session: #{session.inspect}"
+    unless session[:line_auth]
+      redirect_to new_user_session_path, alert: "LINEログイン情報がありません。もう一度ログインしてください。"
+      return
+    end
+
+    @user = User.new(
+      line_uid: session[:line_auth]["uid"],
+      provider: "line",
+      name: session[:line_auth]["name"] || "LINEユーザー",
+      email: nil,
+      password: nil,
+      uid: session[:line_auth]["uid"]
+    )
+    if @user.save
+      sign_in(@user)
+      session.delete(:line_auth)
+      redirect_to dashboard_index_path, notice: "LINE認証でログインしました。アプリ内でメールアドレスとパスワードを設定できます"
+    else
+      Rails.logger.debug "User save failed: #{@user.errors.full_messages}"
+      flash.now[:alert] = @user.errors.full_messages.join(", ")
+      render :email, status: :unprocessable_entity
+    end
+  end
 
   # POST /resource
   def create

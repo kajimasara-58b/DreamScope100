@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     get "users/done", to: "users/registrations#done", as: "registration_done"
     get "users/email", to: "users/registrations#email", as: "user_email_registration"
     post "users/email", to: "users/registrations#update_email", as: "user_update_email"
+    post "users/skip_email", to: "users/registrations#skip_email_registration", as: "skip_email_registration" 
   end
 
   namespace :public do
