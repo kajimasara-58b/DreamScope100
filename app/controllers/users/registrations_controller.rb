@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
-  before_action :authenticate_user!, except: [:email, :update_email, :skip_email_registration]
-  skip_before_action :require_no_authentication, only: [:email, :update_email, :skip_email_registration]
+  before_action :authenticate_user!, except: [ :email, :update_email, :skip_email_registration ]
+  skip_before_action :require_no_authentication, only: [ :email, :update_email, :skip_email_registration ]
 
   def email
     @user = User.new(name: session[:line_auth]&.dig("name"))
@@ -82,6 +82,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   protected
 
   def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :email, :uid, :provider])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :name, :email, :uid, :provider ])
   end
 end

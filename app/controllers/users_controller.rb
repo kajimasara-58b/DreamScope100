@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!, except: [:link_account] # ログインしていない場合、ログインページにリダイレクト
+  before_action :authenticate_user!, except: [ :link_account ] # ログインしていない場合、ログインページにリダイレクト
   def show
     @user = current_user
   end
@@ -96,7 +96,6 @@ class UsersController < ApplicationController
     if @user.email.blank?
       flash[:alert] = "メールアドレスを設定してください。"
       redirect_to users_show_path
-      return
     end
   end
   
