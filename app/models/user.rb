@@ -17,9 +17,11 @@ class User < ApplicationRecord
   validates :email, presence: true, if: -> { provider == "email" } # 通常ログインで必須
   validates :provider, presence: true, on: :save # 登録時はコールバックで設定
   validates :uid, presence: true, uniqueness: { scope: :provider, conditions: -> { where(active: true) } }, on: :save
+  validates :is_dummy_password, inclusion: { in: [true, false] }, allow_nil: false
 
   # デフォルト値を設定
   before_validation :set_default_provider_and_uid, on: :create
+  before_validation :set_default_is_dummy_password, on: :create
 
   # メールアドレスの必須性をproviderに応じて設定
   def email_required?
@@ -51,6 +53,14 @@ class User < ApplicationRecord
   def set_default_provider_and_uid
     self.provider ||= "email" if provider.blank? # 通常ログインの場合
     self.uid ||= SecureRandom.uuid if uid.blank? # 一意の値を生成
+  end
+
+  def set_default_is_dummy_password
+    if provider == "line" && password.nil?
+      self.is_dummy_password = true
+    elsif is_dummy_password.nil?
+      self.is_dummy_password = false
+    end
   end
 
   def encrypted_password_changed?

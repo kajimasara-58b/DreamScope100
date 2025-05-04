@@ -91,9 +91,35 @@ class UsersController < ApplicationController
     end
   end
 
+  def edit_password
+    @user = current_user
+    if @user.email.blank?
+      flash[:alert] = "メールアドレスを設定してください。"
+      redirect_to users_show_path
+      return
+    end
+  end
+  
+  def update_password
+    @user = current_user
+    if @user.update(password_params)
+      @user.update(is_dummy_password: false)
+      sign_in(@user, event: :authentication, bypass: true)
+      redirect_to users_show_path, notice: "パスワードを更新しました。"
+    else
+      flash[:alert] = "パスワードの更新に失敗しました。入力内容を確認してください。"
+      render :edit_password, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def user_params
     params.require(:user).permit(:name, :email, :provider, :line_uid) # 必要な属性のみ指定
   end
+
+  def password_params
+    params.require(:user).permit(:password, :password_confirmation)
+  end
+    
 end

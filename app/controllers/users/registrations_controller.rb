@@ -38,7 +38,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
       name: session[:line_auth]["name"] || "LINEユーザー",
       email: nil,
       password: nil,
-      active: true
+      active: true,
+      is_dummy_password: true # LINEログインではパスワード未設定
     )
     if @user.save
       sign_in(@user)
