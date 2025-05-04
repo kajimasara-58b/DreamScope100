@@ -98,7 +98,7 @@ class UsersController < ApplicationController
       redirect_to users_show_path
     end
   end
-  
+
   def update_password
     @user = current_user
     if @user.update(password_params)
@@ -120,5 +120,5 @@ class UsersController < ApplicationController
   def password_params
     params.require(:user).permit(:password, :password_confirmation)
   end
-    
+
 end
