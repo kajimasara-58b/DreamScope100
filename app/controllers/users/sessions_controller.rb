@@ -18,7 +18,9 @@ class Users::SessionsController < Devise::SessionsController
       session[:user_id] = resource.id
       respond_with resource, location: after_sign_in_path_for(resource)
     else
-      flash.now[:warning] = "メールアドレスまたはパスワードが正しくありません"
+      # 認証失敗時、resourceを初期化して入力値を保持
+      self.resource = User.new(user_params.slice(:email))
+      flash.now[:alert] = "メールアドレスまたはパスワードが正しくありません"
       render :new, status: :unprocessable_entity
     end
   end

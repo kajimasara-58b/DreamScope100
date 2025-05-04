@@ -12,11 +12,11 @@ class User < ApplicationRecord
 
   # バリデーション
   validates :name, presence: true
-  validates :uid, uniqueness: { scope: :provider, allow_nil: true, conditions: -> { where(active: true) } } 
+  validates :uid, uniqueness: { scope: :provider, allow_nil: true, conditions: -> { where(active: true) } }, if: -> { provider == "line" }
   validates :email, uniqueness: { allow_nil: true }, if: -> { email.present? && provider == "email" }
   validates :email, presence: true, if: -> { provider == "email" } # 通常ログインで必須
   validates :provider, presence: true, on: :save # 登録時はコールバックで設定
-  validates :uid, presence: true, uniqueness: { scope: :provider, conditions: -> { where(active: true) } }, on: :save
+  validates :uid, presence: true, if: -> { provider == "line" } # LINEログインでのみ必須
   validates :is_dummy_password, inclusion: { in: [true, false] }, allow_nil: false
 
   # デフォルト値を設定
