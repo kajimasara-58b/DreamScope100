@@ -29,6 +29,10 @@
                 <span class="text-left"><%= @goal.status %></span>
             </div>
             <div class="mb-2">
+                <span class="text-left mb-8">通知設定：</span>
+                <span class="text-left"><%= @goal.notify_enabled? ? "ON" : "OFF" %></span>
+            </div>
+            <div class="mb-2">
                 <span class="text-left mb-8">カテゴリー：</span>
                 <span class="text-left"><%= @goal.category %></span>
             </div>

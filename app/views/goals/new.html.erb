@@ -53,6 +53,9 @@
   .text_nitimae {
     width: 55px;
   }
+  .form-section {
+    width: 50%; /* 半分ずつ */
+  }
 </style>
 </head>
 
@@ -62,7 +65,7 @@
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto" data-page="goal-new">
   <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">  
-    <div class="actions mb-4 flex mr-5">
+    <div class="actions mb-7 flex mr-5">
       <% breadcrumb :goal_new %>
       <%= breadcrumbs separator: " › " %>
     </div>
@@ -87,13 +90,13 @@
         </div>
 
         <div class="mb-4 flex gap-x-8">
-          <div class="w-1/2 mr-5">
+          <div class="w-1/2 mr-5 form-section">
             <%= form.label :status, "達成状況" %>
             <%= form.select :status, Goal.statuses.keys.map { |status| [status.humanize, status] }, { prompt: '選択してください' }, { class: "rounded p-2 w-full form-uniform-height" } %>
           </div>
         
           <!-- 通知設定 -->
-          <div class="w-1/2">
+          <div class="w-1/2 form-section">
             <%= form.label :notify_enabled, "通知設定" %>
             <div class="flex items-center rounded bg-white p-2 form-uniform-height">
               
@@ -186,7 +189,7 @@
       const date = document.getElementById("goal-due-date-input-new").value;
 
       // 入力バリデーション
-      if (!title) {
+      if (!originalTitle) {
         alert("目標を入力してください！");
         return;
       }
@@ -206,7 +209,7 @@
     // Turboのレンダリング後に実行
     document.addEventListener("turbo:render", initializeCharCountNew);
     // 初回ロード時にも実行
-    document.addEventListener("DOMContentLoaded", initializeCharCountNew);
+    document.addEventListener("turbo:load", initializeCharCountNew);
   </script>
 </body>
 
