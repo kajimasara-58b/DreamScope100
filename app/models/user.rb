@@ -7,42 +7,69 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :omniauthable, omniauth_providers: [ :line ]
 
+  # スコープ
+  scope :active, -> { where(active: true) }
+
   # バリデーション
-  # validates :provider, presence: true
-  # validates :uid, presence: true, uniqueness: { scope: :provider }
+  validates :name, presence: true
+  validates :uid, uniqueness: { scope: :provider, allow_nil: true, conditions: -> { where(active: true) } }, if: -> { provider == "line" }
+  validates :email, uniqueness: { allow_nil: true }, if: -> { email.present? && provider == "email" }
+  validates :email, presence: true, if: -> { provider == "email" } # 通常ログインで必須
+  validates :provider, presence: true, on: :save # 登録時はコールバックで設定
+  validates :uid, presence: true, if: -> { provider == "line" } # LINEログインでのみ必須
+  validates :is_dummy_password, inclusion: { in: [ true, false ] }, allow_nil: false
 
   # デフォルト値を設定
   before_validation :set_default_provider_and_uid, on: :create
+  before_validation :set_default_is_dummy_password, on: :create
 
-  def self.from_omniauth(auth)
-    # 1. providerとuidで既存ユーザーを検索
-    user = find_by(provider: auth.provider, uid: auth.uid)
-
-    # 2. 見つからない場合、メールアドレスで既存ユーザーを検索
-    unless user
-      user = find_by(email: auth.info.email)
-      if user
-        # 既存ユーザーが見つかった場合、providerとuidを更新
-        user.update(provider: auth.provider, uid: auth.uid)
-      end
-    end
-
-    # 3. それでも見つからない場合、新規ユーザーを作成
-    user ||= first_or_create(provider: auth.provider, uid: auth.uid) do |new_user|
-      new_user.email = auth.info.email || "default_#{auth.uid}@example.com"
-      new_user.password = Devise.friendly_token[0, 20]
-      new_user.name = auth.info.name
-    end
-
-    user
+  # メールアドレスの必須性をproviderに応じて設定
+  def email_required?
+    provider == "email"
   end
 
-  validates :email, uniqueness: true
+  def password_required?
+    provider == "email" && super
+  end
+
+  def self.from_omniauth(auth)
+    find_by(provider: auth.provider, uid: auth.uid, active: true) ||
+    create_with_omniauth(auth)
+  end
+
+  def self.create_with_omniauth(auth)
+    create! do |user|
+      user.provider = auth.provider
+      user.uid = auth.uid
+      user.email = auth.info.email || "line_#{auth.uid}@example.com"
+      user.name = auth.info.name || "LINE User"
+      user.password = Devise.friendly_token[0, 20]
+      user.active = true
+    end
+  end
 
   private
 
   def set_default_provider_and_uid
-    self.provider ||= "email" # 通常ログインの場合
-    self.uid ||= SecureRandom.uuid # 一意の値を生成
+    self.provider ||= "email" if provider.blank? # 通常ログインの場合
+    self.uid ||= SecureRandom.uuid if uid.blank? # 一意の値を生成
+  end
+
+  def set_default_is_dummy_password
+    if provider == "line" && password.nil?
+      self.is_dummy_password = true
+    elsif is_dummy_password.nil?
+      self.is_dummy_password = false
+    end
+  end
+
+  def encrypted_password_changed?
+    return false if provider == "line" && encrypted_password.blank?
+    super
+  end
+
+  def generate_link_token
+    self.link_token = SecureRandom.urlsafe_base64(32)
+    self.link_token_sent_at = Time.current
   end
 end

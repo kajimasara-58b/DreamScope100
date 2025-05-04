@@ -14,10 +14,19 @@
     background-color: #e0e0e0; /* クリック時の背景色 */
     color: #111; /* クリック時の文字色 */
   }
+
+  .alert {
+    color: red; /* Tailwind red-500 */
+  }
 </style>
 
 <%= render "shared/header" %>
 <p style="color: green"><%= notice %></p>
+<% if flash[:alert] %>
+  <div class="alert alert-danger">
+    <%= flash[:alert] %>
+  </div>
+<% end %>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
   <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">  
@@ -27,27 +36,41 @@
     </div>
     <main class="flex-grow p-4 flex flex-col items-center justify-center">
       <div class="w-full max-w-md">
-        <!-- 入力内容を白いメモ風の背景で囲む -->
-        <div class="bg-white rounded p-8 mb-10">
-          <div class="bg-white p-4 mb-2">
-            <span class="text-left block mb-1">ユーザー名</span>
-            <div class="flex justify-between items-center">
-              <span class="text-lg block mt-1 w-full word-break: break-all" style="white-space: pre-wrap;"><%= current_user.name %></span>
-              <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_path(current_user.id), class: "text-black ml-2" %>
-            </div>
+      <!-- 1つ目の白枠：ユーザー名 + メールアドレス -->
+      <div class="bg-white rounded p-8 mb-6">
+        <div class="p-4">
+          <span class="text-left block mb-1">ユーザー名</span>
+          <div class="flex justify-between items-center">
+            <span class="text-lg block mt-1 w-full word-break: break-all" style="white-space: pre-wrap;"><%= current_user.name %></span>
           </div>
-          <div class="bg-white p-4 mb-2">
-            <span class="text-left block mb-1">メールアドレス</span>
-            <div class="flex justify-between items-center">
+        </div>
+        <div class="p-4">
+          <span class="text-left block mb-1">メールアドレス</span>
+          <div class="flex justify-between items-center">
+            <% if current_user.email.present? %>
               <span class="text-lg block mt-1 w-full word-break: break-all" style="white-space: pre-wrap;"><%= current_user.email %></span>
-              <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_path(current_user.id), class: "text-black ml-2" %>
-            </div>
+            <% else %>
+              <span class="text-lg block mt-1 w-full text-gray-500" style="white-space: pre-wrap;">未設定</span>
+            <% end %>
+            <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_path(current_user.id), class: "text-black ml-2" %>
           </div>
-        </div>  
+        </div>
+      </div>
 
-        <div class="actions flex justify-center">
-          <%= link_to "パスワード変更はこちら", edit_user_registration_path, class: "underline" %> 
-        </div> 
+      <!-- 2つ目の白枠：パスワード -->
+      <div class="bg-white rounded p-8 mb-4">
+        <div class="p-4">
+          <span class="text-left block mb-1">パスワード</span>
+          <div class="flex justify-between items-center">
+            <% if current_user.is_dummy_password %>
+              <span class="text-lg block mt-1 w-full text-gray-500" style="white-space: pre-wrap;">未設定</span>
+              <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_password_users_path, class: "text-black ml-2" %>
+            <% else %>
+              <span class="text-lg block mt-1 w-full word-break: break-all" style="white-space: pre-wrap;">設定済み</span>
+              <%= link_to content_tag(:i, '', class: 'fas fa-pencil-alt'), edit_user_registration_path, class: "text-black ml-2" %>
+            <% end %>
+          </div>
+        </div>
       </div>  
     </main>
   </div>  

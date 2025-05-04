@@ -57,7 +57,12 @@ crumb :users_show do
 end
 
 crumb :users_edit do
-  link "編集", edit_user_registration_path
+  link "ユーザー名・メールアドレス編集", edit_user_registration_path
+  parent :users_show
+end
+
+crumb :edit_password_users do
+  link "パスワード新規登録", edit_password_users_path
   parent :users_show
 end
 

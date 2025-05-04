@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   get "test", to: "test#index"
+  get "users/edit_password", to: "users#edit_password", as: :edit_password_users
+  patch "users/update_password", to: "users#update_password", as: :update_password_users
   devise_for :users, controllers: {
     sessions: "users/sessions",
     registrations: "users/registrations",
@@ -9,6 +11,9 @@ Rails.application.routes.draw do
   devise_scope :user do
     post "send_password_reset", to: "users/registrations#send_password_reset", as: "send_password_reset"
     get "users/done", to: "users/registrations#done", as: "registration_done"
+    get "users/email", to: "users/registrations#email", as: "user_email_registration"
+    post "users/email", to: "users/registrations#update_email", as: "user_update_email"
+    post "users/skip_email", to: "users/registrations#skip_email_registration", as: "skip_email_registration"
   end
 
   namespace :public do
@@ -21,7 +26,11 @@ Rails.application.routes.draw do
       end
     end
   end
-  resources :users, only: [ :edit, :update ]
+  resources :users, only: [ :show, :edit, :update ] do
+    get :check_email, on: :collection
+    get :initiate_link_account, on: :collection
+    get :link_account, on: :collection
+  end
   get "home/index"
   get "tweet/index"
   get "riyoukiyaku/index"

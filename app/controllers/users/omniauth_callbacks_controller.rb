@@ -1,18 +1,21 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def line
     auth = request.env["omniauth.auth"]
+    @user = User.find_by(provider: auth.provider, uid: auth.uid, active: true)
     Rails.logger.info "LINE Auth Info: #{auth.to_json}" # デバッグ用ログ
 
-    @user = User.from_omniauth(request.env["omniauth.auth"])
-    if @user.persisted?
+    if @user
+      # 2回目以降のログイン
       sign_in_and_redirect @user, event: :authentication
       set_flash_message(:notice, :success, kind: "LINE") if is_navigational_format?
     else
-      redirect_to new_user_registration_url
+      # 初回ログイン
+      session[:line_auth] = { uid: auth.uid, name: auth.info.name || "LINEユーザー" }
+      redirect_to user_email_registration_path
     end
   end
 
   def failure
-    redirect_to root_path
+    redirect_to new_user_session_path, alert: "LINEログインに失敗しました"
   end
 end

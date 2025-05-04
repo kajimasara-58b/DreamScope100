@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Users::SessionsController < Devise::SessionsController
-  before_action :authenticate_user!, except: [ :new ]
+  before_action :authenticate_user!, except: [ :new, :create ]
   # before_action :configure_sign_in_params, only: [:create]
 
   # GET /resource/sign_in
@@ -11,13 +11,17 @@ class Users::SessionsController < Devise::SessionsController
 
   # POST /resource/sign_in
   def create
-    super
-    if @resource.present?
-      # セッションにユーザーIDのみ保存
-      session[:user_id] = user.id
-      flash[:notice] = "ログインしました"
+    self.resource = warden.authenticate(auth_options)
+    if resource
+      set_flash_message!(:notice, :signed_in)
+      sign_in(resource_name, resource)
+      session[:user_id] = resource.id
+      respond_with resource, location: after_sign_in_path_for(resource)
     else
-      flash.now[:warning] = "ログインできませんでした"
+      # 認証失敗時、resourceを初期化して入力値を保持
+      self.resource = User.new(user_params.slice(:email))
+      flash.now[:alert] = "メールアドレスまたはパスワードが正しくありません"
+      render :new, status: :unprocessable_entity
     end
   end
 
