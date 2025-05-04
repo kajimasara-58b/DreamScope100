@@ -54,10 +54,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def create
     super do |resource|
-      if resource.persisted?
-        sign_out(resource)
-        redirect_to new_user_session_path, notice: "登録が完了しました。ログインしてください。" and return
-      end
+      # オートログインに変更
+      # if resource.persisted?
+      #   sign_out(resource)
+      #   redirect_to new_user_session_path, notice: "登録が完了しました。ログインしてください。" and return
+      # end
     end
   end
 
