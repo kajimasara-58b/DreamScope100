@@ -38,8 +38,8 @@ ja:
         user:
           attributes:
             email:
-              blank: を入力してください
-              taken: はすでに使用されています
+              blank: メールアドレスを入力してください
+              taken: このメールアドレスはすでに使用されています
             password:
               blank: を入力してください
               too_short: は%{count}文字以上で入力してください

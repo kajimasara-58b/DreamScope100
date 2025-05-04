@@ -24,7 +24,11 @@ Rails.application.routes.draw do
       end
     end
   end
-  resources :users, only: [ :edit, :update ]
+  resources :users, only: [ :show, :edit, :update ] do
+    get :check_email, on: :collection
+    get :initiate_link_account, on: :collection
+    get :link_account, on: :collection
+  end
   get "home/index"
   get "tweet/index"
   get "riyoukiyaku/index"

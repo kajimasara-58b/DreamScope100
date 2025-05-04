@@ -14,12 +14,15 @@
     background-color: #e0e0e0; /* クリック時の背景色 */
     color: #111; /* クリック時の文字色 */
   }
+  .alert {
+    color: red; /* Tailwind red-500 */
+  }
 </style>
 
 <%= render "shared/header" %>
 <% if flash[:alert] %>
   <div class="alert alert-danger">
-    <p><%= flash[:alert] %></p>
+    <%= flash[:al　ert] %>
   </div>
 <% end %>
 
@@ -52,6 +55,33 @@
             </div>
         </div>
       <% end %>
+
+      <script>
+      document.addEventListener("turbo:load", () => {
+        const emailInput = document.querySelector("#user_email");
+        const form = document.querySelector("form");
+        if (emailInput) {
+          emailInput.addEventListener("blur", async () => {
+            const email = emailInput.value;
+            if (email) {
+              const response = await fetch(`/users/check_email?email=${encodeURIComponent(email)}`, {
+                headers: { Accept: "application/json" },
+              });
+              const data = await response.json();
+              if (data.conflict) {
+                const confirmLink = confirm(data.message);
+                if (confirmLink) {
+                  window.location.href = `/users/initiate_link_account?email=${encodeURIComponent(email)}`;
+                } else {
+                  emailInput.value = "";
+                  emailInput.focus();
+                }
+              }
+            }
+          });
+        }
+      });
+      </script>
     </main>
   </div>  
 </body>

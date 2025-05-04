@@ -7,13 +7,16 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :omniauthable, omniauth_providers: [ :line ]
 
+  # スコープ
+  scope :active, -> { where(active: true) }
+
   # バリデーション
   validates :name, presence: true
-  validates :line_uid, uniqueness: { allow_nil: true }
-  validates :email, uniqueness: { allow_nil: true }, if: -> { email.present? }
+  validates :uid, uniqueness: { scope: :provider, allow_nil: true, conditions: -> { where(active: true) } } 
+  validates :email, uniqueness: { allow_nil: true }, if: -> { email.present? && provider == "email" }
   validates :email, presence: true, if: -> { provider == "email" } # 通常ログインで必須
   validates :provider, presence: true, on: :save # 登録時はコールバックで設定
-  validates :uid, presence: true, uniqueness: { scope: :provider }, on: :save
+  validates :uid, presence: true, uniqueness: { scope: :provider, conditions: -> { where(active: true) } }, on: :save
 
   # デフォルト値を設定
   before_validation :set_default_provider_and_uid, on: :create
@@ -28,7 +31,19 @@ class User < ApplicationRecord
   end
 
   def self.from_omniauth(auth)
-    find_by(line_uid: auth.uid)
+    find_by(provider: auth.provider, uid: auth.uid, active: true) ||
+    create_with_omniauth(auth)
+  end
+
+  def self.create_with_omniauth(auth)
+    create! do |user|
+      user.provider = auth.provider
+      user.uid = auth.uid
+      user.email = auth.info.email || "line_#{auth.uid}@example.com"
+      user.name = auth.info.name || "LINE User"
+      user.password = Devise.friendly_token[0, 20]
+      user.active = true
+    end
   end
 
   private
@@ -41,5 +56,10 @@ class User < ApplicationRecord
   def encrypted_password_changed?
     return false if provider == "line" && encrypted_password.blank?
     super
+  end
+
+  def generate_link_token
+    self.link_token = SecureRandom.urlsafe_base64(32)
+    self.link_token_sent_at = Time.current
   end
 end

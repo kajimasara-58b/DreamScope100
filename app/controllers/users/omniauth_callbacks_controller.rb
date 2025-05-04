@@ -1,7 +1,7 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def line
     auth = request.env["omniauth.auth"]
-    @user = User.find_by(line_uid: auth.uid)
+    @user = User.find_by(provider: auth.provider, uid: auth.uid, active: true)
     Rails.logger.info "LINE Auth Info: #{auth.to_json}" # デバッグ用ログ
 
     if @user
