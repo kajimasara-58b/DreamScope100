@@ -1,4 +1,4 @@
-require 'line/bot'
+require "line/bot"
 
 module LineBot
   def self.client
