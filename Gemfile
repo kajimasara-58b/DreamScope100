@@ -49,6 +49,10 @@ gem "omniauth", "~> 2.1"
 gem "omniauth-rails_csrf_protection" # CSRF保護用のOmniAuth拡張
 gem "redis-session-store", "~> 0.11.3"
 
+gem "sidekiq"
+gem "sidekiq-scheduler"
+gem "line-bot-api"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -63,7 +67,6 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  gem "devise"
   gem "letter_opener_web"
 end
 

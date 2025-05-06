@@ -30,6 +30,7 @@ ja:
         status: 達成状況
         due_date: 達成予定日
         category: カテゴリー
+        notify_days_before: 通知日
     models:
       user: ユーザー
       goal: 目標
@@ -62,6 +63,8 @@ ja:
             due_date:
               blank: を入力してください
             category:
+              blank: を入力してください
+            notify_days_before:
               blank: を入力してください
   devise:
     confirmations:

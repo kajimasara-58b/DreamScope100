@@ -1,0 +1,13 @@
+:concurrency: 5
+:queues:
+  - default
+  - mailers
+
+:scheduler:
+  :schedule:
+    check_goal_notifications_job:
+      cron: "0 0 * * *" # 毎日0:00に実行（JSTで実行する場合はタイムゾーン設定が必要）
+      class: CheckGoalNotificationsJob
+      queue: default
+      args: []
+      description: "毎日0:00に目標通知をチェック"

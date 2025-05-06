@@ -90,6 +90,7 @@ Rails.application.configure do
   config.action_cable.mount_path = "/cable"
   config.action_cable.url = "ws://localhost:3000/cable"
   config.action_cable.allowed_request_origins = [ "http://localhost:3000" ]
+  config.hosts.clear # 開発環境でのみ使用、すべてのホストを許可
 
   # セッションの共有を有効化
   config.session_store :cookie_store, key: "_dreamscope100_session"

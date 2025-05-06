@@ -119,7 +119,7 @@
           </select>
         </div>
       </form> 
-      <%= link_to "/goals/new", class: "ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow button" do %>
+      <%= link_to "/goals/new", class: "ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow button", data: { turbo: false } do %>
         <i class="fas fa-pencil-alt mr-2"></i>目標作成
       <% end %>
       <a href="#" id="generate-image-button" class="ml-4 bg-white text-black flex items-center px-4 py-2 rounded shadow button">
@@ -402,7 +402,7 @@
         <div class="flex items-center">
           <span class="mr-2 goal-number"><%= current_index %></span>
           <%= check_box_tag "goals[]", nil, false, disabled: true %>
-          <%= link_to "新しい目標を作成", new_goal_path, class: "ml-2 cursor-pointer text-gray-300" %>
+          <%= link_to "新しい目標を作成", new_goal_path, class: "ml-2 cursor-pointer text-gray-300", data: { turbo: false } %>
         </div>
         <% current_index += 1 %>
       <% end %>
