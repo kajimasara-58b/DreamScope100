@@ -24,10 +24,17 @@ class SendGoalNotificationJob < ApplicationJob
   private
 
   def send_line_notification(user_id, goal)
-    message = {
-      type: 'text',
-      text: "目標「#{goal.title}」の達成予定日（#{goal.due_date}）が近づいています！頑張ってください！"
-    }
+    message = [
+      {
+        type: 'text',
+        text: "目標「#{goal.title}」の達成予定日：#{goal.due_date}　が近づいています！💪"
+      },
+      {
+        type: 'sticker',
+        packageId: '8515',
+        stickerId: '16581265'
+      }
+    ]
 
     response = LineBot.client.push_message(user_id, message)
     if response.is_a?(Net::HTTPSuccess)
