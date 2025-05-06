@@ -43,6 +43,9 @@ Rails.application.routes.draw do
   resources :goals
   get "generate_images/create"
   post "/generate_image", to: "generate_images#create"
+  post "/line_webhook", to: "line_webhooks#callback"
+  get "/line_connect", to: "line_connect#connect"
+
   # get "login", to: "sessions#new"
   # /loginにアクセスするとSessionsControllerのnewアクションがよばれる
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
