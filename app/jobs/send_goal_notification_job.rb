@@ -26,13 +26,13 @@ class SendGoalNotificationJob < ApplicationJob
   def send_line_notification(user_id, goal)
     message = [
       {
-        type: 'text',
+        type: "text",
         text: "目標「#{goal.title}」の達成予定日：#{goal.due_date}　が近づいています！💪"
       },
       {
-        type: 'sticker',
-        packageId: '8515',
-        stickerId: '16581265'
+        type: "sticker",
+        packageId: "8515",
+        stickerId: "16581265"
       }
     ]
 
