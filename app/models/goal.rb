@@ -21,7 +21,7 @@ class Goal < ApplicationRecord
     return nil unless notify_enabled? && due_date && notify_days_before
     due_date - notify_days_before.days
   end
-  
+
   private
 
   def goals_limit_per_user
