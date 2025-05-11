@@ -27,6 +27,35 @@
   .calendar-icon:hover {
     color: #FFA230; /* ホバー時の色 */
   }
+
+  .form-uniform-height {
+    height: 42px;
+    line-height: 42px;
+  }
+  .text-right-force {
+    text-align: right !important;
+  }
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-right: 24px; /* ONと「何日前」の間隔を広げる */
+    margin-left: 8px;
+  }
+  .checkbox-label {
+    margin-left: 10px;
+    margin-bottom: 0;
+  }
+  .days-input {
+    width: 70px; /* 何日前の入力幅 */
+    border-radius: 4px;
+    text-align: right;
+  }
+  .text_nitimae {
+    width: 55px;
+  }
+  .form-section {
+    width: 50%; /* 半分ずつ */
+  }
 </style>
 </head>
 
@@ -36,7 +65,7 @@
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto" data-page="goal-new">
   <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">  
-    <div class="actions mb-4 flex mr-5">
+    <div class="actions mb-7 flex mr-5">
       <% breadcrumb :goal_new %>
       <%= breadcrumbs separator: " › " %>
     </div>
@@ -54,20 +83,43 @@
           <%= form.label :due_date, "達成予定日" %>
         </div>
         <div class="mb-4 flex items-center space-x-2">
-          <%= form.date_field :due_date, class: "rounded p-2 w-full mr-3", id: "goal-due-date-input-new" %>
+                    <%= form.date_field :due_date, class: "rounded p-2 w-full mr-3 form-uniform-height", id: "goal-due-date-input-new" %>
           <button type="button" onclick="addToGoogleCalendar()" class="flex items-center cursor-pointer" title="Googleカレンダーに追加">
             <i class="fas fa-calendar-plus text-3xl mr-2 calendar-icon"></i>
           </button>
         </div>
 
-        <div class="mb-4">
-          <%= form.label :status, "達成状況" %>
-          <%= form.select :status, Goal.statuses.keys.map { |status| [status.humanize, status] }, { prompt: '選択してください' }, { class: "rounded p-2 w-full" } %>
+        <div class="mb-4 flex gap-x-8">
+          <div class="w-1/2 mr-5 form-section">
+            <%= form.label :status, "達成状況" %>
+            <%= form.select :status, Goal.statuses.keys.map { |status| [status.humanize, status] }, { prompt: '選択してください' }, { class: "rounded p-2 w-full form-uniform-height" } %>
+          </div>
+
+          <!-- 通知設定 -->
+          <div class="w-1/2 form-section">
+            <%= form.label :notify_enabled, "通知設定" %>
+            <div class="flex items-center rounded bg-white p-2 form-uniform-height">
+
+              <!-- ONチェックボックス -->
+              <div class="checkbox-group">
+                <%= form.check_box :notify_enabled, {}, true, false %>
+                <%= form.label :notify_enabled, "ON", class: "checkbox-label" %>
+              </div>
+
+              <!-- 通知何日前フォーム + 日前 -->
+              <div class="flex items-center gap-x-1">
+                <%= form.number_field :notify_days_before, min: 1, placeholder: "", class: "days-input" %>
+              </div>
+              <div class="text_nitimae">
+                <span>日前</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="mb-9">
           <%= form.label :category, "カテゴリー" %>
-          <%= form.select :category, Goal.categories.keys.map { |category| [category.humanize, category] }, { prompt: '選択してください' }, { class: "rounded p-2 w-full" } %>
+          <%= form.select :category, Goal.categories.keys.map { |category| [category.humanize, category] }, { prompt: '選択してください' }, { class: "rounded p-2 w-full form-uniform-height" } %>
         </div>
 
         <div class="flex flex-col justify-center items-center md:items-start mb-5">
@@ -137,7 +189,7 @@
       const date = document.getElementById("goal-due-date-input-new").value;
 
       // 入力バリデーション
-      if (!title) {
+      if (!originalTitle) {
         alert("目標を入力してください！");
         return;
       }
@@ -157,7 +209,7 @@
     // Turboのレンダリング後に実行
     document.addEventListener("turbo:render", initializeCharCountNew);
     // 初回ロード時にも実行
-    document.addEventListener("DOMContentLoaded", initializeCharCountNew);
+    document.addEventListener("turbo:load", initializeCharCountNew);
   </script>
 </body>
 

@@ -7,10 +7,21 @@ class Goal < ApplicationRecord
   validates :status, presence: true
   validates :due_date, presence: true
   validates :category, presence: true
+  validates :notify_days_before, presence: true, if: :notify_enabled?
+  validates :notify_days_before, numericality: { greater_than: 0 }, allow_nil: true
 
   # ユーザーごとの目標数制限（100個まで）のカスタムバリデーション
   validate :goals_limit_per_user
 
+  def notify_enabled?
+    notify_enabled
+  end
+
+  def notification_date
+    return nil unless notify_enabled? && due_date && notify_days_before
+    due_date - notify_days_before.days
+  end
+  
   private
 
   def goals_limit_per_user
