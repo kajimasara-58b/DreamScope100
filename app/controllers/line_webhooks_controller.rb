@@ -14,7 +14,7 @@ class LineWebhooksController < ApplicationController
     events = LineBot.client.parse_events_from(body)
       events.each do |event|
         case event
-          when Line::Bot::Event::Follow
+        when Line::Bot::Event::Follow
           user_id = event["source"]["userId"]
           Rails.logger.info("Friend added: userId=#{user_id}")
           # 連携用のURLを送信
