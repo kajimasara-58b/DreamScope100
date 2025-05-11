@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "test", to: "test#index"
+  # get "users/auth/line", to: "users/auth#line"
   get "users/edit_password", to: "users#edit_password", as: :edit_password_users
   patch "users/update_password", to: "users#update_password", as: :update_password_users
   devise_for :users, controllers: {
