@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "test", to: "test#index"
+  # get "users/auth/line", to: "users/auth#line"
   get "users/edit_password", to: "users#edit_password", as: :edit_password_users
   patch "users/update_password", to: "users#update_password", as: :update_password_users
   devise_for :users, controllers: {
@@ -43,6 +44,8 @@ Rails.application.routes.draw do
   resources :goals
   get "generate_images/create"
   post "/generate_image", to: "generate_images#create"
+  post "/line_webhook", to: "line_webhooks#callback"
+  get "/line_connect", to: "line_connect#connect"
   # get "login", to: "sessions#new"
   # /loginにアクセスするとSessionsControllerのnewアクションがよばれる
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

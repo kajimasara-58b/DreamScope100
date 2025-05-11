@@ -48,13 +48,13 @@ class GoalsController < ApplicationController
   def destroy
     @goal = Goal.find(params[:id])
     @goal.destroy
-
+    session.delete(:goal_params) # 削除後にセッションをクリア
     redirect_to goals_path, notice: "目標を削除しました"
   end
 
   private
 
   def goal_params
-    params.require(:goal).permit(:id, :title, :due_date, :status, :user_id, :category) # 必要な属性を指定すること
+    params.require(:goal).permit(:id, :title, :due_date, :status, :user_id, :category, :notify_enabled, :notify_days_before) # 必要な属性を指定すること
   end
 end
