@@ -83,11 +83,20 @@
         <div>
           <%= form.label :due_date, "達成予定日" %>
         </div>
-        <div class="mb-4 flex items-center space-x-2">
-          <%= form.date_field :due_date, class: "rounded p-2 w-full mr-3 form-uniform-height", id: "goal-due-date-input-new" %>
-          <button type="button" id="calendar-button" class="flex items-center cursor-pointer button" title="Googleカレンダーに追加">
-            <i class="fas fa-calendar-plus text-3xl mr-2 calendar-icon"></i>
-          </button>
+        <div class="mb-4">
+          <div class="mb-1 flex items-center space-x-2">
+            <%= form.date_field :due_date, class: "rounded p-2 w-full mr-3 form-uniform-height", id: "goal-due-date-input-new" %>
+            <button type="button" id="calendar-button" class="flex items-center cursor-pointer button" title="Googleカレンダーに追加">
+              <i class="fas fa-calendar-plus text-3xl mr-2 calendar-icon"></i>
+            </button>
+          </div>
+
+          <!-- 通知を有効にするメッセージ -->
+          <% if current_user.line_notice_id.blank? %>
+            <div class="mb-4 text-sm text-gray-500" style="font-size: 0.8rem;">
+              ※LINEログインの上通知を有効にするとリマインド機能が使用できます！
+            </div>
+          <% end %>
         </div>
 
         <div class="mb-4 flex gap-x-8">
@@ -96,26 +105,27 @@
             <%= form.select :status, Goal.statuses.keys.map { |status| [status.humanize, status] }, { prompt: '選択してください' }, { class: "rounded p-2 w-full form-uniform-height" } %>
           </div>
 
-          <!-- 通知設定 -->
-          <div class="w-1/2 form-section">
-            <%= form.label :notify_enabled, "通知設定" %>
-            <div class="flex items-center rounded bg-white p-2 form-uniform-height">
+          <!-- 通知設定（line_notice_idが登録されている場合のみ表示）  -->
+          <% if current_user.line_notice_id.present? %>
+            <div class="w-1/2 form-section">
+              <%= form.label :notify_enabled, "通知設定" %>
+              <div class="flex items-center rounded bg-white p-2 form-uniform-height">
+                <!-- ONチェックボックス -->
+                <div class="checkbox-group">
+                  <%= form.check_box :notify_enabled, {}, true, false %>
+                  <%= form.label :notify_enabled, "ON", class: "checkbox-label" %>
+                </div>
 
-              <!-- ONチェックボックス -->
-              <div class="checkbox-group">
-                <%= form.check_box :notify_enabled, {}, true, false %>
-                <%= form.label :notify_enabled, "ON", class: "checkbox-label" %>
-              </div>
-
-              <!-- 通知何日前フォーム + 日前 -->
-              <div class="flex items-center gap-x-1">
-                <%= form.number_field :notify_days_before, min: 1, placeholder: "", class: "days-input" %>
-              </div>
-              <div class="text_nitimae">
-                <span>日前</span>
+                <!-- 通知何日前フォーム + 日前 -->
+                <div class="flex items-center gap-x-1">
+                  <%= form.number_field :notify_days_before, min: 1, placeholder: "", class: "days-input" %>
+                </div>
+                <div class="text_nitimae">
+                  <span>日前</span>
+                </div>
               </div>
             </div>
-          </div>
+          <% end %> 
         </div>
 
         <div class="mb-9">
@@ -123,7 +133,7 @@
           <%= form.select :category, Goal.categories.keys.map { |category| [category.humanize, category] }, { prompt: '選択してください' }, { class: "rounded p-2 w-full form-uniform-height" } %>
         </div>
 
-        <div class="flex flex-col justify-center items-center md:items-start mb-5">
+        <div class="flex flex-col justify-center items-center md:items-start">
           <div class="flex mb-5 justify-between w-full">
             <div class="actions mb-5 flex mr-5">
               <%= link_to "キャンセル", goals_path, class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow button" %>
