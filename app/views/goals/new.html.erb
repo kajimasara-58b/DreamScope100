@@ -1,62 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
   <!-- Turboのキャッシュを無効化 -->
   <meta name="turbo-cache-control" content="no-cache">
+  <!-- Font AwesomeのCDNを読み込む -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    .button {
+      transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+    }
 
-  .button {
-    transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
-  }
+    .button:hover {
+      background-color: #f0f0f0; /* ホバー時の背景色 */
+      color: #333; /* ホバー時の文字色 */
+    }
 
-  .button:hover {
-    background-color: #f0f0f0; /* ホバー時の背景色 */
-    color: #333; /* ホバー時の文字色 */
-  }
+    .button:active {
+      background-color: #e0e0e0; /* クリック時の背景色 */
+      color: #111; /* クリック時の文字色 */
+    }
 
-  .button:active {
-    background-color: #e0e0e0; /* クリック時の背景色 */
-    color: #111; /* クリック時の文字色 */
-  }
+    .calendar-icon {
+      color: #FFC276; /* 通常時の色 */
+      transition: color 0.3s; /* スムーズなトランジション */
+    }
 
-  .calendar-icon {
-    color: #FFC276; /* 通常時の色 */
-    transition: color 0.3s; /* スムーズなトランジション */
-  }
+    .calendar-icon:hover {
+      color: #FFA230; /* ホバー時の色 */
+    }
 
-  .calendar-icon:hover {
-    color: #FFA230; /* ホバー時の色 */
-  }
-
-  .form-uniform-height {
-    height: 42px;
-    line-height: 42px;
-  }
-  .text-right-force {
-    text-align: right !important;
-  }
-  .checkbox-group {
-    display: flex;
-    align-items: center;
-    margin-right: 24px; /* ONと「何日前」の間隔を広げる */
-    margin-left: 8px;
-  }
-  .checkbox-label {
-    margin-left: 10px;
-    margin-bottom: 0;
-  }
-  .days-input {
-    width: 70px; /* 何日前の入力幅 */
-    border-radius: 4px;
-    text-align: right;
-  }
-  .text_nitimae {
-    width: 55px;
-  }
-  .form-section {
-    width: 50%; /* 半分ずつ */
-  }
-</style>
+    .form-uniform-height {
+      height: 42px;
+      line-height: 42px;
+    }
+    .text-right-force {
+      text-align: right !important;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-right: 24px; /* ONと「何日前」の間隔を広げる */
+      margin-left: 8px;
+    }
+    .checkbox-label {
+      margin-left: 10px;
+      margin-bottom: 0;
+    }
+    .days-input {
+      width: 70px; /* 何日前の入力幅 */
+      border-radius: 4px;
+      text-align: right;
+    }
+    .text_nitimae {
+      width: 55px;
+    }
+    .form-section {
+      width: 50%; /* 半分ずつ */
+    }
+  </style>
 </head>
 
 <%= render "shared/header" %>
@@ -83,8 +84,8 @@
           <%= form.label :due_date, "達成予定日" %>
         </div>
         <div class="mb-4 flex items-center space-x-2">
-                    <%= form.date_field :due_date, class: "rounded p-2 w-full mr-3 form-uniform-height", id: "goal-due-date-input-new" %>
-          <button type="button" onclick="addToGoogleCalendar()" class="flex items-center cursor-pointer" title="Googleカレンダーに追加">
+          <%= form.date_field :due_date, class: "rounded p-2 w-full mr-3 form-uniform-height", id: "goal-due-date-input-new" %>
+          <button type="button" id="calendar-button" class="flex items-center cursor-pointer button" title="Googleカレンダーに追加">
             <i class="fas fa-calendar-plus text-3xl mr-2 calendar-icon"></i>
           </button>
         </div>
@@ -145,7 +146,10 @@
       const titleInput = document.getElementById("goal-title-input-new");
       const charCountDisplay = document.getElementById("title-char-count-new");
 
-      if (!titleInput || !charCountDisplay) return; // 要素が存在しない場合はスキップ
+      if (!titleInput || !charCountDisplay) {
+        console.log("文字数カウント要素が見つかりません（新規作成画面）");
+        return;
+      }
 
       // 文字数を更新する関数
       const updateCharCount = () => {
@@ -178,15 +182,21 @@
       const encodedTitle = encodeURIComponent(title);
       const encodedDescription = encodeURIComponent(description);
       // Googleカレンダーの予定追加リンクを生成
-      const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodedTitle}&dates=${formattedDate}/${formattedDate}&details=${encodedDescription}`;
-      return url;
+      return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodedTitle}&dates=${formattedDate}/${formattedDate}&details=${encodedDescription}`;
     }
 
     // カレンダーに追加する関数
     function addToGoogleCalendar() {
-      const originalTitle = document.getElementById("goal-title-input-new").value.trim();
+      const titleInput = document.getElementById("goal-title-input-new");
+      const dateInput = document.getElementById("goal-due-date-input-new");
+      if (!titleInput || !dateInput) {
+        console.error("入力要素が見つかりません（新規作成画面）。", { titleInput, dateInput });
+        alert("フォームがまだ読み込まれていません。ページをリロードしてください。");
+        return;
+      }
+      const originalTitle = titleInput.value.trim();
       const title = `達成予定日：${originalTitle}`;
-      const date = document.getElementById("goal-due-date-input-new").value;
+      const date = dateInput.value;
 
       // 入力バリデーション
       if (!originalTitle) {
@@ -206,14 +216,31 @@
       }
     }
 
-    // Turboのレンダリング後に実行
-    document.addEventListener("turbo:render", initializeCharCountNew);
-    // 初回ロード時にも実行
-    document.addEventListener("turbo:load", initializeCharCountNew);
+    const initializeCalendarButton = () => {
+      const calendarButton = document.querySelector("#calendar-button");
+      const titleInput = document.getElementById("goal-title-input-new");
+      const dateInput = document.getElementById("goal-due-date-input-new");
+      if (calendarButton && titleInput && dateInput) {
+        console.log("カレンダーボタンにリスナーを設定しました（新規作成画面）");
+        calendarButton.removeEventListener("click", addToGoogleCalendar);
+        calendarButton.addEventListener("click", addToGoogleCalendar);
+      } else {
+        console.log("カレンダーボタンまたは入力要素が見つかりません（新規作成画面）", {
+          calendarButton,
+          titleInput,
+          dateInput,
+        });
+      }
+    };
+
+    // Turboイベントを削除し、DOMContentLoadedのみで初期化
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOMContentLoaded イベント発火（新規作成画面）");
+      initializeCharCountNew();
+      initializeCalendarButton();
+    });
   </script>
 </body>
 
 <%= render "shared/footer" %>
-<!-- Font AwesomeのCDNを読み込む -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </html>

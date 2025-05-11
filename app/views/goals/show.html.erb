@@ -1,5 +1,32 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <!-- Turboのキャッシュを無効化 -->
+  <meta name="turbo-cache-control" content="no-cache">
+  <!-- Font AwesomeのCDNを読み込む -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    .button {
+      transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+    }
+
+    .button:hover {
+      background-color: #f0f0f0; /* ホバー時の背景色 */
+      color: #333; /* ホバー時の文字色 */
+    }
+
+    .destroy_button:hover {
+      background-color: #FFAAAA; /* ホバー時の背景色 */
+      color: #333; /* ホバー時の文字色 */
+    }
+
+    .button:active {
+      background-color: #e0e0e0; /* クリック時の背景色 */
+      color: #111; /* クリック時の文字色 */
+    }
+  </style>
+</head>
 
 <%= render "shared/header" %>
 
@@ -44,10 +71,10 @@
             <%= link_to "一覧へ戻る", goals_path, class: "bg-gray-300 text-black flex items-center px-4 py-2 rounded shadow button" %> 
             </div>
             <div class="actions mb-5 flex mr-5">
-            <%= button_to "削除", @goal, method: :delete, class: "bg-[#FFDADA] text-black flex items-center px-4 py-2 rounded shadow button", onclick: "return confirm('削除しますか？');" %>
+              <%= button_to "削除", @goal, method: :delete, class: "bg-[#FFDADA] text-black flex items-center px-4 py-2 rounded shadow destroy_button", onclick: "return confirm('削除しますか？');" %>
             </div>
             <div class="actions mb-5 flex">
-            <%= link_to "編集", edit_goal_path, class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button" %>
+              <%= link_to "編集", edit_goal_path, class: "bg-white text-black flex items-center px-4 py-2 rounded shadow button", data: { turbo: false } %>
             </div>
         </div>  
     </main>
@@ -55,8 +82,4 @@
 </body>
 
 <%= render "shared/footer" %>
-
-<!-- Font AwesomeのCDNを読み込む -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
 </html>

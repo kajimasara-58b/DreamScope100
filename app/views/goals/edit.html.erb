@@ -1,69 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
   <!-- Turboのキャッシュを無効化 -->
   <meta name="turbo-cache-control" content="no-cache">
+  <!-- Font AwesomeのCDNを読み込む -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-  .button {
-    transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
-  }
+  <style>
+    .button {
+      transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+    }
 
-  .button:hover {
-    background-color: #f0f0f0; /* ホバー時の背景色 */
-    color: #333; /* ホバー時の文字色 */
-  }
+    .button:hover {
+      background-color: #f0f0f0; /* ホバー時の背景色 */
+      color: #333; /* ホバー時の文字色 */
+    }
 
-  .button:active {
-    background-color: #e0e0e0; /* クリック時の背景色 */
-    color: #111; /* クリック時の文字色 */
-  }
+    .button:active {
+      background-color: #e0e0e0; /* クリック時の背景色 */
+      color: #111; /* クリック時の文字色 */
+    }
 
-  .calendar-icon {
-    color: #FFC276;
-    transition: color 0.3s;
-  }
+    .calendar-icon {
+      color: #FFC276;
+      transition: color 0.3s;
+    }
 
-  .calendar-icon:hover {
-    color: #FFA230;
-  }
+    .calendar-icon:hover {
+      color: #FFA230;
+    }
 
-  .form-uniform-height {
-    height: 42px;
-    line-height: 42px;
-  }
-  .text-right-force {
-    text-align: right !important;
-  }
-  .checkbox-group {
-    display: flex;
-    align-items: center;
-    margin-right: 24px; /* ONと「何日前」の間隔を広げる */
-    margin-left: 8px;
-  }
-  .checkbox-label {
-    margin-left: 10px;
-    margin-bottom: 0;
-  }
-  .days-input {
-    width: 70px; /* 何日前の入力幅 */
-    border-radius: 4px;
-    text-align: right;
-  }
-  .text_nitimae {
-    width: 55px;
-  }
-  .form-section {
-    width: 50%; /* 半分ずつ */
-  }
-</style>
+    .form-uniform-height {
+      height: 42px;
+      line-height: 42px;
+    }
+    .text-right-force {
+      text-align: right !important;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-right: 24px; /* ONと「何日前」の間隔を広げる */
+      margin-left: 8px;
+    }
+    .checkbox-label {
+      margin-left: 10px;
+      margin-bottom: 0;
+    }
+    .days-input {
+      width: 70px; /* 何日前の入力幅 */
+      border-radius: 4px;
+      text-align: right;
+    }
+    .text_nitimae {
+      width: 55px;
+    }
+    .form-section {
+      width: 50%; /* 半分ずつ */
+    }
+  </style>
 </head>
 
-<%= render "shared/header" %>
-
-<%= render 'devise/shared/error_messages', resource: @goal %>
-
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto" data-page="goal-edit">
+  <%= render "shared/header" %>
+  <%= render 'devise/shared/error_messages', resource: @goal %>
+
   <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">  
     <div class="actions mb-7 flex mr-5">
       <% breadcrumb :goal_edit %>
@@ -83,8 +84,8 @@
           <%= form.label :due_date, "達成予定日" %>
         </div>
         <div class="mb-4 flex items-center space-x-2">
-          <%= form.date_field :due_date, class: "rounded w-full py-2 px-3 mr-3 form-uniform-height", id: "goal-due-date-input-edit"%>
-          <button type="button" onclick="addToGoogleCalendar()" class="flex items-center cursor-pointer" title="Googleカレンダーに追加">
+          <%= form.date_field :due_date, class: "rounded w-full py-2 px-3 mr-3 form-uniform-height", id: "goal-due-date-input-edit" %>
+          <button type="button" id="calendar-button" class="flex items-center cursor-pointer button" title="Googleカレンダーに追加">
             <i class="fas fa-calendar-plus text-3xl mr-2 calendar-icon"></i>
           </button>
         </div>
@@ -139,15 +140,14 @@
   <!-- 文字数カウント用のスクリプト -->
   <script>
     const initializeCharCountEdit = () => {
-      // 編集画面でのみ実行
       if (document.body.dataset.page !== "goal-edit") return;
-
       const titleInput = document.getElementById("goal-title-input-edit");
       const charCountDisplay = document.getElementById("title-char-count-edit");
 
-      if (!titleInput || !charCountDisplay) return; // 要素が存在しない場合はスキップ
-
-      // 文字数を更新する関数
+      if (!titleInput || !charCountDisplay) {
+        console.log("文字数カウント要素が見つかりません（編集画面）");
+        return;
+      }
       const updateCharCount = () => {
         const charCount = titleInput.value.length;
         charCountDisplay.textContent = charCount;
@@ -158,7 +158,6 @@
         }
       };
 
-      // 初期文字数を設定
       updateCharCount();
 
       // 入力時のリアルタイム更新
@@ -174,15 +173,20 @@
       const formattedDate = parsedDate.toISOString().replace(/[-:]/g, "").split(".")[0].slice(0, 8);
       const encodedTitle = encodeURIComponent(title);
       const encodedDescription = encodeURIComponent(description);
-      const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodedTitle}&dates=${formattedDate}/${formattedDate}&details=${encodedDescription}`;
-      return url;
+      return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodedTitle}&dates=${formattedDate}/${formattedDate}&details=${encodedDescription}`;
     }
 
     function addToGoogleCalendar() {
-      const originalTitle = document.getElementById("goal-title-input-edit").value.trim();
+      const titleInput = document.getElementById("goal-title-input-edit");
+      const dateInput = document.getElementById("goal-due-date-input-edit");
+      if (!titleInput || !dateInput) {
+        console.error("入力要素が見つかりません（編集画面）。", { titleInput, dateInput });
+        alert("フォームがまだ読み込まれていません。ページをリロードしてください。");
+        return;
+      }
+      const originalTitle = titleInput.value.trim();
       const title = `達成予定日：${originalTitle}`;
-      const date = document.getElementById("goal-due-date-input-edit").value;
-
+      const date = dateInput.value;
       if (!originalTitle) {
         alert("目標を入力してください！");
         return;
@@ -201,18 +205,33 @@
       } catch (error) {
         alert(error.message);
       }
+    }
+
+    const initializeCalendarButton = () => {
+      const calendarButton = document.querySelector("#calendar-button");
+      const titleInput = document.getElementById("goal-title-input-edit");
+      const dateInput = document.getElementById("goal-due-date-input-edit");
+      if (calendarButton && titleInput && dateInput) {
+        console.log("カレンダーボタンにリスナーを設定しました（編集画面）");
+        calendarButton.removeEventListener("click", addToGoogleCalendar);
+        calendarButton.addEventListener("click", addToGoogleCalendar);
+      } else {
+        console.log("カレンダーボタンまたは入力要素が見つかりません（編集画面）", {
+          calendarButton,
+          titleInput,
+          dateInput,
+        });
+      }
     };
 
-    // Turboのレンダリング後に実行
-    document.addEventListener("turbo:render", initializeCharCountEdit);
-    // 初回ロード時にも実行
-    document.addEventListener("turbo:load", initializeCharCountEdit);
+    // Turboイベントを削除し、DOMContentLoadedのみで初期化
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOMContentLoaded イベント発火（編集画面）");
+      initializeCharCountEdit();
+      initializeCalendarButton();
+    });
   </script>
 </body>
 
 <%= render "shared/footer" %>
-
-<!-- Font AwesomeのCDNを読み込む -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
 </html>
