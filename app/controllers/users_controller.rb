@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!, except: [ :link_account ] # ログインしていない場合、ログインページにリダイレクト
+  before_action :authenticate_user!, except: [ :link_account, :check_email, :initiate_link_account, :initiate_line_link_account ] # ログインしていない場合、ログインページにリダイレクト
   def show
     @user = current_user
   end
@@ -19,18 +19,79 @@ class UsersController < ApplicationController
   end
 
   def check_email
-    email = params[:email]
-    existing_user = User.where(email: email).where.not(id: current_user.id).first
+    email = params[:email]&.strip&.downcase
+    unless email.present?
+      Rails.logger.info "No email provided in check_email"
+      render json: { conflict: false, message: "メールアドレスが入力されていません。" }, status: :bad_request
+      return
+    end
+    existing_user = User.active.where(email: email).first
+    Rails.logger.info "Check email: #{email}, found user: #{existing_user&.id || 'none'}"
     if existing_user
       render json: { conflict: true, message: "このメールアドレスは既に登録されています。既存アカウントと結びつけますか？" }
     else
-      render json: { conflict: false }
+      render json: { conflict: false, message: "このメールアドレスは利用可能です。" }
+    end
+  end
+
+  # LINEログイン用の新アクション
+  def initiate_line_link_account
+    email = params[:email]
+    unless email.present?
+      Rails.logger.debug "No email provided"
+      render json: { success: false, message: "メールアドレスを入力してください。" }, status: :unprocessable_entity
+      return
+    end
+
+    existing_user = User.active.where(email: email).first
+    unless existing_user
+      Rails.logger.debug "No existing user found for email: #{email}"
+      render json: { success: false, message: "このメールアドレスは登録されていません。" }, status: :unprocessable_entity
+      return
+    end
+
+    unless session[:line_auth]
+      Rails.logger.debug "No LINE auth session"
+      render json: { success: false, message: "LINEログイン情報がありません。もう一度ログインしてください。" }, status: :unprocessable_entity
+      return
+    end
+
+    existing_line_user = User.active.where(uid: session[:line_auth]["uid"], provider: "line").first
+    if existing_line_user && existing_line_user != existing_user
+      Rails.logger.info "Existing LINE user found: #{existing_line_user.id}"
+      render json: { success: false, message: "このLINEユーザーIDはすでに別のアカウントに登録されています。" }, status: :unprocessable_entity
+      return
+    end
+
+    begin
+      ActiveRecord::Base.transaction do
+        if existing_user.update_columns(link_token: SecureRandom.urlsafe_base64(32), link_token_sent_at: Time.current)
+          UserMailer.link_account_email(existing_user, email).deliver_later
+          session[:line_auth][:link_email] = email # メールアドレスをセッションに保存
+          render json: {
+            success: true,
+            message: "認証メールを送信しました。メール内のリンクをクリックして結びつけを完了してください。",
+            redirect_url: new_user_session_path
+          }
+        else
+          existing_user.update_columns(link_token: nil, link_token_sent_at: nil)
+          render json: { success: false, message: "アカウントの結びつけに失敗しました。" }, status: :unprocessable_entity
+        end
+      end
+    rescue ActiveRecord::RecordNotUnique => e
+      Rails.logger.error("Unique constraint violation: #{e.message}")
+      existing_user.update_columns(link_token: nil, link_token_sent_at: nil)
+      render json: { success: false, message: "このLINEユーザーIDはすでに別のアカウントに登録されています。" }, status: :unprocessable_entity
+    rescue StandardError => e
+      Rails.logger.error("Failed to process line link account: #{e.message}")
+      existing_user.update_columns(link_token: nil, link_token_sent_at: nil)
+      render json: { success: false, message: "処理中にエラーが発生しました。もう一度お試しください。" }, status: :unprocessable_entity
     end
   end
 
   def initiate_link_account
     email = params[:email]
-    existing_user = User.where(email: email).where.not(id: current_user.id).first
+    existing_user = User.active.where(email: email).first
     if existing_user
       begin
         # emailは更新せず、トークンのみ保存
@@ -57,33 +118,24 @@ class UsersController < ApplicationController
     user = User.find_by(link_token: params[:token])
     if user && user.link_token_sent_at > 15.minutes.ago
       Rails.logger.debug("User found: id=#{user.id}, email=#{user.email}")
-      existing_user = User.active.where(email: params[:email]).where.not(id: user.id).first
-      if existing_user
-        Rails.logger.debug("Existing user found: id=#{existing_user.id}, email=#{existing_user.email}")
-        begin
-          ActiveRecord::Base.transaction do
-            user.update!(
-              active: false,
-              link_token: nil, # トークンをクリア
-              link_token_sent_at: nil
-            )
-            existing_user.update!(
-              name: existing_user.name || user.name, # 名前を統合（必要に応じて）
-              email: params[:email], # メールアドレスを確実に設定
-              provider: "line",
-              uid: user.uid
-            )
-          end
-          Rails.logger.debug("Signing in existing user: id=#{existing_user.id}")
-          sign_in(existing_user, event: :authentication)
-          redirect_to user_path(existing_user), notice: "アカウントを結びつけました。"
-        rescue ActiveRecord::RecordInvalid => e
-          Rails.logger.error("Failed to link account: #{e.message}")
-          redirect_to new_user_session_path, alert: "アカウントの結びつけに失敗しました：#{e.message}"
+      begin
+        ActiveRecord::Base.transaction do
+          user.update!(
+            name: user.name,
+            email: params[:email],
+            provider: "line",
+            uid: session[:line_auth]&.dig("uid") || user.uid,
+            link_token: nil,
+            link_token_sent_at: nil
+          )
+          sign_in(user, event: :authentication)
+          session.delete(:line_auth)
         end
-      else
-        Rails.logger.error("Existing user not found for email: #{params[:email]}")
-        redirect_to new_user_session_path, alert: "アカウントが見つかりません。"
+        Rails.logger.debug("Signing in user: id=#{user.id}")
+        redirect_to user_path(user), notice: "アカウントを結びつけました。"
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error("Failed to link account: #{e.message}")
+        redirect_to new_user_session_path, alert: "アカウントの結びつけに失敗しました：#{e.message}"
       end
     else
       Rails.logger.error("Invalid or expired link: token=#{params[:token]}, email=#{params[:email]}, user_found=#{user.present?}")
@@ -114,7 +166,7 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :provider, :line_uid) # 必要な属性のみ指定
+    params.require(:user).permit(:name, :email, :provider, :line_uid, :password, :password_confirmation) # 必要な属性のみ指定
   end
 
   def password_params

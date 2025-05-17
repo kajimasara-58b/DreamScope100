@@ -25,6 +25,8 @@ ja:
         unconfirmed_email: 未確認Eメール
         unlock_token: ロック解除用トークン
         updated_at: 更新日
+        uid: LINEユーザーID
+        name: ユーザー名
       goal:
         title: 目標
         status: 達成状況
@@ -40,7 +42,7 @@ ja:
           attributes:
             email:
               blank: メールアドレスを入力してください
-              taken: このメールアドレスはすでに使用されています
+              taken: がすでに使用されています
             password:
               blank: を入力してください
               too_short: は%{count}文字以上で入力してください
@@ -55,6 +57,7 @@ ja:
               blank: ログイン方法を選択してください
             uid:
               blank: ユーザーIDが設定されていません
+              taken: がすでに使用されています
           invalid: ユーザー情報が無効です
         goal:
           attributes:

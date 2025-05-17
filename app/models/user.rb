@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  attr_accessor :require_password_for_email_registration
+
   has_many :goals, dependent: :destroy
   has_many :tweets, dependent: :destroy
   # Include default devise modules. Others available are:
@@ -29,22 +31,36 @@ class User < ApplicationRecord
   end
 
   def password_required?
-    provider == "email" && super
+    # ● 通常の email ログイン時 OR
+    # ● LINEログイン後にメール＋パスワード登録をするフローで
+    #   controller からフラグを立てたとき
+    (provider == "email" && super) ||
+      require_password_for_email_registration == true
   end
 
   def self.from_omniauth(auth)
-    find_by(provider: auth.provider, uid: auth.uid, active: true) ||
-    create_with_omniauth(auth)
+    user = find_by(provider: auth.provider, uid: auth.uid, active: true)
+    return user if user
+
+    # アカウント作成を遅延させ、セッションに仮ユーザー情報を保存
+    {
+      provider: auth.provider,
+      uid: auth.uid,
+      name: auth.info.name || "LINE User",
+      email: auth.info.email,
+      temporary: true
+    }
   end
 
   def self.create_with_omniauth(auth)
     create! do |user|
       user.provider = auth.provider
       user.uid = auth.uid
-      user.email = auth.info.email || "line_#{auth.uid}@example.com"
+      user.email = auth.info.email # デフォルトメールを削除
       user.name = auth.info.name || "LINE User"
-      user.password = Devise.friendly_token[0, 20]
+      user.password = Devise.friendly_token[0, 20] if user.provider == "email"
       user.active = true
+      user.is_dummy_password = (user.provider == "line")
     end
   end
 
