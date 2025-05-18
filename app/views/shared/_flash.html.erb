@@ -5,7 +5,7 @@
 </style> 
 
 <div id="flash">
-  <% if flash[:email_password_unset] && flash[:alert] %>
+  <% if flash[:email_password_unset] || flash[:alert] %>
     <div class="text-red-700 px-4 flash">
       <%= flash[:alert] %>
       <br>メールアドレス・パスワードの設定は<%= link_to "こちら", users_show_path, class: "underline" %>から

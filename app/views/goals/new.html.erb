@@ -63,7 +63,9 @@
 <%= render "shared/header" %>
 
 <%= render 'devise/shared/error_messages', resource: @goal %>
-<%= render "shared/flash" %>
+<% if current_user.email_password_unset? %>
+  <%= render "shared/flash" %>
+<% end %>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto" data-page="goal-new">
   <div class="flex-grow p-4 flex-col md:flex-row" style="display: flex; flex-direction: column;">  
