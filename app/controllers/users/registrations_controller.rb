@@ -4,52 +4,83 @@ class Users::RegistrationsController < Devise::RegistrationsController
   before_action :authenticate_user!, except: [ :email, :update_email, :skip_email_registration ]
   skip_before_action :require_no_authentication, only: [ :email, :update_email, :skip_email_registration ]
 
+  # LINE認証済みユーザー用画面
   def email
-    @user = User.new(name: session[:line_auth]&.dig("name"))
+    unless session[:line_auth]
+      return redirect_to new_user_session_path, alert: "LINEログイン情報がありません。"
+    end
+
+    # セッションからLINE情報取り出し
+    auth = session[:line_auth]
+    # ① 既存LINEユーザーを探す
+    @user = User.active.find_by(provider: "line", uid: auth["uid"])
+
+    # ② 見つからなければ未保存のインスタンスを生成
+    unless @user
+      @user = User.new(
+        provider: "line",
+        uid:      auth["uid"],
+        name:     auth["name"] || "LINEユーザー",
+        active:   true,
+        # is_dummy_password は before_validation でセットするなら不要
+      )
+    end
+
+    render :email
   end
 
   def update_email
-    @user = User.new(user_params.merge(
-      uid: session[:line_auth]["uid"],
-      provider: "line",
-      name: session[:line_auth]["name"] || "LINEユーザー",
-      active: true
-    ))
+    auth = session[:line_auth] or
+    return redirect_to(new_user_session_path, alert: "LINEログイン情報がありません。")
+
+    # ① 既存LINEユーザー or 新規Userインスタンス
+    @user = User.active.find_by(provider: "line", uid: auth["uid"]) ||
+            User.new(provider: "line", uid: auth["uid"], name: auth["name"], active: true)
+
+    # ここで「メール＋パスワード登録フローです」とフラグを立てる
+    @user.require_password_for_email_registration = true
+
+    # フォームから渡ってくる email/password/confirmation/name をマスアサイン
+    @user.assign_attributes(user_params)
+
     if @user.save
-      sign_in(@user)
+      # 保存成功→自動ログイン＆セッション削除
+      sign_in(@user, event: :authentication)
       session.delete(:line_auth)
-      redirect_to dashboard_index_path, notice: "メールアドレスを登録しました！"
+      redirect_to user_path(@user), notice: "メールアドレスとパスワードを登録しました。"
     else
-      flash.now[:alert] = @user.errors.full_messages.join(", ")
+      # 保存失敗→エラーメッセージとともにフォーム再表示
+      flash.now[:alert] = @user.errors.full_messages.join("、")
       render :email, status: :unprocessable_entity
     end
   end
 
   def skip_email_registration
-    Rails.logger.debug "skip_email_registration called with params: #{params.inspect}, session: #{session.inspect}"
-    unless session[:line_auth]
-      redirect_to new_user_session_path, alert: "LINEログイン情報がありません。もう一度ログインしてください。"
-      return
+    auth = session[:line_auth]
+    unless auth
+      return redirect_to new_user_session_path, alert: "LINEログイン情報がありません。"
     end
 
-    @user = User.new(
-      uid: session[:line_auth]["uid"],
-      provider: "line",
-      name: session[:line_auth]["name"] || "LINEユーザー",
-      email: nil,
-      password: nil,
-      active: true,
-      is_dummy_password: true # LINEログインではパスワード未設定
-    )
-    if @user.save
-      sign_in(@user)
-      session.delete(:line_auth)
-      redirect_to dashboard_index_path, notice: "LINE認証でログインしました。アプリ内でメールアドレスとパスワードを設定できます"
-    else
-      Rails.logger.debug "User save failed: #{@user.errors.full_messages}"
-      flash.now[:alert] = @user.errors.full_messages.join(", ")
-      render :email, status: :unprocessable_entity
+    # ① 既存のLINEユーザーを探す or 新規作成
+    user = User.active.find_by(provider: "line", uid: auth["uid"])
+    unless user
+      user = User.create!(
+        provider:          "line",
+        uid:               auth["uid"],
+        name:              auth["name"]  || "LINEユーザー",
+        active:            true,
+        is_dummy_password: true
+      )
     end
+
+    # ② 仮ログイン状態（Devise で認証済み）にする
+    sign_in(user, event: :authentication)
+
+    # ③ セッションからLINE情報はもう不要なら削除
+    session.delete(:line_auth)
+
+    # ④ ダッシュボードへ
+    redirect_to dashboard_index_path, notice: "メールアドレス・パスワードの登録をスキップしました。後で設定できます。"
   end
 
   def create
@@ -83,6 +114,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   protected
 
   def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [ :name, :email, :uid, :provider ])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :name, :email, :uid, :provider, :password, :password_confirmation ])
+  end
+
+  def user_params
+    params.require(:user).permit(:name, :email, :password, :password_confirmation) # 必要な属性のみ指定
   end
 end

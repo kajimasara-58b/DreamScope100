@@ -2,19 +2,20 @@
 <html>
 <head>
   <%= csrf_meta_tags %>
+  <meta name="turbo-cache-control" content="no-cache">
   <meta name="turbo-visit-control" content="reload">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <style>
   .button { width: 160px; height: 48px; border-radius: 5px; text-align: center; display: inline-block; text-decoration: none; padding: 10px 20px; transition: background-color 0.3s, color 0.3s; }
   .button:hover { background-color: #f0f0f0; color: #333; }
   .button:active { background-color: #e0e0e0; color: #111; }
   .error { color: red; font-size: 0.8em; }
+  .alert { color: red; }
 </style>
-<%= render "shared/beforelogin_header" %>
 
-<% if flash[:alert].present? %>
-  <div class="flash alert" style="color: red;"><%= flash[:alert] %></div>
-<% end %>
+<%= render "shared/beforelogin_header" %>
+<%= render 'devise/shared/error_messages', resource: resource %>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
   <main class="flex-grow p-4 flex flex-col items-center justify-center">
@@ -23,30 +24,24 @@
       ◆アカウントを保護するため、メールアドレスとパスワードの登録をお願いします◆
     </p>
 
-    <%= form_with model: @user, url: user_update_email_path, local: true, html: { class: "w-full max-w-md", data: { turbo: false } } do |f| %>
+    <%= form_with model: @user, url: user_update_email_path, method: :patch, local: true, data: { turbo: false }, html: { class: "w-full max-w-md" } do |form| %>
       <div class="field mb-4">
-        <%= f.label :email, "メールアドレス" %>
-        <%= f.email_field :email, class: "rounded w-full py-2 px-3" %>
-        <% if @user.errors[:email].any? %>
-          <div class="error"><%= @user.errors[:email].join(", ") %></div>
-        <% end %>
+        <%= form.label :email, "メールアドレス" %>
+        <%= form.email_field :email, class: "rounded w-full py-2 px-3", id: "user_email", autocomplete: "email", required: true %>
       </div>
       <div class="field mb-4">
-        <%= f.label :password, "パスワード" %>
-        <%= f.password_field :password, class: "rounded w-full py-2 px-3" %>
-        <% if @user.errors[:password].any? %>
-          <div class="error"><%= @user.errors[:password].join(", ") %></div>
+        <%= form.label :password, "パスワード" %>
+        <% if @minimum_password_length %>
+          ※<%= @minimum_password_length %>文字以上で設定してください
         <% end %>
+        <%= form.password_field :password, class: "rounded w-full py-2 px-3", id: "user_password", autocomplete: "new-password", required: true %>
       </div>
       <div class="field mb-8">
-        <%= f.label :password_confirmation, "パスワード（確認）" %>
-        <%= f.password_field :password_confirmation, class: "rounded w-full py-2 px-3" %>
-        <% if @user.errors[:password_confirmation].any? %>
-          <div class="error"><%= @user.errors[:password_confirmation].join(", ") %></div>
-        <% end %>
+        <%= form.label :password_confirmation, "パスワード（確認）" %>
+        <%= form.password_field :password_confirmation, class: "rounded w-full py-2 px-3", id: "user_password_confirmation", autocomplete: "new-password", required: true %>
       </div>
       <div class="actions flex justify-center space-x-4">
-        <%= f.submit "登録", class: "bg-white text-black px-4 py-2 rounded shadow button" %>
+        <%= form.submit "登録", class: "bg-white text-black px-4 py-2 rounded shadow button" %>
       </div>
     <% end %>
 
@@ -54,8 +49,116 @@
       <%= form.hidden_field :authenticity_token, value: form_authenticity_token %>
       <%= form.submit "あとで登録する", class: "bg-gray-300 text-black px-4 py-2 rounded shadow button" %>
     <% end %>
+
+    <script>
+      console.log("Script loaded at", new Date().toISOString());
+      function setupEmailCheck() {
+        if (window.location.pathname !== "/users/email") {
+          console.log("Not on /users/email, skipping email check");
+          return;
+        }
+        console.log("Setting up email check at", new Date().toISOString());
+        const emailInput = document.querySelector("#user_email");
+        if (emailInput) {
+          emailInput.removeEventListener("blur", handleEmailBlur);
+          emailInput.addEventListener("blur", handleEmailBlur);
+          console.log("Email input found:", emailInput);
+        } else {
+          console.error("Email input not found");
+        }
+      }
+
+      async function handleEmailBlur(event) {
+        const emailInput = event.target;
+        const email = emailInput.value.trim();
+        console.log(`Checking email: ${email}`);
+        if (email) {
+          try {
+            const url = `/users/check_email?email=${encodeURIComponent(email)}`;
+            console.log(`Fetching: ${url}`);
+            const response = await fetch(url, {
+              headers: { Accept: "application/json" },
+              method: "GET"
+            });
+            console.log(`Fetch response status: ${response.status}`);
+            if (!response.ok) {
+              console.error(`Fetch failed with status: ${response.status}`);
+              alert("メールアドレスの確認に失敗しました。もう一度お試しください。");
+              return;
+            }
+
+            let data;
+            try {
+              data = await response.json();
+              console.log("Response data:", JSON.stringify(data));
+            } catch (e) {
+              console.error("Failed to parse JSON:", e);
+              alert("サーバーからの応答が無効です。もう一度お試しください。");
+              return;
+            }
+
+            if (data.conflict) {
+              console.log("Conflict detected, attempting to show confirm dialog");
+              try {
+                const confirmMessage = data.message || "このメールアドレスは既に登録されています。既存アカウントと結びつけますか？";
+                const confirmLink = window.confirm(confirmMessage);
+                console.log("Confirm dialog result:", confirmLink);
+                if (confirmLink) {
+                  console.log(`Sending POST to initiate_line_link_account with email: ${email}`);
+                  const formData = new FormData();
+                  formData.append("email", email);
+                  formData.append("authenticity_token", document.querySelector('meta[name="csrf-token"]').content);
+                  const postResponse = await fetch("<%= initiate_line_link_account_users_path %>", {
+                    method: "POST",
+                    body: formData,
+                    headers: { Accept: "application/json" }
+                  });
+                  console.log(`POST response status: ${postResponse.status}`);
+                  const postData = await postResponse.json();
+                  console.log("POST response data:", JSON.stringify(postData));
+                  if (postResponse.ok && postData.success) {
+                    console.log("Link account initiated, redirecting to:", postData.redirect_url);
+                    alert(postData.message);
+                    window.location.href = postData.redirect_url;
+                  } else {
+                    console.error(`Initiate line link account failed with status: ${postResponse.status}`);
+                    alert(postData.message || "アカウントの結びつけに失敗しました。もう一度お試しください。");
+                    window.location.href = "<%= user_email_registration_path %>";
+                  }
+                } else {
+                  console.log("User cancelled, clearing email input");
+                  emailInput.value = "";
+                  emailInput.focus();
+                }
+              } catch (e) {
+                console.error("Confirm dialog error:", e);
+                alert("ダイアログの表示に失敗しました。もう一度お試しください。");
+              }
+            } else {
+              console.log("No conflict, proceeding normally");
+            }
+          } catch (error) {
+            console.error("Error during email check:", error);
+            alert("メールアドレスの確認中にエラーが発生しました。");
+          }
+        } else {
+          console.log("Email input is empty");
+        }
+      }
+
+      // Turbo イベントを確実に設定
+      document.removeEventListener("turbo:load", setupEmailCheck);
+      document.addEventListener("turbo:load", () => {
+        console.log("turbo:load fired at", new Date().toISOString());
+        setupEmailCheck();
+      });
+      document.removeEventListener("DOMContentLoaded", setupEmailCheck);
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("DOMContentLoaded fired at", new Date().toISOString());
+        setupEmailCheck();
+      });
+    </script>
   </main>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <%= render "shared/footer" %>
 </body>
+<%= render "shared/footer" %>
 </html>

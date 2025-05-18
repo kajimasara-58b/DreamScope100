@@ -31,6 +31,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def check_line_auth
+    if session[:line_auth] && !current_user
+      redirect_to user_email_registration_path, alert: "メールアドレスを登録してください。"
+    end
+  end
+
+
   protected
 
   def configure_permitted_parameters
