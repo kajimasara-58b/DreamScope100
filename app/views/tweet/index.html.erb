@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<%= csrf_meta_tags %>
 <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet"> <!-- Aldrichフォントをインポート -->
 <style>
   /* app/assets/stylesheets/application.css */
@@ -39,6 +40,7 @@
   <h2 class="text-4xl"><%= link_to "DreamScope100", dashboard_index_path, class: "text-white link" %></h2>
   <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-white link", onclick: "return confirm('ログアウトしますか？');" %>
 </header>
+<%= render "shared/flash" %>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen">
   <div class="fixed top-20 left-0 w-full bg-[#FFF5E8] p-3fixed top-16 left-0 w-full bg-[#FFF5E8] z-10 p-4">  

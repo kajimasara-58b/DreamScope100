@@ -65,6 +65,10 @@ class User < ApplicationRecord
     end
   end
 
+  def email_password_unset?
+    email.blank? || encrypted_password.blank?
+  end
+
   private
 
   def set_default_provider_and_uid

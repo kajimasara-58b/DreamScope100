@@ -16,18 +16,29 @@ class GoalsController < ApplicationController
 
     # メールorパスワード未設定チェック
     if current_user.email_password_unset?
-      flash.now[:alert] = "メールアドレスとパスワードを設定すると目標作成ができるようになります！"
-      render :new, status: :unprocessable_entity
+      flash.now[:email_password_unset] = "メールアドレスとパスワードを設定すると目標作成ができるようになります！"
+      Rails.logger.info("Flash email_password_unset set: #{flash.now[:email_password_unset]}")
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace("flash", partial: "shared/flash")
+          ]
+        end
+        format.html { render :new, status: :unprocessable_entity }
+      end
       return
+    end
+
+    # バリデーションエラー時
+    unless @goal.valid?
+      session[:goal_params] = goal_params # 作成内容をセッションに保存
+      flash.now[:alert] = @goal.errors.full_messages # 具体的なエラーメッセージをフラッシュに
+      render :new, status: :unprocessable_entity
     end
 
     if @goal.save
       session.delete(:goal_params) # 成功時にセッションをクリア
       redirect_to goals_path, notice: "目標を作成しました"
-    else
-      session[:goal_params] = goal_params # 編集内容をセッションに保存
-      flash.now[:alert] = @goal.errors.full_messages # 具体的なエラーメッセージをフラッシュに
-      render :new, status: :unprocessable_entity
     end
   end
 
