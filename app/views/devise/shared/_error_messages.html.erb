@@ -5,7 +5,7 @@
 </style> 
 
 <% if resource&.errors&.any? %>
-  <div id="error_explanation" data-turbo-cache="false">
+  <div id="error_explanation" data-turbo-cache="false" class="px-4">
     <h2>
       <span style="color: red;">
         <%= I18n.t("errors.messages.not_saved",

@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   end
   get "home/index"
   get "tweet/index"
+  post "/flash", to: "flash#create"
   get "riyoukiyaku/index"
   get "privacypolicy/index"
   get "inquiry/index"

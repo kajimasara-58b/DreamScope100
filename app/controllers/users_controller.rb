@@ -217,6 +217,10 @@ class UsersController < ApplicationController
     end
   end
 
+  def email_password_unset?
+    email.blank? || encrypted_password.blank? # Deviseの場合、encrypted_passwordでパスワード確認
+  end
+
   private
 
   def user_params

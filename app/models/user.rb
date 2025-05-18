@@ -24,6 +24,7 @@ class User < ApplicationRecord
   # デフォルト値を設定
   before_validation :set_default_provider_and_uid, on: :create
   before_validation :set_default_is_dummy_password, on: :create
+  before_validation :normalize_email
 
   # メールアドレスの必須性をproviderに応じて設定
   def email_required?
@@ -56,12 +57,16 @@ class User < ApplicationRecord
     create! do |user|
       user.provider = auth.provider
       user.uid = auth.uid
-      user.email = auth.info.email # デフォルトメールを削除
+      user.email = auth.info.email.presence # nil or empty string -> nil
       user.name = auth.info.name || "LINE User"
       user.password = Devise.friendly_token[0, 20] if user.provider == "email"
       user.active = true
       user.is_dummy_password = (user.provider == "line")
     end
+  end
+
+  def email_password_unset?
+    email.blank? || encrypted_password.blank?
   end
 
   private
@@ -87,5 +92,9 @@ class User < ApplicationRecord
   def generate_link_token
     self.link_token = SecureRandom.urlsafe_base64(32)
     self.link_token_sent_at = Time.current
+  end
+
+  def normalize_email
+    self.email = email.presence # 空文字やnilをnilに統一
   end
 end
