@@ -43,20 +43,29 @@ function setupChat() {
       console.log("Received data:", JSON.stringify(data, null, 2));
       const flashContainer = document.getElementById("flash");
 
+      // デバッグ: データ構造確認
+      console.log("data.error exists:", !!data.error);
+      console.log("data.flash exists:", !!data.flash);
+      console.log("data.flash.alert:", data.flash?.alert);
+
       if (data.error && data.flash) {
         console.log("Processing flash data:", data.flash);
-        alert(data.error);
         if (!flashContainer) {
-          console.error("Flash container not found!");
+          console.error("Flash container not found! Ensure <div id='flash'> exists.");
+          alert(data.flash.alert || data.error);
           return;
         }
+        alert(data.flash.alert || data.error); // 直接ダイアログ
         fetch("/flash", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
           },
-          body: JSON.stringify(data.flash)
+          body: JSON.stringify({
+            alert: data.flash.alert,
+            email_password_unset: data.flash.email_password_unset || true // 目標画面互換
+          })
         })
         .then(response => {
           console.log("Fetch /flash response:", response.status, response.statusText);
@@ -82,7 +91,7 @@ function setupChat() {
         if (tweetsContainer) {
           const tweetElement = `<div data-tweet-id="${data.tweet_id}">${data.tweet}</div>`;
           tweetsContainer.insertAdjacentHTML("beforeend", tweetElement);
-          messageInput.value = ""; // 成功時のみクリア
+          messageInput.value = "";
           scrollToBottom();
         }
       } else if (data.message) {

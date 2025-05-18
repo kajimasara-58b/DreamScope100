@@ -5,16 +5,15 @@
 </style> 
 
 <div id="flash">
-  <% if flash[:email_password_unset] %>
+  <% if flash[:email_password_unset] && flash[:alert] %>
     <div class="text-red-700 px-4 flash">
-      メールアドレスとパスワードを設定すると目標作成ができるようになります！
       <%= flash[:alert] %>
-      <br><%= link_to "こちら", users_show_path, class: "underline" %>から設定してください
+      <br>メールアドレス・パスワードの設定は<%= link_to "こちら", users_show_path, class: "underline" %>から
     </div>
     <script>
       // Turbo Streamでも即座にalert表示
       alert(
-        "<%= j flash[:alert] %>メールアドレスとパスワードを設定すると目標作成ができるようになります！ 設定は ダッシュボード › ユーザー情報ページ から"
+        "<%= j flash[:alert] %>この機能はメールアドレスとパスワードを設定すると使用できます！ 設定は ダッシュボード › ユーザー情報ページ から"
       );
     </script>
   <% end %>

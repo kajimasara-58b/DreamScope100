@@ -47,9 +47,9 @@ class GoalsController < ApplicationController
   end
 
   def edit
+    session.delete(:goal_params) # セッションから削除
     @goal = Goal.find(params[:id])
     @goal.assign_attributes(session[:goal_params]) if session[:goal_params]
-    session.delete(:goal_params) # セッションから削除
   end
 
   def update
