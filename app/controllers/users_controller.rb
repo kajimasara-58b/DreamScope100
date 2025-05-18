@@ -10,13 +10,25 @@ class UsersController < ApplicationController
 
   def update
     @user = current_user
-    if @user.update(user_params)
+    email = user_params[:email]&.strip&.downcase
+    existing_user = User.active.where(email: email).where.not(id: @user.id).first
+
+    if existing_user
+      # メールアドレスが他のユーザーと重複する場合、結びつけプロセスを開始
+      token = SecureRandom.urlsafe_base64(32)
+      ActiveRecord::Base.transaction do
+        @user.update_columns(link_token: token, link_token_sent_at: Time.current)
+      end
+      UserMailer.link_account_email(@user, email).deliver_later
+      redirect_to user_path(@user), notice: "このメールアドレスは既に登録されています。認証メールを送信しました。メール内のリンクをクリックして結びつけを完了してください。"
+    elsif @user.update(user_params)
       redirect_to users_show_path, notice: "登録情報を更新しました"
     else
-      session[:user_params] = user_params # 編集内容をセッションに保存
+      flash.now[:alert] = @user.errors.full_messages.join(", ")
       render :edit, status: :unprocessable_entity
     end
   end
+
 
   def check_email
     email = params[:email]&.strip&.downcase
@@ -25,7 +37,9 @@ class UsersController < ApplicationController
       render json: { conflict: false, message: "メールアドレスが入力されていません。" }, status: :bad_request
       return
     end
-    existing_user = User.active.where(email: email).first
+
+    # 現在のユーザーを除外して重複チェック
+    existing_user = User.active.where(email: email).where.not(id: current_user&.id).first
     Rails.logger.info "Check email: #{email}, found user: #{existing_user&.id || 'none'}"
     if existing_user
       render json: { conflict: true, message: "このメールアドレスは既に登録されています。既存アカウントと結びつけますか？" }
