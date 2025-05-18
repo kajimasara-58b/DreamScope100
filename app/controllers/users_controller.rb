@@ -55,24 +55,24 @@ class UsersController < ApplicationController
       render json: { success: false, message: "メールアドレスを入力してください。" }, status: :unprocessable_entity
       return
     end
-  
+
     existing_user = User.active.find_by(email: email)
     unless existing_user
       render json: { success: false, message: "このメールアドレスは登録されていません。" }, status: :unprocessable_entity
       return
     end
-  
+
     unless session[:line_auth]
       render json: { success: false, message: "LINEログイン情報がありません。もう一度ログインしてください。" }, status: :unprocessable_entity
       return
     end
-  
+
     existing_line_user = User.active.find_by(uid: session[:line_auth]["uid"], provider: "line")
     if existing_line_user && existing_line_user != existing_user
       render json: { success: false, message: "このLINEユーザーIDはすでに別のアカウントに登録されています。" }, status: :unprocessable_entity
       return
     end
-  
+
     # 1) トークン発行とカラム更新はトランザクションで
     token = SecureRandom.urlsafe_base64(32)
     ActiveRecord::Base.transaction do
@@ -83,10 +83,10 @@ class UsersController < ApplicationController
       # セッションへの保存だけはトランザクション外でも OK ですが、このままでも構いません
       session[:line_auth][:link_email] = email
     end
-  
+
     # 2) トランザクションがコミットされたあとでメール送信
     UserMailer.line_link_account_email(existing_user, email).deliver_later
-  
+
     # 3) JSON レスポンスは最後に一度だけ
     render json: {
       success:      true,
@@ -100,7 +100,6 @@ class UsersController < ApplicationController
     existing_user.update_columns(link_token: nil, link_token_sent_at: nil)
     render json: { success: false, message: "処理中にエラーが発生しました。もう一度お試しください。" }, status: :unprocessable_entity
   end
-  
 
   # LINEログインと同時にメールアドレス登録用のアクション
   def line_link_account

@@ -13,7 +13,7 @@ Rails.application.routes.draw do
     post "send_password_reset", to: "users/registrations#send_password_reset", as: "send_password_reset"
     get "users/done", to: "users/registrations#done", as: "registration_done"
     get "users/email", to: "users/registrations#email", as: "user_email_registration"
-    patch "/users/email", to: 'users/registrations#update_email', as: "user_update_email"
+    patch "/users/email", to: "users/registrations#update_email", as: "user_update_email"
     post "users/skip_email", to: "users/registrations#skip_email_registration", as: "skip_email_registration"
   end
 
