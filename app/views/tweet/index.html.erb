@@ -47,7 +47,7 @@
   }
 
   .restricted-input {
-    height: 45px; /* inputと高さ揃える */
+    height: 50px; /* inputと高さ揃える */
     resize: none; /* スクロールバー非表示 */
     white-space: normal; /* 折り返し有効 */
     overflow-wrap: break-word; /* 単語折り返し */
@@ -56,7 +56,7 @@
     padding: 6px; /* 上下余裕 */
   }
   .restricted-input::placeholder {
-    font-size: 0.7rem; /* 小さい文字 */
+    font-size: 0.8rem; /* 小さい文字 */
     color: #999; /* 薄グレーで読みやすく */
     white-space: normal; /* プレースホルダー折り返し */
     overflow-wrap: break-word;
@@ -93,7 +93,7 @@
     <div class="max-w-md mx-auto flex items-center space-x-2">
       <%= label_tag :message, 'Say something:', class: "sr-only" %>
       <% if current_user.email_password_unset? %>
-        <%= text_area_tag :message, nil, placeholder: "メールアドレス・パスワードを設定するとメッセージを送信できます", class: "flex-grow border rounded p-2 restricted-input", readonly: true, rows: 2 %>
+        <%= text_area_tag :message, nil, placeholder: "※メールアドレス・パスワードを設定するとメッセージを送信できます", class: "flex-grow border rounded p-2 restricted-input", readonly: true, rows: 2 %>
       <% else %>
         <%= text_field_tag :message, nil, data: { behavior: 'room_speaker' }, class: "flex-grow border rounded p-2" %>
       <% end %>
