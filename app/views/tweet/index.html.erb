@@ -34,13 +34,42 @@
   .link:active {
     color: #A9A9A9; /* クリック時の文字色 */
   }
+
+  #send-message {
+    background-color: #FFA230; /* オレンジ */
+    transition: background-color 0.3s; /* スムーズな変化 */
+  }
+  #send-message:hover {
+    background-color: #E6952A; /* ホバーで暗め */
+  }
+  #send-message:active {
+    background-color: #D98326; /* アクティブでさらに暗め */
+  }
+
+  .restricted-input {
+    height: 45px; /* inputと高さ揃える */
+    resize: none; /* スクロールバー非表示 */
+    white-space: normal; /* 折り返し有効 */
+    overflow-wrap: break-word; /* 単語折り返し */
+    display: flex; /* 中央揃え */
+    align-items: center; /* 上下中央 */
+    padding: 6px; /* 上下余裕 */
+  }
+  .restricted-input::placeholder {
+    font-size: 0.7rem; /* 小さい文字 */
+    color: #999; /* 薄グレーで読みやすく */
+    white-space: normal; /* プレースホルダー折り返し */
+    overflow-wrap: break-word;
+  }
 </style>
 
 <header class="fixed top-0 left-0 w-full bg-[#FFC276] text-white p-6 flex justify-between items-center">
   <h2 class="text-4xl"><%= link_to "DreamScope100", dashboard_index_path, class: "text-white link" %></h2>
   <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-white link", onclick: "return confirm('ログアウトしますか？');" %>
 </header>
-<%= render "shared/flash" %>
+<% if current_user.email_password_unset? %>
+  <%= render "shared/flash" %>
+<% end %>
 
 <body class="bg-[#FFF5E8] flex flex-col h-screen">
   <div class="fixed top-20 left-0 w-full bg-[#FFF5E8] p-3fixed top-16 left-0 w-full bg-[#FFF5E8] z-10 p-4">  
@@ -63,8 +92,14 @@
   <div class="fixed bottom-14 left-0 w-full bg-[#FFF5E8] z-10 p-4">
     <div class="max-w-md mx-auto flex items-center space-x-2">
       <%= label_tag :message, 'Say something:', class: "sr-only" %>
-      <%= text_field_tag :message, nil, data: { behavior: 'room_speaker' }, class: "flex-grow border rounded p-2" %>
-      <button id="send-message" class="bg-blue-500 text-white px-4 py-2 rounded">送信</button>
+      <% if current_user.email_password_unset? %>
+        <%= text_area_tag :message, nil, placeholder: "メールアドレス・パスワードを設定するとメッセージを送信できます", class: "flex-grow border rounded p-2 restricted-input", readonly: true, rows: 2 %>
+      <% else %>
+        <%= text_field_tag :message, nil, data: { behavior: 'room_speaker' }, class: "flex-grow border rounded p-2" %>
+      <% end %>
+      <% unless current_user.email_password_unset? %>
+        <button id="send-message" class="bg-blue-500 text-white px-4 py-2 rounded">送信</button>
+      <% end %>
     </div>
   </div>
   <div class="fixed bottom-0 left-0 w-full z-0">
