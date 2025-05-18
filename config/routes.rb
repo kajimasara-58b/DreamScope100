@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     get :initiate_link_account, on: :collection
     post :initiate_line_link_account, on: :collection # LINEログイン時にメールアドレス登録用、POST
     get :link_account, on: :collection
+    get :line_link_account, on: :collection
   end
   get "home/index"
   get "tweet/index"
