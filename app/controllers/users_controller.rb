@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!, except: [ :link_account, :check_email, :initiate_link_account, :initiate_line_link_account ] # ログインしていない場合、ログインページにリダイレクト
+  before_action :authenticate_user!, except: [ :link_account, :line_link_account, :check_email, :initiate_link_account, :initiate_line_link_account ] # ログインしていない場合、ログインページにリダイレクト
   def show
     @user = current_user
   end
