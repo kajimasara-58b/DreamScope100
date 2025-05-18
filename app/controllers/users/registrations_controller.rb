@@ -68,6 +68,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         provider:          "line",
         uid:               auth["uid"],
         name:              auth["name"]  || "LINEユーザー",
+        email:             nil, # 明示的にnilをセット
         active:            true,
         is_dummy_password: true
       )

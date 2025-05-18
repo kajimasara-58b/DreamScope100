@@ -13,6 +13,14 @@ class GoalsController < ApplicationController
   def create
     @goal = Goal.new(goal_params)
     @goal.user_id = current_user.id
+
+    # メールorパスワード未設定チェック
+    if current_user.email_password_unset?
+      flash.now[:alert] = "メールアドレスとパスワードを設定すると目標作成ができるようになります！"
+      render :new, status: :unprocessable_entity
+      return
+    end
+
     if @goal.save
       session.delete(:goal_params) # 成功時にセッションをクリア
       redirect_to goals_path, notice: "目標を作成しました"
