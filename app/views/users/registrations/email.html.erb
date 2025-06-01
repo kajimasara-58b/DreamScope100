@@ -41,14 +41,18 @@
         <%= form.password_field :password_confirmation, class: "rounded w-full py-2 px-3", id: "user_password_confirmation", autocomplete: "new-password", required: true %>
       </div>
       <div class="actions flex justify-center space-x-4">
+        <%= form.hidden_field :redirect_to, value: welcome_path %>
         <%= form.submit "登録", class: "bg-white text-black px-4 py-2 rounded shadow button" %>
       </div>
     <% end %>
 
     <%= form_with url: skip_email_registration_path, method: :post, local: true, html: { class: "mt-4", data: { turbo: false } } do |form| %>
       <%= form.hidden_field :authenticity_token, value: form_authenticity_token %>
+      <%= form.hidden_field :redirect_to, value: welcome_path %>
       <%= form.submit "あとで登録する", class: "bg-gray-300 text-black px-4 py-2 rounded shadow button" %>
     <% end %>
+
+    <p class="mt-2 mb-4 text-sm">登録またはスキップ後アカウント作成が完了し、LINE友達追加画面に進みます</p>
 
     <script>
       console.log("Script loaded at", new Date().toISOString());
