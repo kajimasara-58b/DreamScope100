@@ -297,7 +297,7 @@ Devise.setup do |config|
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
 
-  config.omniauth :line, ENV["LINE_LOGIN_CHANNEL_ID"], ENV["LINE_LOGIN_CHANNEL_SECRET"], scope: "profile openid", bot_prompt: "aggressive"
+  config.omniauth :line, ENV["LINE_LOGIN_CHANNEL_ID"], ENV["LINE_LOGIN_CHANNEL_SECRET"], scope: "profile openid", bot_prompt: "aggressive", callback_path: "/users/auth/line/callback"
 
   # ==> Hotwire/Turbo configuration
   # When using Devise with Hotwire/Turbo, the http status for error responses

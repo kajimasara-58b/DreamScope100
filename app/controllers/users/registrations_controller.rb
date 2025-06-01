@@ -47,7 +47,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       # 保存成功→自動ログイン＆セッション削除
       sign_in(@user, event: :authentication)
       session.delete(:line_auth)
-      redirect_to user_path(@user), notice: "メールアドレスとパスワードを登録しました。"
+      redirect_to params[:redirect_to] || welcome_path, notice: "メールアドレスとパスワードを登録しました。"
     else
       # 保存失敗→エラーメッセージとともにフォーム再表示
       flash.now[:alert] = @user.errors.full_messages.join("、")
@@ -80,8 +80,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
     # ③ セッションからLINE情報はもう不要なら削除
     session.delete(:line_auth)
 
-    # ④ ダッシュボードへ
-    redirect_to dashboard_index_path, notice: "メールアドレス・パスワードの登録をスキップしました。後で設定できます。"
+    # ④ LINE公式アカウント友達登録へ
+    redirect_to params[:redirect_to] || welcome_path, notice: "メールアドレス・パスワードの登録をスキップしました。後で設定できます。"
   end
 
   def create

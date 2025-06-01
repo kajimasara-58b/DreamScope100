@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<style>
+  .button {
+    width: 110px; /* 固定幅（LINEボタンに合わせる） */
+    height: 42px; /* 固定高さ */
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+  }
+
+  .button:hover {
+    background-color: #f0f0f0; /* ホバー時の背景色 */
+    color: #333; /* ホバー時の文字色 */
+  }
+
+  .button:active {
+    background-color: #e0e0e0; /* クリック時の背景色 */
+    color: #111; /* クリック時の文字色 */
+  }
+  .btn-line {
+    background-color: #00C300;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s; /* スムーズなトランジション */
+  }
+  .btn-line:hover {
+    background-color: #00A300;
+  }
+  /* 「または」のスタイル */
+  .or-container {
+    display: flex;
+    align-items: center;
+    width: 100%; /* 親要素の幅に合わせる */
+    max-width: 300px; /* 必要に応じて最大幅を設定、調整可能 */
+    margin: 20px auto; /* 上下20px、左右は自動で中央揃え */
+  }
+
+  .or-line {
+    flex: 1;
+    height: 1px;
+    background-color: black; /* 薄いグレー */
+  }
+
+  .or-text {
+    margin: 0 10px;
+    font-size: 13px;
+  }
+</style>
+
+<%= render "shared/header" %>
+
+<body class="bg-[#FFF5E8] flex flex-col h-screen overflow-auto">
+  <main class="flex-grow p-4 flex flex-col items-center justify-center">
+    <div class="mt-2 mb-5 text-center">
+        <h2 class="text-2xl font-bold mb-4">ようこそ、<%= current_user.name %> さん</h2>
+        <p>LINEログインでのアカウント作成が完了しました！</p>
+        <p>アプリをフル活用するために、LINE公式アカウントの友達追加をお勧めします</p>
+        <p class="mb-6 text-sm">友達追加すると、通知機能が利用可能になります🔔</p>
+        <a href="<%= @line_friend_link %>" class="btn btn-line bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
+            LINE公式アカウントを友達追加
+        </a>
+
+        <!-- 「または」のセクション -->
+        <div class="or-container">
+        <div class="or-line"></div>
+        <span class="or-text">または</span>
+        <div class="or-line"></div>
+        </div>
+
+        <div class="mb-2">
+            <p class="mb-2">スマホでQRコードをスキャン</p>
+            <img src="https://qr-official.line.me/sid/M/946voeaz.png" alt="LINE友達追加QRコード" class="mx-auto w-32 h-32">
+        </div>
+        <p class="mt-4 text-sm">
+            <%= link_to dashboard_index_path, class: "bg-gray-300 text-black px-4 py-2 rounded shadow button" do %>
+            <i class="fas fa-times-circle button-icon"></i> 閉じる
+            <% end %>
+        </p>
+    </div>
+  </main>
+</body>
+
+<!-- Font AwesomeのCDNを読み込む -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<%= render "shared/footer" %>
+
+</html>

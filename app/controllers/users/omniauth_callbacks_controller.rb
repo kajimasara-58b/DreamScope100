@@ -12,6 +12,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       # 初回ログイン
       session[:line_auth] = { uid: auth.uid, name: auth.info.name || "LINEユーザー" }
       redirect_to user_email_registration_path
+      # redirect_to welcome_path, notice: "LINEでログインしました！" # テスト用
     end
   end
 
