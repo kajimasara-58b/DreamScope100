@@ -37,6 +37,9 @@ ja:
       user: ユーザー
       goal: 目標
     errors:
+      messages:
+        record_invalid: バリデーションに失敗しました
+        taken: は既に使用されています
       models:
         user:
           attributes:

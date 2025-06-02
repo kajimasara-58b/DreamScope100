@@ -108,12 +108,20 @@ class UsersController < ApplicationController
     if user && user.link_token_sent_at > 15.minutes.ago
       Rails.logger.debug("User found: id=#{user.id}, email=#{user.email}")
       begin
+        line_user_id = session[:line_auth]&.dig("uid")
+        line_notice_id = User.active.find_by(uid: line_user_id, provider: "line")&.line_notice_id
         ActiveRecord::Base.transaction do
+          # LINEログインアカウントのline_notice_idをクリア（存在する場合）
+          if line_user = User.active.find_by(uid: line_user_id, provider: "line")
+            line_user.update!(line_notice_id: nil)
+          end
+          # 連携先アカウントを更新
           user.update!(
             name: user.name,
             email: params[:email],
             provider: "line",
-            uid: session[:line_auth]&.dig("uid") || user.uid,
+            uid: line_user_id || user.uid,
+            line_notice_id: line_notice_id, # line_notice_idを引き継ぐ
             link_token: nil,
             link_token_sent_at: nil
           )
@@ -176,16 +184,20 @@ class UsersController < ApplicationController
         Rails.logger.debug("Existing user found: id=#{existing_user.id}, email=#{existing_user.email}")
         begin
           ActiveRecord::Base.transaction do
+            line_notice_id = user.line_notice_id # line_notice_idを保存
+            Rails.logger.debug("Transferring line_notice_id: #{line_notice_id}")
             user.update!(
               active: false,
               link_token: nil, # トークンをクリア
-              link_token_sent_at: nil
+              link_token_sent_at: nil,
+              line_notice_id: nil # ユニーク制約回避のためクリア
             )
             existing_user.update!(
               name: existing_user.name || user.name, # 名前を統合（必要に応じて）
               email: params[:email], # メールアドレスを確実に設定
               provider: "line",
-              uid: user.uid
+              uid: user.uid,
+              line_notice_id: line_notice_id # line_notice_idを引き継ぐ
             )
           end
           Rails.logger.debug("Signing in existing user: id=#{existing_user.id}")
@@ -224,7 +236,7 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :provider, :line_uid, :password, :password_confirmation) # 必要な属性のみ指定
+    params.require(:user).permit(:name, :email, :provider, :line_uid, :password, :password_confirmation, :line_notice_id) # 必要な属性のみ指定
   end
 
   def password_params

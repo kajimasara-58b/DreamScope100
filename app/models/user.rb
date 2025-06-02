@@ -20,6 +20,7 @@ class User < ApplicationRecord
   validates :provider, presence: true, on: :save # 登録時はコールバックで設定
   validates :uid, presence: true, if: -> { provider == "line" } # LINEログインでのみ必須
   validates :is_dummy_password, inclusion: { in: [ true, false ] }, allow_nil: false
+  validates :line_notice_id, uniqueness: { allow_nil: true }, if: :active?
 
   # デフォルト値を設定
   before_validation :set_default_provider_and_uid, on: :create
