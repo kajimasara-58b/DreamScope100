@@ -93,7 +93,7 @@
           <!-- 通知を有効にするメッセージ -->
           <% if current_user.line_notice_id.blank? %>
             <div class="mb-4 text-sm text-gray-500" style="font-size: 0.8rem;">
-              ※LINEログイン→公式アカウントで通知を有効にするとリマインド機能が使用できます！
+              ※LINEログイン→<%= link_to "LINE公式アカウント", line_friend_add_path, style: "text-decoration: underline;" %>で通知を有効にするとリマインド機能が使用できます！
             </div>
           <% end %>
         </div>
