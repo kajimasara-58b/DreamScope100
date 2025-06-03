@@ -2,20 +2,17 @@ class TweetBroadcastJob < ApplicationJob
   queue_as :default
 
   def perform(tweet, current_user_id = nil)
-    # Do something later
     Rails.logger.info "Broadcasting tweet: #{tweet.inspect}"
     ActionCable.server.broadcast("room_channel", {
-      tweet: render_tweet(tweet, current_user_id),
-      tweet_id: tweet.id
+      tweet: {
+        id: tweet.id,
+        message: tweet.message,
+        user_id: tweet.user_id,
+        user_name: tweet.user.name || "Anonymous",
+        created_at: tweet.created_at.in_time_zone('Tokyo').strftime("%H:%M")
+      },
+      tweet_id: tweet.id,
+      user_id: tweet.user_id
     })
-  end
-
-  private
-
-  def render_tweet(tweet, current_user_id)
-    ApplicationController.render(
-      partial: "shared/message",
-      locals: { tweet: tweet, is_current_user: current_user_id && tweet.user_id == current_user_id }
-    )
   end
 end

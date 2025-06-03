@@ -6,10 +6,12 @@
   /* app/assets/stylesheets/application.css */
   .tweet .bg-green-200 {
     border-radius: 20px 20px 0 20px;
+    margin-bottom: 0.5rem; /* メッセージ間の隙間を広げる（24px） */
   }
 
   .tweet .bg-white {
     border-radius: 20px 20px 20px 0;
+    margin-bottom: 0.5rem; /* メッセージ間の隙間を広げる（24px） */
   }
 
   body {
@@ -61,6 +63,20 @@
     white-space: normal; /* プレースホルダー折り返し */
     overflow-wrap: break-word;
   }
+  .text-center.text-gray-500.text-sm.my-4 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem; /* 上の隙間を広げる */
+    margin-bottom: 1rem; /* 下の隙間を広げる */
+  }
+  .text-center.text-gray-500.text-sm.my-4::before,
+  .text-center.text-gray-500.text-sm.my-4::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #d1d5db;
+    margin: 0 10px;
+  }
 </style>
 
 <header class="fixed top-0 left-0 w-full bg-[#FFC276] text-white p-6 flex justify-between items-center">
@@ -82,7 +98,16 @@
   <!-- チャットエリア（スクロール可能） -->
   <div id="tweets" class="flex-grow overflow-y-auto p-4" style="padding-top: 140px; padding-bottom: 160px;">
     <div class="max-w-md mx-auto flex flex-col space-y-2 justify-end min-h-full">
+      <% previous_date = nil %>
       <% @tweets.each do |tweet| %>
+        <% current_date = tweet.created_at.in_time_zone('Tokyo').to_date %>
+        <% if previous_date != current_date %>
+          <!-- 日付が変わったタイミングで日付を表示 -->
+          <div class="text-center text-gray-500 text-sm my-4">
+            <%= current_date.strftime("%Y/%m/%d") %>
+          </div>
+          <% previous_date = current_date %>
+        <% end %>
         <%= render partial: "shared/message", locals: { tweet: tweet, is_current_user: (tweet.user == current_user) } %>
       <% end %>
     </div>
