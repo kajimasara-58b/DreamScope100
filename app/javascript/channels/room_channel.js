@@ -85,8 +85,24 @@ function setupChat() {
       if (data.tweet && data.tweet_id) {
         const tweetsContainer = document.getElementById("tweets");
         if (tweetsContainer) {
-          // サーバーサイドでレンダリングされたHTMLをそのまま使用
-          const tweetElement = data.tweet;
+          // 現在のユーザーIDを取得
+          const currentUserId = document.querySelector('meta[name="current-user-id"]').getAttribute('content');
+          const isCurrentUser = data.user_id == currentUserId;
+
+          // メッセージHTMLをクライアントサイドで構築
+          const tweetElement = `
+            <div class="tweet flex ${isCurrentUser ? 'justify-end' : 'justify-start'}" data-tweet-id="${data.tweet_id}">
+              <div class="flex flex-col ${isCurrentUser ? 'items-end' : 'items-start'}">
+                <span class="text-xs text-gray-500 mb-1">
+                  ${data.tweet.user_name} • ${data.tweet.created_at}
+                </span>
+                <div class="${isCurrentUser ? 'bg-green-200' : 'bg-white'} text-black p-3 rounded-lg max-w-xs shadow">
+                  <p>${data.tweet.message}</p>
+                </div>
+              </div>
+            </div>
+          `;
+
           tweetsContainer.insertAdjacentHTML("beforeend", tweetElement);
           messageInput.value = "";
           scrollToBottom();

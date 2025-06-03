@@ -14,6 +14,8 @@
     <meta property="og:url" content="https://f6a8-2001-3b0-306-17da-5c73-ffbe-67b3-651e.ngrok-free.app"><!-- 本番環境に移すタイミングで修正 -->
     <meta property="og:type" content="website">
 
+    <meta name="current-user-id" content="<%= current_user&.id %>">
+
     <title><%= content_for(:title) || "Myapp" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="mobile-web-app-capable" content="yes">
