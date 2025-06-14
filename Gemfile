@@ -71,10 +71,14 @@ group :development do
   gem "letter_opener_web"
 end
 
-group :test do
-  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+group :development, :test do
+  gem "rspec-rails", "~> 6.0.0"
   gem "capybara"
-  gem "selenium-webdriver"
-  gem "factory_bot_rails", "~> 6.2"
-  gem "faker", "~> 3.2"
+  gem "factory_bot_rails"
+  gem "faker"
+end
+
+group :test do
+  gem "database_cleaner-active_record", "~> 2.0"
+  gem "cuprite"
 end
