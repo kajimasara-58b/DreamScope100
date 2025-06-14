@@ -10,12 +10,9 @@ module ApplicationCable
     private
 
     def find_verified_user
-      user_id = cookies.signed[:user_id]
-      Rails.logger.info "ActionCable: Looking for user with ID #{user_id}"
-      if verified_user = User.find_by(id: user_id)
+      if verified_user = env['warden'].user
         verified_user
       else
-        Rails.logger.warn "ActionCable: User not found for ID #{user_id}, rejecting connection"
         reject_unauthorized_connection
       end
     end

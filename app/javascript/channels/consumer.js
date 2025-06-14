@@ -3,4 +3,10 @@
 
 import { createConsumer } from "@rails/actioncable"
 
-export default createConsumer()
+// export default createConsumer()
+
+// ngrok用に動的にURLを設定
+const cableUrl = window.location.hostname.includes('ngrok') 
+  ? `wss://${window.location.hostname}/cable`
+  : 'ws://localhost:3000/cable';
+export default createConsumer(cableUrl);
