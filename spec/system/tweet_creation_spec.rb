@@ -22,11 +22,11 @@ RSpec.describe 'Tweet Creation', type: :system, js: true do
     ActiveJob::Base.queue_adapter = :test
   end
 
-  #it 'ツイートを投稿できる' do
-  #  visit tweet_index_path
-  #  fill_in 'message-input', with: 'テストツイート'
-  #  click_button '送信'
-  #  expect(page).to have_content('テストツイート', wait: 5)
-  #  expect(Tweet.exists?(message: 'テストツイート')).to be_true
-  #end
+  #  it 'ツイートを投稿できる' do
+  #    visit tweet_index_path
+  #    fill_in 'message-input', with: 'テストツイート'
+  #    click_button '送信'
+  #    expect(page).to have_content('テストツイート', wait: 5)
+  #    expect(Tweet.exists?(message: 'テストツイート')).to be_true
+  #  end
 end
