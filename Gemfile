@@ -72,13 +72,13 @@ group :development do
 end
 
 group :development, :test do
-  gem 'rspec-rails', '~> 6.0.0'
-  gem 'capybara'
-  gem 'factory_bot_rails'
-  gem 'faker'
+  gem "rspec-rails", "~> 6.0.0"
+  gem "capybara"
+  gem "factory_bot_rails"
+  gem "faker"
 end
 
 group :test do
-  gem 'database_cleaner-active_record', '~> 2.0'
-  gem 'cuprite'
+  gem "database_cleaner-active_record", "~> 2.0"
+  gem "cuprite"
 end
