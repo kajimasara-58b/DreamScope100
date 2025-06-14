@@ -7,11 +7,11 @@ class TweetBroadcastJob < ApplicationJob
       tweet: ApplicationController.render(
         partial: "shared/message",
         locals: { tweet: tweet, is_current_user: nil }, # 判定をクライアントに委ねる
-        formats: [:html]
+        formats: [ :html ]
       ),
       tweet_id: tweet.id,
       user_id: tweet.user_id.to_s, # 受信側で比較用
-      date: tweet.created_at.in_time_zone('Tokyo').to_date.to_s
+      date: tweet.created_at.in_time_zone("Tokyo").to_date.to_s
     })
   end
 end

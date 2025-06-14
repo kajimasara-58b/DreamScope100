@@ -52,7 +52,7 @@ Rails.application.routes.draw do
   post "/line_webhook", to: "line_webhooks#callback"
   get "/line_connect", to: "line_connect#connect"
 
-  mount ActionCable.server => '/cable'
+  mount ActionCable.server => "/cable"
 
   # get "login", to: "sessions#new"
   # /loginにアクセスするとSessionsControllerのnewアクションがよばれる
