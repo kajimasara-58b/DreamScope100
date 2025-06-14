@@ -52,6 +52,7 @@ gem "redis-session-store", "~> 0.11.3"
 gem "sidekiq"
 gem "sidekiq-scheduler"
 gem "line-bot-api"
+gem "rspec-rails", "~> 6.0.0"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -74,4 +75,6 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "factory_bot_rails", "~> 6.2"
+  gem "faker", "~> 3.2"
 end

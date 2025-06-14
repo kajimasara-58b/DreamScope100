@@ -72,6 +72,10 @@ ja:
               blank: を入力してください
             notify_days_before:
               blank: を入力してください
+        tweet:
+          attributes:
+            user:
+              required: を入力してください
   devise:
     confirmations:
       confirmed: メールアドレスが確認できました。
@@ -135,6 +139,8 @@ ja:
       updated: パスワードが正しく変更されました。
       updated_not_active: パスワードが正しく変更されました。
     registrations:
+      email:
+        blank: メールアドレスを入力してください
       destroyed: アカウントを削除しました。またのご利用をお待ちしております。
       edit:
         are_you_sure: 本当によろしいですか？
@@ -190,3 +196,4 @@ ja:
       not_saved:
         one: エラーが発生したため保存されませんでした
         other: "%{count} 件のエラーが発生したため保存されませんでした"
+      greater_than: は0より大きくなければなりません
