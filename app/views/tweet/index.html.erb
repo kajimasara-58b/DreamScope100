@@ -1,74 +1,72 @@
 <!DOCTYPE html>
 <html>
 <%= csrf_meta_tags %>
-<link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet"> <!-- Aldrichフォントをインポート -->
+<link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet">
 <style>
-  /* app/assets/stylesheets/application.css */
   .tweet .bg-green-200 {
-    border-radius: 20px 20px 0 20px;
-    margin-bottom: 0.5rem; /* メッセージ間の隙間を広げる（24px） */
+    background-color: #9AE6B4 !important; /* Tailwindのbg-green-200相当 */
+    border-radius: 20px 20px 0 20px !important;
+    margin-bottom: 0.5rem;
   }
-
   .tweet .bg-white {
-    border-radius: 20px 20px 20px 0;
-    margin-bottom: 0.5rem; /* メッセージ間の隙間を広げる（24px） */
+    background-color: #FFFFFF !important; /* Tailwindのbg-white相当 */
+    border-radius: 20px 20px 20px 0 !important;
+    margin-bottom: 0.5rem;
   }
-
+  .p-3.rounded-lg.max-w-xs.shadow {
+    background-color: #FFFFFF; /* デフォルトを白 */
+  }
   body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* 高さを画面いっぱいにする */
+    min-height: 100vh;
   }
   footer {
-    margin-top: auto; /* フッターを下に寄せる */
+    margin-top: auto;
   }
   header h2 {
-    font-family: 'Aldrich', sans-serif; /* Aldrichフォントを適用 */
+    font-family: 'Aldrich', sans-serif;
   }
   .link {
-    transition: color 0.3s; /* スムーズなトランジション */
+    transition: color 0.3s;
   }
-
   .link:hover {
-    color: #E3E3E3; /* ホバー時の文字色 */
+    color: #E3E3E3;
   }
-
   .link:active {
-    color: #A9A9A9; /* クリック時の文字色 */
+    color: #A9A9A9;
   }
-
   #send-message {
-    background-color: #FFA230; /* オレンジ */
-    transition: background-color 0.3s; /* スムーズな変化 */
+    background-color: #FFA230;
+    transition: background-color 0.3s;
   }
   #send-message:hover {
-    background-color: #E6952A; /* ホバーで暗め */
+    background-color: #E6952A;
   }
   #send-message:active {
-    background-color: #D98326; /* アクティブでさらに暗め */
+    background-color: #D98326;
   }
-
   .restricted-input {
-    height: 50px; /* inputと高さ揃える */
-    resize: none; /* スクロールバー非表示 */
-    white-space: normal; /* 折り返し有効 */
-    overflow-wrap: break-word; /* 単語折り返し */
-    display: flex; /* 中央揃え */
-    align-items: center; /* 上下中央 */
-    padding: 6px; /* 上下余裕 */
+    height: 50px;
+    resize: none;
+    white-space: normal;
+    overflow-wrap: break-word;
+    display: flex;
+    align-items: center;
+    padding: 6px;
   }
   .restricted-input::placeholder {
-    font-size: 0.8rem; /* 小さい文字 */
-    color: #999; /* 薄グレーで読みやすく */
-    white-space: normal; /* プレースホルダー折り返し */
+    font-size: 0.8rem;
+    color: #999;
+    white-space: normal;
     overflow-wrap: break-word;
   }
   .text-center.text-gray-500.text-sm.my-4 {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 2rem; /* 上の隙間を広げる */
-    margin-bottom: 1rem; /* 下の隙間を広げる */
+    margin-top: 2rem;
+    margin-bottom: 1rem;
   }
   .text-center.text-gray-500.text-sm.my-4::before,
   .text-center.text-gray-500.text-sm.my-4::after {
@@ -79,6 +77,7 @@
   }
 </style>
 
+<body data-current-user-id="<%= @current_user.id %>">
 <header class="fixed top-0 left-0 w-full bg-[#FFC276] text-white p-6 flex justify-between items-center">
   <h2 class="text-4xl"><%= link_to "DreamScope100", dashboard_index_path, class: "text-white link" %></h2>
   <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-white link", onclick: "return confirm('ログアウトしますか？');" %>
@@ -87,29 +86,30 @@
   <%= render "shared/flash" %>
 <% end %>
 
-<body class="bg-[#FFF5E8] flex flex-col h-screen">
-  <div class="fixed top-20 left-0 w-full bg-[#FFF5E8] p-3fixed top-16 left-0 w-full bg-[#FFF5E8] z-10 p-4">  
+<div class="bg-[#FFF5E8] flex flex-col h-screen">
+  <div class="fixed top-20 left-0 w-full bg-[#FFF5E8] p-3 z-10">
     <div class="actions flex mr-5">
       <% breadcrumb :openchat %>
-      <%= breadcrumbs separator: " &rsaquo; " %>
+      <%= breadcrumbs separator: " › " %>
     </div>
   </div>
 
   <!-- チャットエリア（スクロール可能） -->
   <div id="tweets" class="flex-grow overflow-y-auto p-4" style="padding-top: 140px; padding-bottom: 160px;">
     <div class="max-w-md mx-auto flex flex-col space-y-2 justify-end min-h-full">
-      <% previous_date = nil %>
-      <% @tweets.each do |tweet| %>
-        <% current_date = tweet.created_at.in_time_zone('Tokyo').to_date %>
-        <% if previous_date != current_date %>
-          <!-- 日付が変わったタイミングで日付を表示 -->
-          <div class="text-center text-gray-500 text-sm my-4">
-            <%= current_date.strftime("%Y/%m/%d") %>
-          </div>
-          <% previous_date = current_date %>
+      <div id="messages">
+        <% previous_date = nil %>
+        <% @tweets.each do |tweet| %>
+          <% current_date = tweet.created_at.in_time_zone('Tokyo').to_date %>
+          <% if previous_date != current_date %>
+            <div class="text-center text-gray-500 text-sm my-4" data-date="<%= current_date.to_s %>">
+              <%= current_date.strftime("%Y/%m/%d") %>
+            </div>
+            <% previous_date = current_date %>
+          <% end %>
+          <%= render partial: "shared/message", locals: { tweet: tweet, is_current_user: (tweet.user_id == @current_user.id) } %>
         <% end %>
-        <%= render partial: "shared/message", locals: { tweet: tweet, is_current_user: (tweet.user == current_user) } %>
-      <% end %>
+      </div>
     </div>
   </div>
 
@@ -120,7 +120,7 @@
       <% if current_user.email_password_unset? %>
         <%= text_area_tag :message, nil, placeholder: "※メールアドレス・パスワードを設定するとメッセージを送信できます", class: "flex-grow border rounded p-2 restricted-input", readonly: true, rows: 2 %>
       <% else %>
-        <%= text_field_tag :message, nil, data: { behavior: 'room_speaker' }, class: "flex-grow border rounded p-2" %>
+        <%= text_field_tag :message, nil, data: { behavior: 'room_speaker' }, class: "flex-grow border rounded p-2", id: "message-input" %>
       <% end %>
       <% unless current_user.email_password_unset? %>
         <button id="send-message" class="bg-blue-500 text-white px-4 py-2 rounded">送信</button>
@@ -137,9 +137,8 @@
       <p>© 2025 DreamScope100. All rights reserved.</p>
     </footer>
   </div>
-</body>
+</div>
 
-<!-- Font AwesomeのCDNを読み込む -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -155,16 +154,29 @@
   });
 
   document.addEventListener('turbo:load', () => {
+    const currentUserId = document.querySelector('body')?.dataset.currentUserId?.toString();
+    console.log("turbo:load - Current User ID:", currentUserId);
+    if (!currentUserId) {
+      console.error("turbo:load - currentUserId is missing!");
+    }
     setTimeout(scrollToBottom, 100);
-  });
 
-  document.addEventListener('DOMContentLoaded', () => {
+    // 送信ボタンのクリックイベントを明示的に定義
     const sendButton = document.getElementById('send-message');
-    const inputField = document.querySelector('input[data-behavior="room_speaker"]');
-
-    sendButton?.addEventListener('click', () => {
-      setTimeout(scrollToBottom, 100);
-    });
+    if (sendButton) {
+      sendButton.onclick = function() {
+        const messageInput = document.getElementById('message-input');
+        if (messageInput && messageInput.value.trim()) {
+          const channel = consumer.subscriptions.subscriptions[0];
+          if (channel) {
+            channel.perform('speak', { message: messageInput.value.trim() });
+            messageInput.value = '';
+          }
+        }
+        return false; // デフォルト動作を防ぐ
+      };
+    }
   });
 </script>
+</body>
 </html>

@@ -51,6 +51,9 @@ Rails.application.routes.draw do
   post "/generate_image", to: "generate_images#create"
   post "/line_webhook", to: "line_webhooks#callback"
   get "/line_connect", to: "line_connect#connect"
+
+  mount ActionCable.server => "/cable"
+
   # get "login", to: "sessions#new"
   # /loginにアクセスするとSessionsControllerのnewアクションがよばれる
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

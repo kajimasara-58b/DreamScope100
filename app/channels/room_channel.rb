@@ -11,8 +11,11 @@ class RoomChannel < ApplicationCable::Channel
     if current_user.email_password_unset?
       error_message = "メールアドレスとパスワードを設定するとメッセージの送信ができるようになります！"
       ActionCable.server.broadcast("room_channel", {
-        error: error_message,
-        flash: { alert: error_message, email_password_unset: true }
+        error: true,
+        flash: {
+          alert: error_message,
+          email_password_unset: true
+        }
       })
       return
     end
@@ -24,7 +27,13 @@ class RoomChannel < ApplicationCable::Channel
       TweetBroadcastJob.perform_later(tweet, current_user.id)
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error("Failed to create tweet: #{e.message}")
-      ActionCable.server.broadcast("room_channel", message: "Error: #{e.message}", flash: { alert: e.message, email_password_unset: false })
+      ActionCable.server.broadcast("room_channel", {
+        error: true,
+        flash: {
+          alert: e.message,
+          email_password_unset: false
+        }
+      })
     end
   end
 end
