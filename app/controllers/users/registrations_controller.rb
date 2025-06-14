@@ -81,7 +81,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     session.delete(:line_auth)
 
     # ④ LINE公式アカウント友達登録へ
-    redirect_to params[:redirect_to] || welcome_path, notice: "メールアドレス・パスワードの登録をスキップしました。後で設定できます。"
+    redirect_to params[:redirect_to] || welcome_path, notice: "メールアドレス・パスワードの登録をスキップしました。「ユーザー情報」から設定できます。"
   end
 
   def create

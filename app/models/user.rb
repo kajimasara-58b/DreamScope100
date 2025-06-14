@@ -21,6 +21,8 @@ class User < ApplicationRecord
   validates :uid, presence: true, if: -> { provider == "line" } # LINEログインでのみ必須
   validates :is_dummy_password, inclusion: { in: [ true, false ] }, allow_nil: false
   validates :line_notice_id, uniqueness: { allow_nil: true }, if: :active?
+  validates :password_confirmation, presence: true, if: :password_required? # 追加：確認必須
+  validates :password, confirmation: true, if: :password_required? # 追加：一致チェック
 
   # デフォルト値を設定
   before_validation :set_default_provider_and_uid, on: :create
@@ -36,8 +38,10 @@ class User < ApplicationRecord
     # ● 通常の email ログイン時 OR
     # ● LINEログイン後にメール＋パスワード登録をするフローで
     #   controller からフラグを立てたとき
+    return false if is_dummy_password && provider == "line"
     (provider == "email" && super) ||
-      require_password_for_email_registration == true
+      require_password_for_email_registration ||
+      (!is_dummy_password && encrypted_password.present?)
   end
 
   def self.from_omniauth(auth)

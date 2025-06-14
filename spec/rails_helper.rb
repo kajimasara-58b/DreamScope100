@@ -5,6 +5,9 @@ require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
+require 'rails_helper'
+require 'devise'
+require 'omniauth'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -60,5 +63,50 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # システムテストのデフォルトドライバをrack_testに設定
+  config.before(:each, type: :system) do
+    driven_by :rack_test
+  end
+
   config.include FactoryBot::Syntax::Methods
+  config.include Devise::Test::IntegrationHelpers, type: :system
 end
+
+require 'capybara/rails'
+require 'capybara/rspec'
+
+Capybara.register_driver :selenium_chrome_headless do |app|
+ Capybara::Selenium::Driver.load_selenium
+ browser_options = ::Selenium::WebDriver::Chrome::Options.new
+ browser_options.args << '--headless'
+ browser_options.args << '--disable-gpu'
+ browser_options.args << '--no-sandbox'
+ Capybara::Selenium::Driver.new(app, browser: :chrome, options: browser_options)
+end
+
+Capybara.default_driver = :selenium_chrome_headless
+Capybara.javascript_driver = :selenium_chrome_headless
+
+require 'database_cleaner/active_record'
+
+RSpec.configure do |config|
+ config.before(:suite) do
+ DatabaseCleaner.strategy = :transaction
+ DatabaseCleaner.clean_with(:truncation)
+ end
+
+ config.around(:each) do |example|
+ DatabaseCleaner.cleaning do
+ example.run
+ end
+ end
+end
+
+require 'capybara/cuprite'
+
+Capybara.register_driver :cuprite do |app|
+  Capybara::Cuprite::Driver.new(app, window_size: [1200, 800])
+end
+Capybara.default_driver = :cuprite
+Capybara.javascript_driver = :cuprite

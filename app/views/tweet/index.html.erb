@@ -156,12 +156,41 @@
   document.addEventListener('turbo:load', () => {
     const currentUserId = document.querySelector('body')?.dataset.currentUserId?.toString();
     console.log("turbo:load - Current User ID:", currentUserId);
-    if (!currentUserId) {
-      console.error("turbo:load - currentUserId is missing!");
-    }
-    setTimeout(scrollToBottom, 100);
 
-    // 送信ボタンのクリックイベントを明示的に定義
+    const consumer = ActionCable.createConsumer();
+    consumer.subscriptions.create('RoomChannel', {
+      connected() {
+        console.log("Connected to RoomChannel");
+      },
+      disconnected() {
+        console.log("Disconnected from RoomChannel");
+      },
+      received(data) {
+        console.log("Received data:", data);
+        if (data.tweet) {
+          const messages = document.getElementById('messages');
+          const tweet = data.tweet;
+          const isCurrentUser = tweet.user_id.toString() === currentUserId;
+          // メッセージHTMLを生成（shared/messageパーシャルを模倣）
+          const messageHtml = `
+            <div class="tweet flex ${isCurrentUser ? 'justify-end' : 'justify-start'}" data-tweet-id="${tweet.id}">
+              <div class="flex flex-col ${isCurrentUser ? 'items-end' : 'items-start'}">
+                <span class="text-xs text-gray-500 mb-1">
+                  ${tweet.user_name || 'Anonymous'} • ${new Date(tweet.created_at).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+                <div class="${isCurrentUser ? 'bg-green-200' : 'bg-white'} text-black p-3 rounded-lg max-w-xs shadow">
+                  <p>${tweet.message}</p>
+                </div>
+              </div>
+            </div>
+          `;
+          messages.insertAdjacentHTML('beforeend', messageHtml);
+          scrollToBottom();
+        }
+      }
+    });
+  
+    // 送信ボタンのクリックイベント
     const sendButton = document.getElementById('send-message');
     if (sendButton) {
       sendButton.onclick = function() {
@@ -173,9 +202,11 @@
             messageInput.value = '';
           }
         }
-        return false; // デフォルト動作を防ぐ
+        return false;
       };
     }
+  
+    setTimeout(scrollToBottom, 100);
   });
 </script>
 </body>
