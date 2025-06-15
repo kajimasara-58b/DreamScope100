@@ -119,6 +119,8 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.6.2)
+    dockerfile-rails (1.7.9)
+      rails (>= 3.0.0)
     dotenv (3.1.7)
     dotenv-rails (3.1.7)
       dotenv (= 3.1.7)
@@ -448,6 +450,7 @@ DEPENDENCIES
   database_cleaner-active_record (~> 2.0)
   debug
   devise
+  dockerfile-rails (>= 1.7)
   dotenv-rails
   factory_bot_rails
   faker
@@ -475,4 +478,4 @@ DEPENDENCIES
   web-console
 
 BUNDLED WITH
-   2.6.3
+   2.5.22

@@ -1,7 +1,8 @@
-:concurrency: 5
+:concurrency: 1
 :queues:
   - default
   - mailers
+:url: <%= ENV["REDIS_URL"] %>
 
 :scheduler:
   :schedule:

@@ -1,0 +1,29 @@
+app = "dreamscope100"
+primary_region = "nrt"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 3000
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[env]
+  RAILS_ENV = "production"
+  RAILS_SERVE_STATIC_FILES = "true"
+  RAILS_LOG_TO_STDOUT = "true"
+
+[deploy]
+  release_command = "bin/rails db:migrate"
+
+[processes]
+  app = "/rails/bin/rails server -b 0.0.0.0 -p 3000"
+  worker = "bundle exec sidekiq -q default"
+
+[vm]
+  memory = 512
+  cpu_kind = "shared"
+  cpus = 1
